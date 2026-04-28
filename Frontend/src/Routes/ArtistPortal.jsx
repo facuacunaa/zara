@@ -131,17 +131,6 @@ export default function ArtistPortal() {
         files.forEach(f => uploadImage(f))
     }
 
-    // ── Save info ──────────────────────────────────────────────────────────
-    const saveInfo = async (e) => {
-        e.preventDefault(); setLoading(true)
-        try {
-            await axios.put(`${API}/artist/content/update`, info, { headers })
-            await refreshArtist()
-            flash('✅ Información actualizada')
-        } catch { flash('❌ Error al guardar') }
-        setLoading(false)
-    }
-
     /* ── LOGIN SCREEN ──────────────────────────────────────────────────── */
     if (!token || !artist) return (
         <PageWrapper>
