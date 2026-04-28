@@ -2,11 +2,18 @@ const express = require("express")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+const { connectDB } = require("../config/db")
 const { UserModel } = require("../models/User.model")
 const { ProductModel } = require("../models/Product.model")
 const { adminAuth } = require("../middlewares/adminAuth")
 
 const adminRouter = express.Router()
+
+// Garantiza conexión en cada request (necesario en serverless)
+adminRouter.use(async (req, res, next) => {
+    await connectDB()
+    next()
+})
 
 // ── SETUP: crea el usuario admin una sola vez ──────────────────────────────
 adminRouter.post("/setup", async (req, res) => {
@@ -28,7 +35,7 @@ adminRouter.post("/setup", async (req, res) => {
         res.json({ msg: "Admin user created successfully" })
     } catch (err) {
         console.log(err)
-        res.status(500).json({ msg: "Error creating admin" })
+        res.status(500).json({ msg: "Error creating admin", error: err.message })
     }
 })
 
