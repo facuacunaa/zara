@@ -1,6 +1,7 @@
 const express = require("express")
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 require('dotenv').config()
 
 const {connection} = require("./config/db")
@@ -11,6 +12,7 @@ const {adminRouter} = require("./routes/admin.route");
 const { authenticate } = require("./middlewares/authentication");
 const app = express();
 
+app.use(cors())
 app.use(express.json())
 
 app.get("/", (req, res) => {
