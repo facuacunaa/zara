@@ -19,8 +19,10 @@ const AdminPage = () => {
     const [editingId, setEditingId] = useState(null)
     const [msg, setMsg] = useState('')
     const [loading, setLoading] = useState(false)
-    const [tab, setTab] = useState('products') // 'products' | 'add'
+    const [tab, setTab] = useState('products') // 'products' | 'add' | 'artists'
     const [searchTerm, setSearchTerm] = useState('')
+    const [artistForm, setArtistForm] = useState({ name: '', slug: '', email: '', password: '' })
+    const [artists, setArtists] = useState([])
 
     const headers = { Authorization: `Bearer ${token}` }
 
@@ -164,6 +166,9 @@ const AdminPage = () => {
                     <SidebarItem active={tab === 'add'} onClick={() => { setForm(emptyForm); setEditingId(null); setTab('add') }}>
                         ➕ Nuevo Producto
                     </SidebarItem>
+                    <SidebarItem active={tab === 'artists'} onClick={() => setTab('artists')}>
+                        🎨 Artistas
+                    </SidebarItem>
                 </SidebarNav>
                 <LogoutBtn onClick={handleLogout}>Cerrar sesión</LogoutBtn>
             </Sidebar>
@@ -198,6 +203,64 @@ const AdminPage = () => {
                             ))}
                         </ProductGrid>
                         {filtered.length === 0 && <Empty>No hay productos aún. ¡Creá el primero!</Empty>}
+                    </>
+                )}
+
+                {/* ── ARTISTS ── */}
+                {tab === 'artists' && (
+                    <>
+                        <PageTitle>Gestión de Artistas</PageTitle>
+                        <Form onSubmit={async (e) => {
+                            e.preventDefault(); setLoading(true); setMsg('')
+                            try {
+                                await axios.post(`${API}/artist/create`, artistForm, { headers })
+                                setMsg('✅ Artista creado. Ya puede ingresar al portal.')
+                                setArtistForm({ name: '', slug: '', email: '', password: '' })
+                            } catch (err) {
+                                setMsg('❌ ' + (err.response?.data?.msg || 'Error'))
+                            }
+                            setLoading(false)
+                            setTimeout(() => setMsg(''), 4000)
+                        }}>
+                            <PageTitle style={{fontSize:'12px'}}>Crear nueva cuenta de artista</PageTitle>
+                            <FormGrid>
+                                <FormGroup>
+                                    <label>Nombre del artista *</label>
+                                    <input value={artistForm.name} required
+                                        onChange={e => setArtistForm({...artistForm, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')})}
+                                        placeholder="Ej: Natalia Gomez" />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Slug (URL) *</label>
+                                    <input value={artistForm.slug} required
+                                        onChange={e => setArtistForm({...artistForm, slug: e.target.value})}
+                                        placeholder="Ej: natalia-gomez" />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Email *</label>
+                                    <input type="email" value={artistForm.email} required
+                                        onChange={e => setArtistForm({...artistForm, email: e.target.value})}
+                                        placeholder="artista@email.com" />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Contraseña *</label>
+                                    <input type="password" value={artistForm.password} required
+                                        onChange={e => setArtistForm({...artistForm, password: e.target.value})}
+                                        placeholder="Contraseña inicial" />
+                                </FormGroup>
+                            </FormGrid>
+                            <FormActions>
+                                <SubmitBtn type="submit" disabled={loading}>
+                                    {loading ? 'Creando...' : 'CREAR ARTISTA'}
+                                </SubmitBtn>
+                            </FormActions>
+                            <p style={{fontSize:'11px',color:'#999',marginTop:'12px'}}>
+                                El artista accede en: <strong>/artist-portal</strong> con su email y contraseña.
+                            </p>
+                        </Form>
+                    </>
+                )}
+
                     </>
                 )}
 
