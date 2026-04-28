@@ -4,7 +4,7 @@ const jwt        = require("jsonwebtoken")
 require("dotenv").config()
 const { connectDB }   = require("../config/db")
 const { ArtistModel } = require("../models/Artist.model")
-const { upload }      = require("../config/cloudinary")
+const { upload, uploadVideo } = require("../config/cloudinary")
 
 const artistRouter = express.Router()
 
@@ -123,6 +123,22 @@ artistRouter.post("/images/hero", artistAuth, upload.single("image"), async (req
         res.json({ msg: "Hero actualizado", url, artist })
     } catch (err) {
         res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
+// ── SUBIR VIDEO HERO ───────────────────────────────────────────────────────
+artistRouter.post("/video/upload", artistAuth, uploadVideo.single("video"), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ msg: "No se envió video" })
+        const url    = req.file.path
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { heroVideo: url },
+            { new: true }
+        ).select("-password")
+        res.json({ msg: "Video subido", url, artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error subiendo video", error: err.message })
     }
 })
 

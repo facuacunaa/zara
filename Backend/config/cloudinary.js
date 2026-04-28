@@ -9,15 +9,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-const storage = new CloudinaryStorage({
+// ── Imágenes ───────────────────────────────────────────────────────────────
+const imageStorage = new CloudinaryStorage({
     cloudinary,
     params: {
-        folder:            "zara-artists",
-        allowed_formats:   ["jpg", "jpeg", "png", "webp"],
-        transformation:    [{ quality: "auto", fetch_format: "auto" }],
+        folder:          "zara-artists/images",
+        allowed_formats: ["jpg", "jpeg", "png", "webp"],
+        transformation:  [{ quality: "auto", fetch_format: "auto" }],
     },
 })
 
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } }) // 10MB
+// ── Videos ────────────────────────────────────────────────────────────────
+const videoStorage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder:          "zara-artists/videos",
+        resource_type:   "video",
+        allowed_formats: ["mp4", "mov", "webm"],
+    },
+})
 
-module.exports = { cloudinary, upload }
+const upload      = multer({ storage: imageStorage, limits: { fileSize: 10  * 1024 * 1024 } }) // 10MB
+const uploadVideo = multer({ storage: videoStorage, limits: { fileSize: 200 * 1024 * 1024 } }) // 200MB
+
+module.exports = { cloudinary, upload, uploadVideo }

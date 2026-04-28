@@ -9,19 +9,20 @@ export default function ArtistPortal() {
     const [artist,  setArtist]  = useState(JSON.parse(localStorage.getItem('artistData') || 'null'))
     const [login,   setLogin]   = useState({ email: '', password: '' })
     const [loginErr,setLoginErr]= useState('')
-    const [tab,     setTab]     = useState('images') // images | info
-    const [msg,     setMsg]     = useState('')
-    const [loading, setLoading] = useState(false)
-    const [info,    setInfo]    = useState({ heroVideo: '', description: '', subtitle: '', quote: '' })
-    const [dragging,setDragging]= useState(false)
-    const fileRef    = useRef(null)
-    const heroRef    = useRef(null)
+    const [tab,          setTab]         = useState('images') // images | info
+    const [msg,          setMsg]         = useState('')
+    const [loading,      setLoading]     = useState(false)
+    const [videoProgress,setVideoProgress] = useState(0)   // 0-100
+    const [imgProgress,  setImgProgress]   = useState({})  // { filename: 0-100 }
+    const [info,         setInfo]        = useState({ description: '', subtitle: '', quote: '' })
+    const [dragging,     setDragging]    = useState(false)
+    const fileRef  = useRef(null)
+    const videoRef = useRef(null)
 
     const headers = { Authorization: `Bearer ${token}` }
 
     useEffect(() => {
         if (artist) setInfo({
-            heroVideo:   artist.heroVideo   || '',
             description: artist.description || '',
             subtitle:    artist.subtitle    || '',
             quote:       artist.quote       || '',
@@ -60,24 +61,46 @@ export default function ArtistPortal() {
         } catch {}
     }
 
+    // ── Upload video ───────────────────────────────────────────────────────
+    const uploadVideo = async (file) => {
+        if (!file) return
+        if (!file.type.startsWith('video/')) return flash('❌ Seleccioná un archivo de video')
+        if (file.size > 200 * 1024 * 1024) return flash('❌ El video supera 200MB')
+        setLoading(true); setVideoProgress(0)
+        const form = new FormData()
+        form.append('video', file)
+        try {
+            await axios.post(`${API}/artist/video/upload`, form, {
+                headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: e => setVideoProgress(Math.round((e.loaded * 100) / e.total))
+            })
+            await refreshArtist()
+            flash('✅ Video subido correctamente')
+        } catch {
+            flash('❌ Error al subir el video')
+        }
+        setLoading(false); setVideoProgress(0)
+    }
+
     // ── Upload image ───────────────────────────────────────────────────────
-    const uploadImage = async (file, isHero = false) => {
+    const uploadImage = async (file) => {
         if (!file) return
         if (file.size > 10 * 1024 * 1024) return flash('❌ La imagen supera 10MB')
-        setLoading(true)
+        const key = file.name + Date.now()
+        setImgProgress(p => ({ ...p, [key]: 0 }))
         const form = new FormData()
         form.append('image', file)
         try {
-            const endpoint = isHero ? '/artist/images/hero' : '/artist/images/upload'
-            await axios.post(`${API}${endpoint}`, form, {
-                headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+            await axios.post(`${API}/artist/images/upload`, form, {
+                headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: e => setImgProgress(p => ({ ...p, [key]: Math.round((e.loaded * 100) / e.total) }))
             })
             await refreshArtist()
-            flash(`✅ ${isHero ? 'Imagen hero' : 'Imagen'} subida correctamente`)
+            flash('✅ Imagen subida')
         } catch {
-            flash('❌ Error al subir la imagen')
+            flash('❌ Error al subir imagen')
         }
-        setLoading(false)
+        setImgProgress(p => { const n = {...p}; delete n[key]; return n })
     }
 
     // ── Delete image ───────────────────────────────────────────────────────
@@ -101,11 +124,22 @@ export default function ArtistPortal() {
         setLoading(false)
     }
 
-    // ── Drag & Drop ────────────────────────────────────────────────────────
+    // ── Drag & Drop imágenes ───────────────────────────────────────────────
     const onDrop = (e) => {
         e.preventDefault(); setDragging(false)
         const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))
         files.forEach(f => uploadImage(f))
+    }
+
+    // ── Save info ──────────────────────────────────────────────────────────
+    const saveInfo = async (e) => {
+        e.preventDefault(); setLoading(true)
+        try {
+            await axios.put(`${API}/artist/content/update`, info, { headers })
+            await refreshArtist()
+            flash('✅ Información actualizada')
+        } catch { flash('❌ Error al guardar') }
+        setLoading(false)
     }
 
     /* ── LOGIN SCREEN ──────────────────────────────────────────────────── */
@@ -144,36 +178,53 @@ export default function ArtistPortal() {
             <Main>
                 {msg && <Toast>{msg}</Toast>}
 
-                {/* ── IMÁGENES ── */}
+                {/* ── IMÁGENES & VIDEO ── */}
                 {tab === 'images' && (
                     <>
-                        <PageTitle>Gestión de Imágenes</PageTitle>
+                        <PageTitle>Contenido Visual</PageTitle>
 
-                        {/* Hero image */}
+                        {/* ── VIDEO HERO ── */}
                         <Section>
-                            <SectionTitle>Imagen Hero (portada)</SectionTitle>
-                            <SectionSub>Esta imagen aparece como fondo principal de tu página.</SectionSub>
+                            <SectionTitle>Video Hero</SectionTitle>
+                            <SectionSub>Este video se reproduce automáticamente al entrar a tu página. MP4, MOV o WEBM · Máx. 200MB</SectionSub>
+
                             <HeroPreviewBox>
-                                {artist.heroImage
-                                    ? <HeroPreview src={artist.heroImage} alt="hero" />
-                                    : <HeroPlaceholder>Sin imagen hero</HeroPlaceholder>
+                                {artist.heroVideo
+                                    ? <HeroVideo src={artist.heroVideo} autoPlay muted loop playsInline />
+                                    : <HeroPlaceholder>🎬 Sin video. Subí uno abajo.</HeroPlaceholder>
                                 }
-                                <HeroOverlay>
-                                    <UploadBtn onClick={() => heroRef.current?.click()} disabled={loading}>
-                                        {loading ? 'Subiendo...' : '📷 Cambiar imagen hero'}
-                                    </UploadBtn>
-                                </HeroOverlay>
                             </HeroPreviewBox>
-                            <input ref={heroRef} type="file" accept="image/*" hidden
-                                onChange={e => uploadImage(e.target.files[0], true)} />
+
+                            {/* Upload zone de video */}
+                            <VideoDropZone
+                                onClick={() => !loading && videoRef.current?.click()}
+                                uploading={loading && videoProgress > 0}
+                            >
+                                {loading && videoProgress > 0 ? (
+                                    <>
+                                        <DropIcon>⏳</DropIcon>
+                                        <DropText>Subiendo video... {videoProgress}%</DropText>
+                                        <ProgressBar>
+                                            <ProgressFill style={{ width: `${videoProgress}%` }} />
+                                        </ProgressBar>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DropIcon>🎬</DropIcon>
+                                        <DropText>{artist.heroVideo ? 'Reemplazar video' : 'Subir video hero'}</DropText>
+                                        <DropHint>MP4 · MOV · WEBM · Máx. 200MB</DropHint>
+                                    </>
+                                )}
+                                <input ref={videoRef} type="file" accept="video/*" hidden
+                                    onChange={e => uploadVideo(e.target.files[0])} />
+                            </VideoDropZone>
                         </Section>
 
-                        {/* Gallery images */}
+                        {/* ── FOTOS ── */}
                         <Section>
-                            <SectionTitle>Galería editorial ({artist.images?.length || 0} imágenes)</SectionTitle>
-                            <SectionSub>Estas imágenes aparecen una debajo de la otra en tu página. Arrastrá o hacé click para agregar.</SectionSub>
+                            <SectionTitle>Galería de Fotos ({artist.images?.length || 0})</SectionTitle>
+                            <SectionSub>Las fotos aparecen una debajo de la otra después del video. Arrastrá o hacé click para agregar.</SectionSub>
 
-                            {/* Drop zone */}
                             <DropZone
                                 dragging={dragging}
                                 onDragOver={e => { e.preventDefault(); setDragging(true) }}
@@ -181,21 +232,33 @@ export default function ArtistPortal() {
                                 onDrop={onDrop}
                                 onClick={() => fileRef.current?.click()}
                             >
-                                <DropIcon>{loading ? '⏳' : '+'}</DropIcon>
-                                <DropText>{loading ? 'Subiendo...' : 'Arrastrá imágenes aquí o hacé click'}</DropText>
-                                <DropHint>JPG, PNG, WEBP · Máx. 10MB por imagen</DropHint>
+                                <DropIcon>+</DropIcon>
+                                <DropText>Arrastrá fotos aquí o hacé click</DropText>
+                                <DropHint>JPG · PNG · WEBP · Máx. 10MB por foto</DropHint>
                                 <input ref={fileRef} type="file" accept="image/*" multiple hidden
                                     onChange={e => Array.from(e.target.files).forEach(f => uploadImage(f))} />
                             </DropZone>
 
-                            {/* Gallery grid */}
+                            {/* Progreso de imágenes en curso */}
+                            {Object.keys(imgProgress).length > 0 && (
+                                <UploadingList>
+                                    {Object.entries(imgProgress).map(([k, p]) => (
+                                        <UploadingItem key={k}>
+                                            <span>Subiendo... {p}%</span>
+                                            <ProgressBar><ProgressFill style={{ width: `${p}%` }} /></ProgressBar>
+                                        </UploadingItem>
+                                    ))}
+                                </UploadingList>
+                            )}
+
+                            {/* Galería */}
                             {artist.images?.length > 0 && (
                                 <GalleryGrid>
                                     {artist.images.map((url, i) => (
                                         <GalleryItem key={i}>
-                                            <GalleryImg src={url} alt={`img ${i+1}`} />
+                                            <GalleryImg src={url} alt={`foto ${i+1}`} />
                                             <GalleryOverlay>
-                                                <GalleryNum>#{i+1}</GalleryNum>
+                                                <GalleryNum>Foto #{i+1}</GalleryNum>
                                                 <DeleteImgBtn onClick={() => deleteImage(i)}>✕ Eliminar</DeleteImgBtn>
                                             </GalleryOverlay>
                                         </GalleryItem>
@@ -203,7 +266,7 @@ export default function ArtistPortal() {
                                 </GalleryGrid>
                             )}
                             {(!artist.images || artist.images.length === 0) && (
-                                <Empty>No hay imágenes aún. ¡Subí la primera!</Empty>
+                                <Empty>No hay fotos aún. ¡Subí la primera!</Empty>
                             )}
                         </Section>
                     </>
@@ -218,40 +281,21 @@ export default function ArtistPortal() {
                                 <InfoGrid>
                                     <InfoGroup>
                                         <InfoLabel>Subtítulo (aparece bajo el nombre)</InfoLabel>
-                                        <InfoInput
-                                            value={info.subtitle}
+                                        <InfoInput value={info.subtitle}
                                             onChange={e => setInfo({...info, subtitle: e.target.value})}
-                                            placeholder="Ej: COLECCIÓN EXCLUSIVA · 2024"
-                                        />
-                                    </InfoGroup>
-                                    <InfoGroup>
-                                        <InfoLabel>Video hero (URL de YouTube o directo)</InfoLabel>
-                                        <InfoInput
-                                            value={info.heroVideo}
-                                            onChange={e => setInfo({...info, heroVideo: e.target.value})}
-                                            placeholder="https://..."
-                                        />
-                                        {info.heroVideo && (
-                                            <VideoHint>✅ Video configurado. Se mostrará si no hay imagen hero.</VideoHint>
-                                        )}
+                                            placeholder="Ej: COLECCIÓN EXCLUSIVA · 2024" />
                                     </InfoGroup>
                                     <InfoGroup full>
                                         <InfoLabel>Descripción / texto editorial</InfoLabel>
-                                        <InfoTextarea
-                                            value={info.description}
+                                        <InfoTextarea value={info.description}
                                             onChange={e => setInfo({...info, description: e.target.value})}
-                                            placeholder="Escribí sobre tu colección..."
-                                            rows={4}
-                                        />
+                                            placeholder="Escribí sobre tu colección..." rows={4} />
                                     </InfoGroup>
                                     <InfoGroup full>
-                                        <InfoLabel>Frase / cita (aparece sobre imágenes)</InfoLabel>
-                                        <InfoTextarea
-                                            value={info.quote}
+                                        <InfoLabel>Frase / cita</InfoLabel>
+                                        <InfoTextarea value={info.quote}
                                             onChange={e => setInfo({...info, quote: e.target.value})}
-                                            placeholder={`"Una conversación entre la forma y el silencio..."`}
-                                            rows={2}
-                                        />
+                                            placeholder={`"Una conversación entre la forma..."`} rows={2} />
                                     </InfoGroup>
                                 </InfoGrid>
                                 <SaveBtn type="submit" disabled={loading}>
@@ -259,12 +303,10 @@ export default function ArtistPortal() {
                                 </SaveBtn>
                             </form>
                         </Section>
-
-                        {/* Preview */}
                         <Section>
-                            <SectionTitle>Vista previa de tu página</SectionTitle>
-                            <PreviewLink href={`/natalia-gomez`} target="_blank">
-                                Ver página → zara.vercel.app/natalia-gomez ↗
+                            <SectionTitle>Vista previa</SectionTitle>
+                            <PreviewLink href={`/${artist.slug}`} target="_blank">
+                                Ver página → /{artist.slug} ↗
                             </PreviewLink>
                         </Section>
                     </>
@@ -303,13 +345,16 @@ const Toast        = styled.div`position:fixed;top:20px;right:20px;z-index:100;b
 const Section      = styled.div`background:white;padding:32px;margin-bottom:24px;box-shadow:0 1px 8px rgba(0,0,0,.05);`
 const SectionTitle = styled.h3`font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:#111;font-weight:500;margin:0 0 6px;`
 const SectionSub   = styled.p`font-size:11px;color:#999;margin:0 0 20px;`
-const HeroPreviewBox=styled.div`position:relative;width:100%;height:280px;background:#f0f0f0;overflow:hidden;`
-const HeroPreview  = styled.img`width:100%;height:100%;object-fit:cover;`
-const HeroPlaceholder=styled.div`width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:13px;`
-const HeroOverlay  = styled.div`position:absolute;bottom:16px;left:50%;transform:translateX(-50%);`
-const UploadBtn    = styled.button`background:white;border:none;padding:12px 24px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.15);
-  &:hover{background:#f0f0f0;} &:disabled{opacity:.5;cursor:not-allowed;}`
-const DropZone     = styled.div`border:2px dashed ${p=>p.dragging?'#000':'#ddd'};padding:40px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:24px;
+const HeroPreviewBox  = styled.div`position:relative;width:100%;height:320px;background:#111;overflow:hidden;margin-bottom:16px;`
+const HeroVideo       = styled.video`width:100%;height:100%;object-fit:cover;`
+const HeroPlaceholder = styled.div`width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#555;font-size:13px;`
+const VideoDropZone   = styled.div`border:2px dashed ${p=>p.uploading?'#000':'#ddd'};padding:32px;text-align:center;cursor:pointer;transition:all .2s;
+  background:${p=>p.uploading?'#f8f8f8':'transparent'};&:hover{border-color:#999;background:#fafafa;}`
+const ProgressBar     = styled.div`width:100%;max-width:300px;height:3px;background:#eee;margin:12px auto 0;`
+const ProgressFill    = styled.div`height:100%;background:#000;transition:width .3s;`
+const UploadingList   = styled.div`margin-bottom:20px;display:flex;flex-direction:column;gap:8px;`
+const UploadingItem   = styled.div`font-size:11px;color:#555;display:flex;flex-direction:column;gap:4px;`
+const DropZone        = styled.div`border:2px dashed ${p=>p.dragging?'#000':'#ddd'};padding:40px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:24px;
   background:${p=>p.dragging?'#f8f8f8':'transparent'};&:hover{border-color:#999;background:#fafafa;}`
 const DropIcon     = styled.div`font-size:32px;color:#ccc;margin-bottom:8px;`
 const DropText     = styled.p`font-size:12px;color:#555;margin:0 0 4px;`
