@@ -7,6 +7,7 @@ const {connection} = require("./config/db")
 const {UserModel} = require("./models/User.model")
 const {productRouter} = require("./routes/products.route");
 const {cartRouter} = require("./routes/cart.route");
+const {adminRouter} = require("./routes/admin.route");
 const { authenticate } = require("./middlewares/authentication");
 const app = express();
 
@@ -64,6 +65,7 @@ app.post("/login", async (req, res) => {
 app.use("/products", productRouter)
 // app.use(authenticate)
 app.use("/cart", cartRouter)
+app.use("/admin", adminRouter)
 
 app.listen(process.env.port, async () => {
     try{
