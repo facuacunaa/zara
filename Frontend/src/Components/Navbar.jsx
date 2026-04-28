@@ -47,7 +47,7 @@ const Navbar = ({ activeIndexs }) => {
             dispatch(getCart())
         }
     }, [])
-    const menuItem = ["NEW", "BEST SELLERS", "BASICS", "JACKETS | OVERSHIRTS", "DRESSES | JUMPSUITS", "BLAZERS", "SHIRTS", "TROUSERS", "TOPS", "JEANS", "KNITWEAR", "SWEATSHIRTS", "T-SHIRTS", "WAISTCOATS | GILETS", "SHORTS | SKORTS", "SKIRTS", "CO-ORD SETS", "SUITS", "COATS | PUFFER JACKETS", "ACCESSORIES", "SHOES", "BAGS", "PERFUMES", "Special Prices", "WEAR TO WORK", "SPECIAL EDITION"]
+    const menuItem = ["NEW", "BEST SELLERS", "BASICS", "JACKETS | OVERSHIRTS", "DRESSES | JUMPSUITS", "BLAZERS", "SHIRTS", "TROUSERS", "TOPS", "JEANS", "KNITWEAR", "SWEATSHIRTS", "T-SHIRTS", "WAISTCOATS | GILETS", "SHORTS | SKORTS", "SKIRTS", "CO-ORD SETS", "SUITS", "COATS | PUFFER JACKETS", "ACCESSORIES", "SHOES", "BAGS", "PERFUMES", "Special Prices", "WEAR TO WORK", "SPECIAL EDITION", "NATALIA GOMEZ"]
     return (
         <>
             <Container theme={theme} style={{ backgroundColor: location.pathname === '/' ? 'transparent' : 'white' }}>
@@ -74,7 +74,7 @@ const Navbar = ({ activeIndexs }) => {
                         </div>
                         <ul className="menu" style={{overflow:"auto"}}>
                             {menuItem.map((ele, index) => (
-                                <li key={index} htmlFor="menu-btn"><Link to={`/products`} style={ele === 'Special Prices' ? { color: 'rgb(245, 57, 147)' } : {}}>{ele}</Link></li>
+                                <li key={index} htmlFor="menu-btn"><Link to={`/products`} style={ele === 'Special Prices' ? { color: 'rgb(245, 57, 147)' } : ele === 'NATALIA GOMEZ' ? { color: 'rgb(180, 120, 60)', fontWeight: 'bold' } : {}}>{ele}</Link></li>
                             ))}
                         </ul>
                     </header>
