@@ -22,9 +22,6 @@ module.exports = {
         800:  '800ms',
         1200: '1200ms',
       },
-      gridTemplateColumns: {
-        editorial: '1fr 1fr',
-      },
     },
   },
   plugins: [],
