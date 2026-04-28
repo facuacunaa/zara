@@ -14,6 +14,7 @@ import Search from '../Components/Search'
 import CardDetail from '../Routes/CardDetail'
 import OTP from './OTP'
 import ProtectedRoute from '../Components/ProtectedRoute'
+import NataliaGomez from './NataliaGomez'
 const AllRoutes = () => {
   return (
     <Routes>
@@ -32,6 +33,7 @@ const AllRoutes = () => {
       <Route path='/search' element={<Search />}></Route>
       <Route path='/fillcarddetail' element={<CardDetail />}></Route>
       <Route path='/otp' element={<OTP />}></Route>
+      <Route path='/natalia-gomez' element={<NataliaGomez />}></Route>
       {/* <Route path='/fillcarddetail' element={<ProtectedRoute><CardDetail /></ProtectedRoute>}></Route> */}
       {/* <Route path='/otp' element={<ProtectedRoute><OTP /></ProtectedRoute>}></Route> */}
     </Routes>
