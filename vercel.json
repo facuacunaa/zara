@@ -1,6 +1,5 @@
 {
   "version": 2,
   "builds": [{ "src": "Backend/index.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "Backend/index.js" }],
-  "functions": { "Backend/index.js": { "maxDuration": 60 } }
+  "routes": [{ "src": "/(.*)", "dest": "Backend/index.js" }]
 }
