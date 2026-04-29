@@ -60,7 +60,7 @@ const AdminPage = () => {
         fd.append('video', homeVideoFile)
         try {
             const res = await axios.post(`${API}/settings/home-video`, fd, {
-                headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+                headers,
                 onUploadProgress: e => setHomeVideoProgress(Math.round(e.loaded * 100 / e.total))
             })
             setHomeVideo(res.data.url)
