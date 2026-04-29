@@ -338,10 +338,12 @@ export default function ArtistPortal() {
 
                     {uploading ? (
                       <SlotUploading>
-                        <span>Subiendo… {progress}%</span>
-                        <ProgressBar style={{ maxWidth: '100%', marginTop: 8 }}>
-                          <ProgressFill style={{ width: `${progress}%` }} />
-                        </ProgressBar>
+                        <div>
+                          <span>Subiendo… {progress}%</span>
+                          <ProgressBar style={{ maxWidth: '100%', marginTop: 8 }}>
+                            <ProgressFill style={{ width: `${progress}%` }} />
+                          </ProgressBar>
+                        </div>
                       </SlotUploading>
                     ) : currentImg ? (
                       <SlotPreview>
@@ -352,8 +354,7 @@ export default function ArtistPortal() {
                       </SlotPreview>
                     ) : (
                       <SlotEmpty>
-                        <span>+</span>
-                        <p>Subir foto</p>
+                        <div><span>+</span><p>Subir foto</p></div>
                       </SlotEmpty>
                     )}
 
@@ -680,17 +681,19 @@ const SlotCard  = styled.div`background:white;border:1px solid #eee;cursor:point
 const SlotNum   = styled.div`font-size:10px;letter-spacing:.2em;color:#888;padding:12px 14px 4px;`
 const SlotLabel = styled.div`font-size:12px;font-weight:500;padding:0 14px 2px;`
 const SlotHint  = styled.div`font-size:10px;color:#bbb;padding:0 14px 10px;`
-const SlotPreview = styled.div`position:relative;aspect-ratio:2/3;background:#f0f0f0;
-  img{width:100%;height:100%;object-fit:cover;display:block;}
+const SlotPreview = styled.div`position:relative;width:100%;padding-bottom:150%;background:#f0f0f0;overflow:hidden;
+  img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
   &:hover > div{opacity:1;}`
 const SlotOverlay = styled.div`position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:.2s;
   display:flex;align-items:center;justify-content:center;
   span{color:white;font-size:11px;letter-spacing:.15em;text-transform:uppercase;}`
-const SlotEmpty = styled.div`aspect-ratio:2/3;background:#f8f8f8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+const SlotEmpty = styled.div`width:100%;padding-bottom:150%;position:relative;background:#f8f8f8;
+  &>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
   span{font-size:28px;color:#ccc;}
   p{font-size:10px;color:#bbb;margin:0;letter-spacing:.1em;text-transform:uppercase;}`
-const SlotUploading = styled.div`aspect-ratio:2/3;background:#f8f8f8;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;
-  span{font-size:11px;color:#555;}`
+const SlotUploading = styled.div`width:100%;padding-bottom:150%;position:relative;background:#f8f8f8;
+  &>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+  span{font-size:11px;color:#555;margin-bottom:6px;}`
 
 /* Texts */
 const InfoGrid     = styled.div`display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;@media(max-width:700px){grid-template-columns:1fr;}`

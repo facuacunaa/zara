@@ -4,12 +4,16 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { getCart } from '../Redux/App/action';
 import Signout from '../Routes/Signout';
+import axios from 'axios';
+
+const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
 const Navbar = ({ activeIndexs }) => {
     const dispatch = useDispatch();
     const [colorB, setColor] = useState('');
     const [theme, setTheme] = useState("black");
     const [val, setVal] = useState(true)
+    const [artists, setArtists] = useState([])
     const location = useLocation();
     const { cart } = useSelector((store) => (store.AppReducer));
     const { isAuth } = useSelector((store) => (store.AuthReducer));
@@ -47,7 +51,12 @@ const Navbar = ({ activeIndexs }) => {
             dispatch(getCart())
         }
     }, [])
-    const menuItem = ["NATALIA GOMEZ"]
+
+    useEffect(() => {
+        axios.get(`${API}/artist`)
+            .then(r => setArtists(r.data))
+            .catch(() => {})
+    }, [])
     return (
         <>
             <Container theme={theme} style={{ backgroundColor: location.pathname === '/' ? 'transparent' : 'white' }}>
@@ -73,8 +82,15 @@ const Navbar = ({ activeIndexs }) => {
                             </Link>
                         </div>
                         <ul className="menu" style={{overflow:"auto"}}>
-                            {menuItem.map((ele, index) => (
-                                <li key={index} htmlFor="menu-btn"><Link to={ele === 'NATALIA GOMEZ' ? `/natalia-gomez` : `/products`} style={ele === 'Special Prices' ? { color: 'rgb(245, 57, 147)' } : ele === 'NATALIA GOMEZ' ? { color: 'rgb(180, 120, 60)', fontWeight: 'bold' } : {}}>{ele}</Link></li>
+                            {artists.map((artist) => (
+                                <li key={artist.slug}>
+                                    <Link
+                                        to={`/${artist.slug}`}
+                                        style={{ color: 'rgb(180, 120, 60)', fontWeight: 'bold' }}
+                                    >
+                                        {artist.name.toUpperCase()}
+                                    </Link>
+                                </li>
                             ))}
                         </ul>
                     </header>
