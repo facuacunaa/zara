@@ -388,10 +388,7 @@ const Container = styled.div`
     }
 
     .logo{
-        width:250px;
-        padding-left:90px;
-        padding-top:20px;
-
+        display: none;
     }
 
     /* 48em = 768px */
