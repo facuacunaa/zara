@@ -23,6 +23,8 @@ const AdminPage = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [artistForm, setArtistForm] = useState({ name: '', slug: '', email: '', password: '' })
     const [artists, setArtists] = useState([])
+    const [pwdMap, setPwdMap] = useState({})       // { artistId: newPassword }
+    const [pwdLoading, setPwdLoading] = useState({})
     const [homeVideo, setHomeVideo] = useState('')
     const [homeVideoFile, setHomeVideoFile] = useState(null)
     const [homeVideoProgress, setHomeVideoProgress] = useState(0)
@@ -40,6 +42,14 @@ const AdminPage = () => {
         }
     }
 
+    // ── Fetch artists ───────────────────────────────────────────────────────
+    const fetchArtists = async () => {
+        try {
+            const res = await axios.get(`${API}/admin/artists`, { headers })
+            setArtists(res.data)
+        } catch { setArtists([]) }
+    }
+
     // ── Fetch settings ──────────────────────────────────────────────────────
     const fetchSettings = async () => {
         try {
@@ -49,7 +59,7 @@ const AdminPage = () => {
     }
 
     useEffect(() => {
-        if (token) { fetchProducts(); fetchSettings() }
+        if (token) { fetchProducts(); fetchSettings(); fetchArtists() }
     }, [token])
 
     // ── Upload home video ───────────────────────────────────────────────────
@@ -247,19 +257,64 @@ const AdminPage = () => {
                 {tab === 'artists' && (
                     <>
                         <PageTitle>Gestión de Artistas</PageTitle>
+
+                        {/* Lista de artistas existentes */}
+                        {artists.length > 0 && (
+                            <ArtistList>
+                                <SectionLabel>Cuentas existentes</SectionLabel>
+                                {artists.map(a => (
+                                    <ArtistRow key={a._id}>
+                                        <ArtistInfo>
+                                            <ArtistName>{a.name}</ArtistName>
+                                            <ArtistMeta>{a.email} · <a href={`/${a.slug}`} target="_blank" rel="noreferrer">/{a.slug}</a></ArtistMeta>
+                                        </ArtistInfo>
+                                        <ArtistPwdForm>
+                                            <input
+                                                type="password"
+                                                placeholder="Nueva contraseña"
+                                                value={pwdMap[a._id] || ''}
+                                                onChange={e => setPwdMap(m => ({ ...m, [a._id]: e.target.value }))}
+                                            />
+                                            <SubmitBtn
+                                                type="button"
+                                                disabled={pwdLoading[a._id] || !pwdMap[a._id]}
+                                                onClick={async () => {
+                                                    setPwdLoading(l => ({ ...l, [a._id]: true }))
+                                                    try {
+                                                        await axios.put(`${API}/admin/artists/${a._id}/password`, { password: pwdMap[a._id] }, { headers })
+                                                        setMsg(`✅ Contraseña de ${a.name} actualizada`)
+                                                        setPwdMap(m => ({ ...m, [a._id]: '' }))
+                                                    } catch (err) {
+                                                        setMsg('❌ ' + (err.response?.data?.msg || 'Error'))
+                                                    }
+                                                    setPwdLoading(l => ({ ...l, [a._id]: false }))
+                                                    setTimeout(() => setMsg(''), 4000)
+                                                }}
+                                                style={{ padding: '10px 20px', fontSize: '10px' }}
+                                            >
+                                                {pwdLoading[a._id] ? '...' : 'CAMBIAR'}
+                                            </SubmitBtn>
+                                        </ArtistPwdForm>
+                                    </ArtistRow>
+                                ))}
+                            </ArtistList>
+                        )}
+
+                        {/* Crear nuevo artista */}
                         <Form onSubmit={async (e) => {
                             e.preventDefault(); setLoading(true); setMsg('')
                             try {
                                 await axios.post(`${API}/artist/create`, artistForm, { headers })
                                 setMsg('✅ Artista creado. Ya puede ingresar al portal.')
                                 setArtistForm({ name: '', slug: '', email: '', password: '' })
+                                fetchArtists()
                             } catch (err) {
                                 setMsg('❌ ' + (err.response?.data?.msg || 'Error'))
                             }
                             setLoading(false)
                             setTimeout(() => setMsg(''), 4000)
-                        }}>
-                            <PageTitle style={{fontSize:'12px'}}>Crear nueva cuenta de artista</PageTitle>
+                        }} style={{ marginTop: '32px' }}>
+                            <SectionLabel>Crear nueva cuenta de artista</SectionLabel>
                             <FormGrid>
                                 <FormGroup>
                                     <label>Nombre del artista *</label>
@@ -280,10 +335,10 @@ const AdminPage = () => {
                                         placeholder="artista@email.com" />
                                 </FormGroup>
                                 <FormGroup>
-                                    <label>Contraseña *</label>
+                                    <label>Contraseña inicial *</label>
                                     <input type="password" value={artistForm.password} required
                                         onChange={e => setArtistForm({...artistForm, password: e.target.value})}
-                                        placeholder="Contraseña inicial" />
+                                        placeholder="Mínimo 4 caracteres" />
                                 </FormGroup>
                             </FormGrid>
                             <FormActions>
@@ -633,4 +688,44 @@ const CancelBtn = styled.button`
     padding: 14px 30px; background: white; color: #000;
     border: 1px solid #ccc; font-size: 11px; letter-spacing: 0.2em; cursor: pointer;
     &:hover { border-color: #000; }
+`
+
+const SectionLabel = styled.p`
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: #888; margin: 0 0 16px;
+`
+
+const ArtistList = styled.div`
+    background: white; box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    margin-bottom: 12px; overflow: hidden;
+`
+
+const ArtistRow = styled.div`
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid #f0f0f0; gap: 24px;
+    flex-wrap: wrap;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #fafafa; }
+`
+
+const ArtistInfo = styled.div`
+    flex: 1; min-width: 200px;
+`
+
+const ArtistName = styled.p`
+    font-size: 13px; font-weight: 500; margin: 0 0 4px; color: #111;
+`
+
+const ArtistMeta = styled.p`
+    font-size: 11px; color: #999; margin: 0;
+    a { color: #999; text-decoration: none; &:hover { color: #000; } }
+`
+
+const ArtistPwdForm = styled.div`
+    display: flex; align-items: center; gap: 10px;
+    input {
+        border: none; border-bottom: 1px solid #ddd; padding: 8px 4px;
+        font-size: 12px; outline: none; width: 180px;
+        &:focus { border-bottom-color: #000; }
+    }
 `

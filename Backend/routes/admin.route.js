@@ -6,6 +6,7 @@ const { connectDB } = require("../config/db")
 const { UserModel } = require("../models/User.model")
 const { ProductModel } = require("../models/Product.model")
 const { adminAuth } = require("../middlewares/adminAuth")
+const { ArtistModel } = require("../models/Artist.model")
 
 const adminRouter = express.Router()
 
@@ -92,6 +93,30 @@ adminRouter.delete("/products/:id", adminAuth, async (req, res) => {
         res.json({ msg: "Product deleted" })
     } catch (err) {
         res.status(500).json({ msg: "Error deleting product" })
+    }
+})
+
+// ── LISTAR ARTISTAS (admin) ────────────────────────────────────────────────
+adminRouter.get("/artists", adminAuth, async (req, res) => {
+    try {
+        const artists = await ArtistModel.find({}).select("-password").lean()
+        res.json(artists)
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
+// ── CAMBIAR CONTRASEÑA DE ARTISTA (admin) ──────────────────────────────────
+adminRouter.put("/artists/:id/password", adminAuth, async (req, res) => {
+    const { password } = req.body
+    if (!password || password.length < 4)
+        return res.status(400).json({ msg: "La contraseña debe tener al menos 4 caracteres" })
+    try {
+        const hash = await bcrypt.hash(password, 10)
+        await ArtistModel.findByIdAndUpdate(req.params.id, { password: hash })
+        res.json({ msg: "Contraseña actualizada" })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
     }
 })
 
