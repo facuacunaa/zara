@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getProduct } from '../Redux/App/action'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
@@ -166,21 +166,25 @@ function ProductCard({ item, featured }) {
 }
 
 /* ─── MAIN COMPONENT ─────────────────────────────────────────────────────── */
-export default function NataliaGomez() {
+export default function ArtistPage() {
+  const { slug }  = useParams()
   const dispatch  = useDispatch()
   const products  = useSelector(s => s.AppReducer.products)
   const [artist,   setArtist]   = useState(null)
+  const [notFound, setNotFound] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   const f1 = useFadeIn(), f2 = useFadeIn(), f3 = useFadeIn()
   const f4 = useFadeIn(), f5 = useFadeIn(), f6 = useFadeIn()
 
-  // Cargar datos del artista
+  // Cargar datos del artista según el slug de la URL
   useEffect(() => {
-    axios.get(`${API}/artist/natalia-gomez`)
+    setArtist(null)
+    setNotFound(false)
+    axios.get(`${API}/artist/${slug}`)
       .then(r => setArtist(r.data))
-      .catch(() => {})
-  }, [])
+      .catch(() => setNotFound(true))
+  }, [slug])
 
   useEffect(() => { dispatch(getProduct('women1', 8)) }, [dispatch])
 
@@ -201,6 +205,14 @@ export default function NataliaGomez() {
   const nameParts = fullName.trim().split(/\s+/)
   const heroFirst = nameParts[0]
   const heroLast  = nameParts.slice(1).join(' ') || ''
+
+  if (notFound) return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', color: '#fff' }}>
+      <p style={{ fontFamily: 'serif', fontSize: '5rem', fontStyle: 'italic', fontWeight: 300, marginBottom: 16 }}>404</p>
+      <p style={{ fontFamily: 'sans-serif', fontSize: '11px', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#888', marginBottom: 40 }}>Artista no encontrado</p>
+      <Link to="/" style={{ fontFamily: 'sans-serif', fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#fff', border: '1px solid #444', padding: '12px 32px', textDecoration: 'none' }}>← Volver al inicio</Link>
+    </div>
+  )
 
   return (
     <div className="bg-chalk font-sans text-ink antialiased">

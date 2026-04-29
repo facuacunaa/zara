@@ -14,7 +14,7 @@ import Search from '../Components/Search'
 import CardDetail from '../Routes/CardDetail'
 import OTP from './OTP'
 import ProtectedRoute from '../Components/ProtectedRoute'
-import NataliaGomez from './NataliaGomez'
+import ArtistPage from './NataliaGomez'
 import AdminPage from './AdminPage'
 import ArtistPortal from './ArtistPortal'
 const AllRoutes = () => {
@@ -27,19 +27,16 @@ const AllRoutes = () => {
       <Route path='/login' element={<LogIn />} />
       <Route path='/signin' element={<SignIn />} />
       <Route path='/cart' element={<Cart />}></Route>
-      {/* <Route path='/cart' element={<ProtectedRoute><Cart /></ProtectedRoute>}></Route> */}
       <Route path='/checkout' element={<Checkout />}></Route>
-      {/* <Route path='/checkout' element={<ProtectedRoute><Checkout /></ProtectedRoute>}></Route> */}
       <Route path='/paymentMethod' element={ <ProtectedRoute><PaymentMethod /></ProtectedRoute>}></Route>
       <Route path='/products' element={<ProductPage />}></Route>
       <Route path='/search' element={<Search />}></Route>
       <Route path='/fillcarddetail' element={<CardDetail />}></Route>
       <Route path='/otp' element={<OTP />}></Route>
-      <Route path='/natalia-gomez' element={<NataliaGomez />}></Route>
       <Route path='/admin' element={<AdminPage />}></Route>
       <Route path='/artist-portal' element={<ArtistPortal />}></Route>
-      {/* <Route path='/fillcarddetail' element={<ProtectedRoute><CardDetail /></ProtectedRoute>}></Route> */}
-      {/* <Route path='/otp' element={<ProtectedRoute><OTP /></ProtectedRoute>}></Route> */}
+      {/* Ruta dinámica — cualquier /:slug que no haya matcheado arriba es una página de artista */}
+      <Route path='/:slug' element={<ArtistPage />}></Route>
     </Routes>
   )
 }
