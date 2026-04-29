@@ -73,6 +73,31 @@ artistRouter.get("/", async (req, res) => {
     }
 })
 
+// ── TODOS LOS PRODUCTOS DE TODOS LOS ARTISTAS (público) ──────────────────
+artistRouter.get("/all-products", async (req, res) => {
+    try {
+        const artists = await ArtistModel.find({})
+            .select("name slug shopProducts")
+            .lean()
+        // Aplanar: cada producto lleva artistName y artistSlug
+        const products = []
+        for (const artist of artists) {
+            for (const product of (artist.shopProducts || [])) {
+                if (product.name) {
+                    products.push({
+                        ...product,
+                        artistName: artist.name,
+                        artistSlug: artist.slug,
+                    })
+                }
+            }
+        }
+        res.json(products)
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── OBTENER ARTISTA (público) ──────────────────────────────────────────────
 artistRouter.get("/:slug", async (req, res) => {
     try {

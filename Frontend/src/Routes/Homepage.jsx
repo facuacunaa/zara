@@ -8,10 +8,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Mousewheel, Pagination } from 'swiper';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
+import AddCart from "../Components/Product-Page-Component/AddCart";
 SwiperCore.use([Mousewheel, Pagination]);
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
@@ -93,10 +94,18 @@ const Homepage = () => {
     const [indexNo, setIndex] = useState(0);
     const category = ['Women', 'Men', 'Kids'];
     const [homeVideo, setHomeVideo] = useState('')
+    const [artistProducts, setArtistProducts] = useState([])
+    const [selectedProd, setSelectedProd]   = useState(null)
 
     useEffect(() => {
         axios.get(`${API}/settings`)
             .then(r => setHomeVideo(r.data.heroVideo || ''))
+            .catch(() => {})
+    }, [])
+
+    useEffect(() => {
+        axios.get(`${API}/artist/all-products`)
+            .then(r => setArtistProducts(r.data || []))
             .catch(() => {})
     }, [])
     return (
@@ -160,6 +169,42 @@ const Homepage = () => {
                     />
                 </ArtVideoWrap>
             </ArtSection>
+        )}
+
+        {/* ── PRODUCTOS DE ARTISTAS ────────────────────────────────── */}
+        {artistProducts.length > 0 && (
+            <ArtistsSection>
+                <ArtistsSectionHeader>
+                    <ArtLabel>— Artistas</ArtLabel>
+                    <ArtistsHeadline>La colección</ArtistsHeadline>
+                </ArtistsSectionHeader>
+
+                <ArtistsGrid>
+                    {artistProducts.map((p, i) => (
+                        <ArtistProductCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                            <ArtistProductImg>
+                                {p.image
+                                    ? <img src={p.image} alt={p.name} />
+                                    : <ArtistProductNoImg>Sin imagen</ArtistProductNoImg>
+                                }
+                                <ArtistProductOverlay>Ver detalle</ArtistProductOverlay>
+                            </ArtistProductImg>
+                            <ArtistProductInfo>
+                                <ArtistProductArtist>
+                                    <Link to={`/artist/${p.artistSlug}`}>{p.artistName}</Link>
+                                </ArtistProductArtist>
+                                <ArtistProductName>{p.name}</ArtistProductName>
+                                <ArtistProductPrice>{p.price}</ArtistProductPrice>
+                            </ArtistProductInfo>
+                        </ArtistProductCard>
+                    ))}
+                </ArtistsGrid>
+            </ArtistsSection>
+        )}
+
+        {/* ── PRODUCT MODAL ───────────────────────────────────────── */}
+        {selectedProd && (
+            <HomeProdModal product={selectedProd} onClose={() => setSelectedProd(null)} />
         )}
     </HomeWrap>
     );
@@ -320,6 +365,164 @@ const ArtVideoWrap = styled.div`
         object-fit: cover;
         max-height: 600px;
     }
+`
+
+/* ── MODAL PRODUCTO HOMEPAGE ─────────────────────────────────────────────── */
+function HomeProdModal({ product, onClose }) {
+    const [visible,  setVisible]  = useState(false)
+    const [imgLoaded, setImgLoaded] = useState(false)
+
+    useEffect(() => {
+        const t = setTimeout(() => setVisible(true), 10)
+        return () => clearTimeout(t)
+    }, [])
+
+    useEffect(() => {
+        const fn = e => { if (e.key === 'Escape') onClose() }
+        window.addEventListener('keydown', fn)
+        return () => window.removeEventListener('keydown', fn)
+    }, [onClose])
+
+    useEffect(() => {
+        document.body.style.overflow = 'hidden'
+        return () => { document.body.style.overflow = '' }
+    }, [])
+
+    const cartData = {
+        producttitle: product.name,
+        image:        product.image,
+        price:        product.price,
+        pricenum:     parseFloat((product.price || '0').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
+        quantity:     1,
+        color:        '',
+        id:           product._id || product.name,
+    }
+
+    return (
+        <>
+            <ModalOverlay visible={visible} onClick={onClose} />
+            <ModalPanel visible={visible}>
+                <ModalHeader>
+                    <span style={{ fontFamily: 'sans-serif', fontSize: '9px', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#888' }}>
+                        <Link to={`/artist/${product.artistSlug}`} style={{ color: '#888', textDecoration: 'none' }}>
+                            {product.artistName}
+                        </Link>
+                    </span>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'sans-serif', fontSize: '10px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#888' }}>✕ Cerrar</button>
+                </ModalHeader>
+                <div style={{ flex: 1, overflowY: 'auto' }}>
+                    <ModalImgWrap>
+                        {product.image && (
+                            <img src={product.image} alt={product.name} onLoad={() => setImgLoaded(true)}
+                                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.7s' }}
+                            />
+                        )}
+                        {!imgLoaded && <div style={{ position: 'absolute', inset: 0, background: '#f5f5f0' }} />}
+                    </ModalImgWrap>
+                    <div style={{ padding: '32px' }}>
+                        <p style={{ fontFamily: 'serif', fontSize: '22px', fontWeight: 300, color: '#1a1a1a', margin: '0 0 8px' }}>{product.name}</p>
+                        <p style={{ fontFamily: 'serif', fontSize: '16px', color: '#888', margin: '0 0 32px' }}>{product.price}</p>
+                        <AddCart data={cartData} />
+                    </div>
+                </div>
+            </ModalPanel>
+        </>
+    )
+}
+
+const ModalOverlay = styled.div`
+    position: fixed; inset: 0; background: rgba(10,10,10,0.6); z-index: 100;
+    opacity: ${p => p.visible ? 1 : 0}; transition: opacity 0.4s;
+`
+const ModalPanel = styled.div`
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 101;
+    background: #fafaf8; display: flex; flex-direction: column;
+    width: 100%; max-width: 520px; box-shadow: -8px 0 40px rgba(0,0,0,0.15);
+    transform: ${p => p.visible ? 'translateX(0)' : 'translateX(100%)'};
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+`
+const ModalHeader = styled.div`
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 32px; border-bottom: 1px solid #ececec; flex-shrink: 0;
+`
+const ModalImgWrap = styled.div`
+    position: relative; background: #f5f5f0;
+    padding-bottom: 120%;
+`
+
+const ArtistsSection = styled.section`
+    background: #fafaf8;
+    padding: 80px 24px;
+`
+const ArtistsSectionHeader = styled.div`
+    text-align: center;
+    margin-bottom: 56px;
+`
+const ArtistsHeadline = styled.h2`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #1a1a1a;
+    margin: 0;
+`
+const ArtistsGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    @media (min-width: 640px)  { grid-template-columns: repeat(3, 1fr); }
+    @media (min-width: 1024px) { grid-template-columns: repeat(4, 1fr); }
+`
+const ArtistProductCard = styled.div`
+    cursor: pointer;
+    &:hover img { transform: scale(1.04); }
+`
+const ArtistProductImg = styled.div`
+    position: relative;
+    overflow: hidden;
+    background: #ededea;
+    padding-bottom: 130%;
+    margin-bottom: 12px;
+    img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.7s ease;
+    }
+`
+const ArtistProductNoImg = styled.div`
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: sans-serif; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #aaa;
+`
+const ArtistProductOverlay = styled.div`
+    position: absolute; bottom: 10px; left: 10px; right: 10px;
+    background: rgba(255,255,255,0.92);
+    text-align: center; padding: 8px;
+    font-family: sans-serif; font-size: 8px;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: #1a1a1a; opacity: 0;
+    transition: opacity 0.3s;
+    ${ArtistProductCard}:hover & { opacity: 1; }
+`
+const ArtistProductInfo = styled.div``
+const ArtistProductArtist = styled.p`
+    font-family: sans-serif; font-size: 8px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: #aaa; margin: 0 0 4px;
+    a { color: inherit; text-decoration: none; &:hover { color: #1a1a1a; } }
+`
+const ArtistProductName = styled.p`
+    font-family: sans-serif; font-size: 9px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: #1a1a1a; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+`
+const ArtistProductPrice = styled.p`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 13px; color: #888; margin: 0;
 `
 
 export default Homepage
