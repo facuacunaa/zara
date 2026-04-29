@@ -45,9 +45,13 @@ export default function ArtistPortal() {
   const [loading,  setLoading] = useState(false)
 
   // Progress
-  const [videoProgress, setVideoProgress] = useState(0)
-  const [slotProgress,  setSlotProgress]  = useState({})   // { slotIdx: 0-100 }
-  const [shopProgress,  setShopProgress]  = useState(0)
+  const [videoProgress,   setVideoProgress]   = useState(0)
+  const [slotProgress,    setSlotProgress]    = useState({})   // { slotIdx: 0-100 }
+  const [shopProgress,    setShopProgress]    = useState(0)
+  const [productProgress, setProductProgress] = useState(0)
+
+  // Nuevo producto para Shop the Look
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', file: null, preview: null })
 
   // Textos editables
   const [texts, setTexts] = useState(EMPTY_TEXTS)
@@ -56,9 +60,10 @@ export default function ArtistPortal() {
   const [hotspots, setHotspots] = useState([])
   const [newHotspot, setNewHotspot] = useState({ ...EMPTY_HOTSPOT })
 
-  const videoRef = useRef(null)
-  const slotRefs = useRef({})
-  const shopRef  = useRef(null)
+  const videoRef      = useRef(null)
+  const slotRefs      = useRef({})
+  const shopRef       = useRef(null)
+  const productImgRef = useRef(null)
 
   const headers = { Authorization: `Bearer ${token}` }
 
@@ -186,6 +191,39 @@ export default function ArtistPortal() {
       flash('✅ Textos guardados')
     } catch { flash('❌ Error al guardar') }
     setLoading(false)
+  }
+
+  /* ── Agregar producto al Shop the Look ──────────────────────────────── */
+  const addShopProduct = async () => {
+    if (!newProduct.name || !newProduct.price) return flash('❌ Completá nombre y precio')
+    if (!newProduct.file) return flash('❌ Seleccioná una imagen para el producto')
+    setLoading(true); setProductProgress(0)
+    const form = new FormData()
+    form.append('image', newProduct.file)
+    form.append('name',  newProduct.name)
+    form.append('price', newProduct.price)
+    try {
+      await axios.post(`${API}/artist/shop-products`, form, {
+        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: e => setProductProgress(Math.round((e.loaded * 100) / e.total))
+      })
+      await refreshArtist()
+      setNewProduct({ name: '', price: '', file: null, preview: null })
+      flash('✅ Producto agregado')
+    } catch {
+      flash('❌ Error al agregar producto')
+    }
+    setLoading(false); setProductProgress(0)
+  }
+
+  /* ── Eliminar producto del Shop the Look ─────────────────────────────── */
+  const deleteShopProduct = async (idx) => {
+    if (!window.confirm('¿Eliminar este producto?')) return
+    try {
+      await axios.delete(`${API}/artist/shop-products/${idx}`, { headers })
+      await refreshArtist()
+      flash('✅ Producto eliminado')
+    } catch { flash('❌ Error al eliminar') }
   }
 
   /* ── Guardar hotspots ────────────────────────────────────────────────── */
@@ -623,6 +661,92 @@ export default function ArtistPortal() {
                 {loading ? 'Guardando…' : 'GUARDAR HOTSPOTS'}
               </SaveBtn>
             </Section>
+
+            {/* ── Productos del look ── */}
+            <Section>
+              <SectionTitle>Productos del look</SectionTitle>
+              <SectionSub>Estos productos aparecen como tarjetas debajo del Shop the Look. Subí la foto, nombre y precio de cada prenda.</SectionSub>
+
+              {/* Grid de productos existentes */}
+              {artist.shopProducts?.length > 0 ? (
+                <ProductGrid>
+                  {artist.shopProducts.map((p, i) => (
+                    <ProductItem key={i}>
+                      <ProductItemImg>
+                        {p.image ? <img src={p.image} alt={p.name} /> : <span>Sin imagen</span>}
+                      </ProductItemImg>
+                      <ProductItemInfo>
+                        <strong>{p.name}</strong>
+                        <span>{p.price}</span>
+                      </ProductItemInfo>
+                      <ProductItemDelete onClick={() => deleteShopProduct(i)}>✕ Eliminar</ProductItemDelete>
+                    </ProductItem>
+                  ))}
+                </ProductGrid>
+              ) : (
+                <Empty>No hay productos aún. Agregá el primero abajo.</Empty>
+              )}
+
+              {/* Formulario para agregar producto */}
+              <AddProductBox>
+                <SectionTitle style={{ marginBottom: 16 }}>Agregar producto</SectionTitle>
+
+                {/* Preview de imagen seleccionada */}
+                <ProductImgPicker onClick={() => productImgRef.current?.click()}>
+                  {newProduct.preview ? (
+                    <img src={newProduct.preview} alt="preview" />
+                  ) : (
+                    <div className="placeholder">
+                      <span>+</span>
+                      <p>Seleccionar foto</p>
+                    </div>
+                  )}
+                  {productProgress > 0 && (
+                    <ProductImgUploading>
+                      <span>{productProgress}%</span>
+                    </ProductImgUploading>
+                  )}
+                  <input
+                    ref={productImgRef}
+                    type="file" accept="image/*" hidden
+                    onChange={e => {
+                      const f = e.target.files[0]
+                      if (!f) return
+                      setNewProduct(p => ({ ...p, file: f, preview: URL.createObjectURL(f) }))
+                    }}
+                  />
+                </ProductImgPicker>
+
+                <ProductFormFields>
+                  <InfoGroup full>
+                    <InfoLabel>Nombre del producto</InfoLabel>
+                    <InfoInput
+                      value={newProduct.name}
+                      onChange={e => setNewProduct(p => ({ ...p, name: e.target.value }))}
+                      placeholder="OVERSIZE COAT"
+                    />
+                  </InfoGroup>
+                  <InfoGroup>
+                    <InfoLabel>Precio</InfoLabel>
+                    <InfoInput
+                      value={newProduct.price}
+                      onChange={e => setNewProduct(p => ({ ...p, price: e.target.value }))}
+                      placeholder="$249"
+                    />
+                  </InfoGroup>
+                </ProductFormFields>
+
+                <SaveBtn
+                  style={{ marginTop: 20 }}
+                  disabled={loading}
+                  onClick={addShopProduct}
+                >
+                  {loading && productProgress > 0
+                    ? `Subiendo… ${productProgress}%`
+                    : '+ AGREGAR PRODUCTO'}
+                </SaveBtn>
+              </AddProductBox>
+            </Section>
           </>
         )}
       </Main>
@@ -728,3 +852,28 @@ const AddHotspotBox   = styled.div`background:#f9f9f9;border:1px dashed #ddd;pad
 const AddHsBtn        = styled.button`background:#000;color:white;border:none;padding:8px 18px;font-size:10px;letter-spacing:.15em;cursor:pointer;
   flex-shrink:0;align-self:flex-end;&:hover{background:#333;}`
 const Empty           = styled.p`text-align:center;color:#bbb;font-size:13px;padding:24px 0;`
+
+/* Shop Products */
+const ProductGrid      = styled.div`display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:24px;`
+const ProductItem      = styled.div`background:#fafafa;border:1px solid #eee;overflow:hidden;`
+const ProductItemImg   = styled.div`aspect-ratio:2/3;background:#f0f0f0;overflow:hidden;position:relative;
+  img{width:100%;height:100%;object-fit:cover;display:block;}
+  span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#bbb;}`
+const ProductItemInfo  = styled.div`padding:10px 12px 6px;display:flex;flex-direction:column;gap:2px;
+  strong{font-size:11px;font-weight:500;letter-spacing:.05em;}
+  span{font-size:12px;color:#888;font-family:Georgia,serif;}`
+const ProductItemDelete= styled.button`width:100%;background:transparent;border:none;border-top:1px solid #eee;
+  padding:8px;font-size:10px;color:#c00;cursor:pointer;letter-spacing:.1em;
+  &:hover{background:#c00;color:white;}`
+const AddProductBox    = styled.div`background:#f9f9f9;border:1px dashed #ddd;padding:24px;`
+const ProductImgPicker = styled.div`width:140px;aspect-ratio:2/3;background:#f0f0f0;border:2px dashed #ddd;
+  cursor:pointer;overflow:hidden;position:relative;margin-bottom:16px;
+  img{width:100%;height:100%;object-fit:cover;display:block;}
+  .placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    span{font-size:28px;color:#ccc;}
+    p{font-size:10px;color:#bbb;margin:0;letter-spacing:.1em;text-transform:uppercase;}}
+  &:hover{border-color:#999;}`
+const ProductImgUploading = styled.div`position:absolute;inset:0;background:rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;
+  span{color:white;font-size:13px;font-weight:500;}`
+const ProductFormFields= styled.div`display:grid;grid-template-columns:1fr 1fr;gap:14px;`

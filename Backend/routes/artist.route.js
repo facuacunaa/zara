@@ -195,6 +195,40 @@ artistRouter.put("/hotspots", artistAuth, async (req, res) => {
     }
 })
 
+// ── AGREGAR PRODUCTO AL SHOP THE LOOK ─────────────────────────────────────
+artistRouter.post("/shop-products", artistAuth, upload.single("image"), async (req, res) => {
+    try {
+        const { name, price } = req.body
+        if (!name || !price) return res.status(400).json({ msg: "Nombre y precio requeridos" })
+        const image = req.file ? req.file.path : ""
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { $push: { shopProducts: { image, name, price } } },
+            { new: true }
+        ).select("-password")
+        res.json({ msg: "Producto agregado", artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
+// ── ELIMINAR PRODUCTO DEL SHOP THE LOOK ───────────────────────────────────
+artistRouter.delete("/shop-products/:index", artistAuth, async (req, res) => {
+    try {
+        const artist = await ArtistModel.findById(req.artistId)
+        const idx = parseInt(req.params.index)
+        if (isNaN(idx) || idx < 0 || idx >= artist.shopProducts.length)
+            return res.status(400).json({ msg: "Índice inválido" })
+        artist.shopProducts.splice(idx, 1)
+        artist.markModified("shopProducts")
+        await artist.save()
+        const updated = await ArtistModel.findById(req.artistId).select("-password")
+        res.json({ msg: "Producto eliminado", artist: updated })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── SUBIR IMAGEN (push al array legacy) ───────────────────────────────────
 artistRouter.post("/images/upload", artistAuth, upload.single("image"), async (req, res) => {
     try {

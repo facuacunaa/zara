@@ -7,6 +7,12 @@ const hotspotSchema = new mongoose.Schema({
     price: { type: String, required: true },
 }, { _id: false })
 
+const shopProductSchema = new mongoose.Schema({
+    image: { type: String, default: "" },
+    name:  { type: String, default: "" },
+    price: { type: String, default: "" },
+}, { _id: false })
+
 const artistSchema = mongoose.Schema({
     name:     { type: String, required: true },
     slug:     { type: String, required: true, unique: true },
@@ -36,6 +42,7 @@ const artistSchema = mongoose.Schema({
     shopTitle:       { type: String, default: "" },
     shopDescription: { type: String, default: "" },
     hotspots:        [hotspotSchema],
+    shopProducts:    [shopProductSchema],
 
     // ── SECCIÓN 7: Landscape quote ────────────────────────────────────────
     landscapeQuote: { type: String, default: "" },

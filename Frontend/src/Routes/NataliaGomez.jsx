@@ -384,6 +384,32 @@ export default function ArtistPage() {
             </div>
           </div>
         </div>
+
+        {/* ── Productos del look ── */}
+        {artist?.shopProducts?.length > 0 && (
+          <div className="mt-16 border-t border-mist pt-12">
+            <p className="font-sans text-[8px] tracking-widest3 text-ash uppercase mb-8 text-center">
+              Las prendas del look
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              {artist.shopProducts.map((p, i) => (
+                <div key={i} className="group cursor-pointer">
+                  <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
+                    {p.image && (
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-800 group-hover:scale-105"
+                      />
+                    )}
+                  </div>
+                  <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed">{p.name}</p>
+                  <p className="font-serif text-sm text-ash">{p.price}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ── LANDSCAPE FULL BLEED ─────────────────────────────────────── */}
