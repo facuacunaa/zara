@@ -39,4 +39,19 @@ settingsRouter.post("/home-video", adminAuth, uploadVideo.single("video"), async
     }
 })
 
+// ── GUARDAR TEXTOS EDITORIALES (solo admin) ───────────────────────────────
+settingsRouter.put("/editorial", adminAuth, async (req, res) => {
+    const { editorialLabel, editorialQuote, editorialBody, editorialCta } = req.body
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { $set: { editorialLabel, editorialQuote, editorialBody, editorialCta } },
+            { new: true, upsert: true, strict: false }
+        )
+        res.json({ msg: "Editorial actualizada", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 module.exports = { settingsRouter }

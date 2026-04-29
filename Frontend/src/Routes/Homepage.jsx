@@ -94,12 +94,16 @@ const Homepage = () => {
     const [indexNo, setIndex] = useState(0);
     const category = ['Women', 'Men', 'Kids'];
     const [homeVideo, setHomeVideo] = useState('')
+    const [editorial, setEditorial] = useState({})
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd, setSelectedProd]   = useState(null)
 
     useEffect(() => {
         axios.get(`${API}/settings`)
-            .then(r => setHomeVideo(r.data.heroVideo || ''))
+            .then(r => {
+                setHomeVideo(r.data.heroVideo || '')
+                setEditorial(r.data)
+            })
             .catch(() => {})
     }, [])
 
@@ -169,6 +173,26 @@ const Homepage = () => {
                     />
                 </ArtVideoWrap>
             </ArtSection>
+        )}
+
+        {/* ── SECCIÓN EDITORIAL ───────────────────────────────────── */}
+        {(editorial.editorialQuote || editorial.editorialBody) && (
+            <EditorialSection>
+                <EditorialInner>
+                    {editorial.editorialLabel && (
+                        <EditorialLabel>{editorial.editorialLabel}</EditorialLabel>
+                    )}
+                    {editorial.editorialQuote && (
+                        <EditorialQuote>{editorial.editorialQuote}</EditorialQuote>
+                    )}
+                    {editorial.editorialBody && (
+                        <EditorialBody>{editorial.editorialBody}</EditorialBody>
+                    )}
+                    {editorial.editorialCta && (
+                        <EditorialCta>{editorial.editorialCta}</EditorialCta>
+                    )}
+                </EditorialInner>
+            </EditorialSection>
         )}
 
         {/* ── PRODUCTOS DE ARTISTAS ────────────────────────────────── */}
@@ -365,6 +389,69 @@ const ArtVideoWrap = styled.div`
         object-fit: cover;
         max-height: 600px;
     }
+`
+
+/* ── EDITORIAL ───────────────────────────────────────────────────────────── */
+const EditorialSection = styled.section`
+    background: #fff;
+    padding: 120px 24px;
+    position: relative;
+    &::before {
+        content: '';
+        display: block;
+        width: 1px;
+        height: 60px;
+        background: #d0d0d0;
+        margin: 0 auto 60px;
+    }
+`
+
+const EditorialInner = styled.div`
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+`
+
+const EditorialLabel = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 32px;
+`
+
+const EditorialQuote = styled.h2`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #0a0a0a;
+    line-height: 1.2;
+    margin: 0 0 40px;
+    letter-spacing: -0.01em;
+`
+
+const EditorialBody = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 12px;
+    line-height: 2;
+    letter-spacing: 0.08em;
+    color: #888;
+    max-width: 480px;
+    margin: 0 auto 40px;
+    white-space: pre-line;
+`
+
+const EditorialCta = styled.span`
+    display: inline-block;
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    border-bottom: 1px solid #0a0a0a;
+    padding-bottom: 2px;
 `
 
 /* ── MODAL PRODUCTO HOMEPAGE ─────────────────────────────────────────────── */

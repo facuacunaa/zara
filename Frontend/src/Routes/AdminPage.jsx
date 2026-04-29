@@ -29,6 +29,7 @@ const AdminPage = () => {
     const [homeVideoFile, setHomeVideoFile] = useState(null)
     const [homeVideoProgress, setHomeVideoProgress] = useState(0)
     const homeVideoRef = React.useRef()
+    const [editorial, setEditorial] = useState({ editorialLabel: '', editorialQuote: '', editorialBody: '', editorialCta: '' })
 
     const headers = { Authorization: `Bearer ${token}` }
 
@@ -55,6 +56,12 @@ const AdminPage = () => {
         try {
             const res = await axios.get(`${API}/settings`)
             setHomeVideo(res.data.heroVideo || '')
+            setEditorial({
+                editorialLabel: res.data.editorialLabel || '',
+                editorialQuote: res.data.editorialQuote || '',
+                editorialBody:  res.data.editorialBody  || '',
+                editorialCta:   res.data.editorialCta   || '',
+            })
         } catch {}
     }
 
@@ -399,6 +406,67 @@ const AdminPage = () => {
                             <FormActions style={{ marginTop: '28px' }}>
                                 <SubmitBtn type="button" disabled={loading || !homeVideoFile} onClick={uploadHomeVideo}>
                                     {loading ? `Subiendo... ${homeVideoProgress}%` : 'SUBIR VIDEO'}
+                                </SubmitBtn>
+                            </FormActions>
+                        </Form>
+
+                        {/* ── Editorial ── */}
+                        <Form as="div" style={{ marginTop: '32px' }}>
+                            <SectionLabel>Sección editorial del home</SectionLabel>
+                            <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '24px' }}>
+                                Aparece debajo del video, con tipografía editorial estilo Zara. Dejá vacío lo que no quieras mostrar.
+                            </p>
+                            <FormGrid>
+                                <FormGroup span={2}>
+                                    <label>Etiqueta pequeña (ej: — Nueva Colección · 2024)</label>
+                                    <input
+                                        value={editorial.editorialLabel}
+                                        onChange={e => setEditorial(s => ({ ...s, editorialLabel: e.target.value }))}
+                                        placeholder="— Nueva Colección · 2024"
+                                    />
+                                </FormGroup>
+                                <FormGroup span={2}>
+                                    <label>Frase principal (grande, itálica)</label>
+                                    <textarea
+                                        rows={3}
+                                        value={editorial.editorialQuote}
+                                        onChange={e => setEditorial(s => ({ ...s, editorialQuote: e.target.value }))}
+                                        placeholder={"La moda no es solo ropa.\nEs la primera oración de tu historia."}
+                                    />
+                                </FormGroup>
+                                <FormGroup span={2}>
+                                    <label>Párrafo de apoyo (texto chico debajo)</label>
+                                    <textarea
+                                        rows={3}
+                                        value={editorial.editorialBody}
+                                        onChange={e => setEditorial(s => ({ ...s, editorialBody: e.target.value }))}
+                                        placeholder="Cada temporada, elegimos artistas que reinventan cómo nos vestimos y cómo nos vemos."
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Llamada a acción (texto subrayado)</label>
+                                    <input
+                                        value={editorial.editorialCta}
+                                        onChange={e => setEditorial(s => ({ ...s, editorialCta: e.target.value }))}
+                                        placeholder="EXPLORAR COLECCIÓN"
+                                    />
+                                </FormGroup>
+                            </FormGrid>
+                            <FormActions style={{ marginTop: '28px' }}>
+                                <SubmitBtn
+                                    type="button"
+                                    disabled={loading}
+                                    onClick={async () => {
+                                        setLoading(true); setMsg('')
+                                        try {
+                                            await axios.put(`${API}/settings/editorial`, editorial, { headers })
+                                            setMsg('✅ Editorial guardada')
+                                        } catch { setMsg('❌ Error al guardar') }
+                                        setLoading(false)
+                                        setTimeout(() => setMsg(''), 3000)
+                                    }}
+                                >
+                                    {loading ? 'Guardando…' : 'GUARDAR EDITORIAL'}
                                 </SubmitBtn>
                             </FormActions>
                         </Form>
