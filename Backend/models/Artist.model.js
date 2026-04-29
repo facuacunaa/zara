@@ -11,7 +11,8 @@ const shopProductSchema = new mongoose.Schema({
     image: { type: String, default: "" },
     name:  { type: String, default: "" },
     price: { type: String, default: "" },
-}, { _id: false })
+    // _id: true (default) — cada producto tiene su propio ObjectId para la ruta de detalle
+})
 
 const artistSchema = mongoose.Schema({
     name:     { type: String, required: true },

@@ -15,6 +15,7 @@ import CardDetail from '../Routes/CardDetail'
 import OTP from './OTP'
 import ProtectedRoute from '../Components/ProtectedRoute'
 import ArtistPage from './NataliaGomez'
+import ArtistProductPage from './ArtistProductPage'
 import AdminPage from './AdminPage'
 import ArtistPortal from './ArtistPortal'
 const AllRoutes = () => {
@@ -35,6 +36,8 @@ const AllRoutes = () => {
       <Route path='/otp' element={<OTP />}></Route>
       <Route path='/admin' element={<AdminPage />}></Route>
       <Route path='/artist-portal' element={<ArtistPortal />}></Route>
+      {/* Detalle de producto del artista */}
+      <Route path='/:slug/producto/:productId' element={<ArtistProductPage />}></Route>
       {/* Ruta dinámica — cualquier /:slug que no haya matcheado arriba es una página de artista */}
       <Route path='/:slug' element={<ArtistPage />}></Route>
     </Routes>

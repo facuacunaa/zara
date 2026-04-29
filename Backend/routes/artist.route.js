@@ -195,6 +195,30 @@ artistRouter.put("/hotspots", artistAuth, async (req, res) => {
     }
 })
 
+// ── OBTENER UN PRODUCTO DEL SHOP THE LOOK (público) ──────────────────────
+artistRouter.get("/:slug/shop-products/:productId", async (req, res) => {
+    try {
+        const artist = await ArtistModel.findOne({ slug: req.params.slug }).select("-password")
+        if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
+
+        const product = artist.shopProducts.find(
+            p => p._id && p._id.toString() === req.params.productId
+        )
+        if (!product) return res.status(404).json({ msg: "Producto no encontrado" })
+
+        res.json({
+            product,
+            artist: { name: artist.name, slug: artist.slug },
+            // otros productos del mismo look (sin el actual)
+            related: artist.shopProducts.filter(
+                p => p._id && p._id.toString() !== req.params.productId
+            ).slice(0, 4)
+        })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── AGREGAR PRODUCTO AL SHOP THE LOOK ─────────────────────────────────────
 artistRouter.post("/shop-products", artistAuth, upload.single("image"), async (req, res) => {
     try {

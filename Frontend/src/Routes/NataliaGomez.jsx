@@ -394,7 +394,6 @@ export default function ArtistPage() {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {artist.shopProducts.map((p, i) => {
-                // Formateamos el producto para que sea compatible con el sistema de carrito existente
                 const cartData = {
                   producttitle: p.name,
                   image:        p.image,
@@ -402,27 +401,46 @@ export default function ArtistPage() {
                   pricenum:     parseFloat(p.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
                   quantity:     1,
                   color:        '',
-                  id:           `shop-${i}`,
+                  id:           p._id || `shop-${i}`,
                 }
+                const detailUrl = p._id ? `/${slug}/producto/${p._id}` : null
                 return (
-                  <div key={i} className="group">
-                    {/* Imagen */}
-                    <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
-                      {p.image && (
-                        <img
-                          src={p.image}
-                          alt={p.name}
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-800 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
+                  <div key={p._id || i} className="group">
+                    {/* Imagen — clickeable si tiene _id */}
+                    {detailUrl ? (
+                      <Link to={detailUrl} className="block">
+                        <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
+                          {p.image && (
+                            <img
+                              src={p.image}
+                              alt={p.name}
+                              className="absolute inset-0 w-full h-full object-cover transition-transform duration-800 group-hover:scale-105"
+                            />
+                          )}
+                          {/* overlay "Ver detalle" */}
+                          <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/10 transition-all duration-300 flex items-end justify-center pb-4">
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-sans text-[8px] tracking-widest2 uppercase bg-white/95 px-4 py-2 text-ink">
+                              Ver detalle
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
+                        {p.image && (
+                          <img src={p.image} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
+                        )}
+                      </div>
+                    )}
                     {/* Info + botón carrito */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate">{p.name}</p>
+                        {detailUrl
+                          ? <Link to={detailUrl}><p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate hover:underline">{p.name}</p></Link>
+                          : <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate">{p.name}</p>
+                        }
                         <p className="font-serif text-sm text-ash">{p.price}</p>
                       </div>
-                      {/* Mismo componente AddCart que usa el resto de la web */}
                       <AddCart data={cartData} />
                     </div>
                   </div>
