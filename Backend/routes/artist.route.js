@@ -100,7 +100,7 @@ artistRouter.put("/content/update", artistAuth, async (req, res) => {
     try {
         const artist = await ArtistModel.findByIdAndUpdate(
             req.artistId,
-            {
+            { $set: {
                 subtitle,
                 editorialLabel, editorialQuote, editorialDescription,
                 bioTitle, bioText, bioGoals, bioQuote,
@@ -110,7 +110,7 @@ artistRouter.put("/content/update", artistAuth, async (req, res) => {
                 shopTitle,      shopDescription,
                 landscapeQuote,
                 footerLabel,    footerWord,
-            },
+            }},
             { new: true }
         ).select("-password")
         res.json({ msg: "Contenido actualizado", artist })
