@@ -115,7 +115,129 @@ function Hotspot({ x, y, name, price }) {
           <p className="font-serif text-sm text-ink">{price}</p>
         </div>
       </div>
+      {/* ── MODAL DETALLE DE PRODUCTO ───────────────────────────────── */}
+      {selectedProd && (
+        <ProductModal product={selectedProd} artistName={artist?.name || ''} onClose={() => setSelectedProd(null)} />
+      )}
+
     </div>
+  )
+}
+
+/* ─── PRODUCT MODAL ──────────────────────────────────────────────────────── */
+function ProductModal({ product, artistName, onClose }) {
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [visible,   setVisible]   = useState(false)
+
+  // Animación de entrada
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 10)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Cerrar con Escape
+  useEffect(() => {
+    const fn = e => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', fn)
+    return () => window.removeEventListener('keydown', fn)
+  }, [onClose])
+
+  // Bloquear scroll del body mientras el modal está abierto
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  const cartData = {
+    producttitle: product.name,
+    image:        product.image,
+    price:        product.price,
+    pricenum:     parseFloat((product.price || '0').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
+    quantity:     1,
+    color:        '',
+    id:           product._id || product.name,
+  }
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-ink/60 z-[100] transition-opacity duration-400 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        onClick={onClose}
+      />
+
+      {/* Panel lateral derecho */}
+      <div
+        className={`fixed top-0 right-0 bottom-0 z-[101] bg-chalk flex flex-col
+          w-full max-w-xl shadow-2xl transition-transform duration-500 ease-out
+          ${visible ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Header del panel */}
+        <div className="flex items-center justify-between px-8 py-5 border-b border-mist flex-shrink-0">
+          <p className="font-sans text-[9px] tracking-widest3 uppercase text-ash">{artistName}</p>
+          <button
+            onClick={onClose}
+            className="font-sans text-[10px] tracking-widest2 uppercase text-ash hover:text-ink transition-colors"
+          >
+            ✕ Cerrar
+          </button>
+        </div>
+
+        {/* Contenido scrolleable */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Imagen */}
+          <div className="relative bg-mist" style={{ paddingBottom: '120%' }}>
+            {product.image && (
+              <img
+                src={product.image}
+                alt={product.name}
+                onLoad={() => setImgLoaded(true)}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+              />
+            )}
+            {!imgLoaded && <div className="absolute inset-0 bg-mist animate-pulse" />}
+          </div>
+
+          {/* Info */}
+          <div className="px-8 py-8">
+            <h2 className="font-serif text-2xl md:text-3xl font-light text-ink mb-2 leading-snug">
+              {product.name}
+            </h2>
+            <p className="font-serif text-lg text-ash mb-8">{product.price}</p>
+
+            <div className="w-8 h-px bg-mist mb-8" />
+
+            <p className="font-sans text-[11px] text-ash leading-loose tracking-wide mb-8">
+              Pieza exclusiva de la colección de {artistName}. Diseño pensado para quienes
+              entienden que la moda es una conversación entre la forma y quien la lleva.
+            </p>
+
+            {/* Agregar al carrito */}
+            <div className="border-t border-mist pt-6">
+              <p className="font-sans text-[9px] tracking-widest2 uppercase text-ash mb-4">
+                Seleccioná tu talla para agregar al carrito
+              </p>
+              <div className="flex items-center gap-4">
+                <span className="font-serif text-base text-ink">{product.price}</span>
+                <AddCart data={cartData} />
+              </div>
+            </div>
+
+            {/* Detalles */}
+            <div className="mt-8 border-t border-mist pt-6 space-y-3">
+              <div className="flex justify-between font-sans text-[10px] tracking-wide uppercase">
+                <span className="text-ash">Colección</span>
+                <span className="text-ink">{artistName}</span>
+              </div>
+              <div className="flex justify-between font-sans text-[10px] tracking-wide uppercase">
+                <span className="text-ash">Precio</span>
+                <span className="text-ink">{product.price}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
@@ -171,8 +293,9 @@ export default function ArtistPage() {
   const { slug }  = useParams()
   const dispatch  = useDispatch()
   const products  = useSelector(s => s.AppReducer.products)
-  const [artist,   setArtist]   = useState(null)
-  const [notFound, setNotFound] = useState(false)
+  const [artist,        setArtist]        = useState(null)
+  const [notFound,      setNotFound]      = useState(false)
+  const [selectedProd,  setSelectedProd]  = useState(null)   // producto abierto en modal
 
   const f1 = useFadeIn(), f2 = useFadeIn(), f3 = useFadeIn()
   const f4 = useFadeIn(), f5 = useFadeIn(), f6 = useFadeIn()
@@ -393,59 +516,30 @@ export default function ArtistPage() {
               Las prendas del look
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-              {artist.shopProducts.map((p, i) => {
-                const cartData = {
-                  producttitle: p.name,
-                  image:        p.image,
-                  price:        p.price,
-                  pricenum:     parseFloat(p.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
-                  quantity:     1,
-                  color:        '',
-                  id:           p._id || `shop-${i}`,
-                }
-                const detailUrl = p._id ? `/${slug}/producto/${p._id}` : null
-                return (
-                  <div key={p._id || i} className="group">
-                    {/* Imagen — clickeable si tiene _id */}
-                    {detailUrl ? (
-                      <Link to={detailUrl} className="block">
-                        <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
-                          {p.image && (
-                            <img
-                              src={p.image}
-                              alt={p.name}
-                              className="absolute inset-0 w-full h-full object-cover transition-transform duration-800 group-hover:scale-105"
-                            />
-                          )}
-                          {/* overlay "Ver detalle" */}
-                          <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/10 transition-all duration-300 flex items-end justify-center pb-4">
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-sans text-[8px] tracking-widest2 uppercase bg-white/95 px-4 py-2 text-ink">
-                              Ver detalle
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    ) : (
-                      <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
-                        {p.image && (
-                          <img src={p.image} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
-                        )}
-                      </div>
+              {artist.shopProducts.map((p, i) => (
+                <div
+                  key={i}
+                  className="group cursor-pointer"
+                  onClick={() => setSelectedProd(p)}
+                >
+                  <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
+                    {p.image && (
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
                     )}
-                    {/* Info + botón carrito */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        {detailUrl
-                          ? <Link to={detailUrl}><p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate hover:underline">{p.name}</p></Link>
-                          : <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate">{p.name}</p>
-                        }
-                        <p className="font-serif text-sm text-ash">{p.price}</p>
-                      </div>
-                      <AddCart data={cartData} />
+                    <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/10 transition-all duration-300 flex items-end justify-center pb-4">
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-sans text-[8px] tracking-widest2 uppercase bg-white/95 px-4 py-2 text-ink">
+                        Ver prenda
+                      </span>
                     </div>
                   </div>
-                )
-              })}
+                  <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate">{p.name}</p>
+                  <p className="font-serif text-sm text-ash">{p.price}</p>
+                </div>
+              ))}
             </div>
           </div>
         )}
