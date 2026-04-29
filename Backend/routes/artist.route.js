@@ -57,12 +57,7 @@ artistRouter.post("/login", async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         )
-        res.json({ msg: "Login exitoso", token, artist: {
-            name: artist.name, slug: artist.slug, email: artist.email,
-            heroVideo: artist.heroVideo, heroImage: artist.heroImage,
-            images: artist.images, description: artist.description,
-            subtitle: artist.subtitle, quote: artist.quote,
-        }})
+        res.json({ msg: "Login exitoso", token, artist: { ...artist.toObject(), password: undefined } })
     } catch (err) {
         res.status(500).json({ msg: "Error", error: err.message })
     }
@@ -79,48 +74,32 @@ artistRouter.get("/:slug", async (req, res) => {
     }
 })
 
-// ── ACTUALIZAR INFO (artista autenticado) ──────────────────────────────────
+// ── ACTUALIZAR TEXTOS (artista autenticado) ────────────────────────────────
 artistRouter.put("/content/update", artistAuth, async (req, res) => {
-    const { heroVideo, description, subtitle, quote } = req.body
+    const {
+        subtitle,
+        editorialLabel, editorialQuote, editorialDescription,
+        section1Label,  section1Headline, section1Body,
+        section2Label,  section2Quote,
+        shopTitle,      shopDescription,
+        landscapeQuote,
+        footerLabel,    footerWord,
+    } = req.body
     try {
         const artist = await ArtistModel.findByIdAndUpdate(
             req.artistId,
-            { heroVideo, description, subtitle, quote },
+            {
+                subtitle,
+                editorialLabel, editorialQuote, editorialDescription,
+                section1Label,  section1Headline, section1Body,
+                section2Label,  section2Quote,
+                shopTitle,      shopDescription,
+                landscapeQuote,
+                footerLabel,    footerWord,
+            },
             { new: true }
         ).select("-password")
         res.json({ msg: "Contenido actualizado", artist })
-    } catch (err) {
-        res.status(500).json({ msg: "Error", error: err.message })
-    }
-})
-
-// ── SUBIR IMAGEN ───────────────────────────────────────────────────────────
-artistRouter.post("/images/upload", artistAuth, upload.single("image"), async (req, res) => {
-    try {
-        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
-        const url    = req.file.path
-        const artist = await ArtistModel.findByIdAndUpdate(
-            req.artistId,
-            { $push: { images: url } },
-            { new: true }
-        ).select("-password")
-        res.json({ msg: "Imagen subida", url, images: artist.images })
-    } catch (err) {
-        res.status(500).json({ msg: "Error subiendo imagen", error: err.message })
-    }
-})
-
-// ── SUBIR IMAGEN HERO ──────────────────────────────────────────────────────
-artistRouter.post("/images/hero", artistAuth, upload.single("image"), async (req, res) => {
-    try {
-        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
-        const url    = req.file.path
-        const artist = await ArtistModel.findByIdAndUpdate(
-            req.artistId,
-            { heroImage: url },
-            { new: true }
-        ).select("-password")
-        res.json({ msg: "Hero actualizado", url, artist })
     } catch (err) {
         res.status(500).json({ msg: "Error", error: err.message })
     }
@@ -142,6 +121,86 @@ artistRouter.post("/video/upload", artistAuth, uploadVideo.single("video"), asyn
     }
 })
 
+// ── SUBIR IMAGEN A SLOT ESPECÍFICO (0-5) ──────────────────────────────────
+artistRouter.post("/images/slot/:slot", artistAuth, upload.single("image"), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
+        const slot = parseInt(req.params.slot)
+        if (isNaN(slot) || slot < 0 || slot > 5)
+            return res.status(400).json({ msg: "Slot inválido (0-5)" })
+
+        const url    = req.file.path
+        const artist = await ArtistModel.findById(req.artistId)
+        if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
+
+        // Rellenar con vacíos hasta el slot pedido
+        while (artist.images.length <= slot) artist.images.push("")
+        artist.images[slot] = url
+        artist.markModified("images")
+        await artist.save()
+
+        const updated = await ArtistModel.findById(req.artistId).select("-password")
+        res.json({ msg: "Imagen actualizada", url, images: updated.images })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
+// ── SUBIR IMAGEN SHOP THE LOOK ─────────────────────────────────────────────
+artistRouter.post("/images/shop", artistAuth, upload.single("image"), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
+        const url    = req.file.path
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { shopImage: url },
+            { new: true }
+        ).select("-password")
+        res.json({ msg: "Shop image actualizada", url, artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
+// ── GUARDAR HOTSPOTS ───────────────────────────────────────────────────────
+artistRouter.put("/hotspots", artistAuth, async (req, res) => {
+    const { hotspots } = req.body
+    if (!Array.isArray(hotspots))
+        return res.status(400).json({ msg: "hotspots debe ser un array" })
+    // Validar cada hotspot
+    for (const h of hotspots) {
+        if (typeof h.x !== "number" || typeof h.y !== "number" ||
+            typeof h.name !== "string" || typeof h.price !== "string")
+            return res.status(400).json({ msg: "Cada hotspot necesita x, y, name, price" })
+    }
+    try {
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { hotspots },
+            { new: true }
+        ).select("-password")
+        res.json({ msg: "Hotspots actualizados", artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
+// ── SUBIR IMAGEN (push al array legacy) ───────────────────────────────────
+artistRouter.post("/images/upload", artistAuth, upload.single("image"), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
+        const url    = req.file.path
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { $push: { images: url } },
+            { new: true }
+        ).select("-password")
+        res.json({ msg: "Imagen subida", url, images: artist.images })
+    } catch (err) {
+        res.status(500).json({ msg: "Error subiendo imagen", error: err.message })
+    }
+})
+
 // ── ELIMINAR IMAGEN ────────────────────────────────────────────────────────
 artistRouter.delete("/images/:index", artistAuth, async (req, res) => {
     try {
@@ -150,6 +209,7 @@ artistRouter.delete("/images/:index", artistAuth, async (req, res) => {
         if (idx < 0 || idx >= artist.images.length)
             return res.status(400).json({ msg: "Índice inválido" })
         artist.images.splice(idx, 1)
+        artist.markModified("images")
         await artist.save()
         res.json({ msg: "Imagen eliminada", images: artist.images })
     } catch (err) {
