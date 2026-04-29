@@ -77,19 +77,13 @@ const Navbar = ({ activeIndexs }) => {
             .catch(() => {})
     }, [])
 
-    // En páginas de artista: transparente arriba, blanco al hacer scroll
-    const artistBg = onArtistPage
-        ? (scrolled ? 'white' : 'transparent')
-        : (location.pathname === '/' ? 'transparent' : 'white')
+    // Homepage y artista: siempre transparente (sin barra visible)
+    // Otras rutas: fondo blanco normal
+    const navBg = needsTransparency ? 'transparent' : 'white'
 
-    // Homepage: siempre transparente, íconos blancos, sin cambio al scroll
-    // Artista: transparente arriba → blanco al bajar
-    const iconColor = (onHomePage || (onArtistPage && !scrolled)) ? 'white' : theme
-    const navBg     = onHomePage
-        ? 'transparent'
-        : onArtistPage
-            ? (scrolled ? 'white' : 'transparent')
-            : 'white'
+    // Íconos blancos cuando fondo es transparente (homepage siempre, artista arriba)
+    // Íconos negros cuando se hace scroll en artista (contenido claro debajo)
+    const iconColor = (onHomePage || (onArtistPage && !scrolled)) ? 'white' : 'black'
 
     return (
         <>
@@ -172,10 +166,7 @@ const Container = styled.div`
     justify-content:space-between;
     position:fixed;
     z-index:5;
-    transition: background-color 0.4s ease, box-shadow 0.4s ease;
-    ${(props) => props.onArtistPage && props.scrolled && `
-        box-shadow: 0 1px 20px rgba(0,0,0,0.08);
-    `}
+    transition: color 0.3s ease;
     .menuContainer{
         height:70px;
     }
