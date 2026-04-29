@@ -176,22 +176,42 @@ const Homepage = () => {
         )}
 
         {/* ── SECCIÓN EDITORIAL ───────────────────────────────────── */}
-        {(editorial.editorialQuote || editorial.editorialBody) && (
+        {(editorial.editorialQuote || editorial.editorialBody || editorial.editorialImage1 || editorial.editorialImage2) && (
             <EditorialSection>
-                <EditorialInner>
-                    {editorial.editorialLabel && (
-                        <EditorialLabel>{editorial.editorialLabel}</EditorialLabel>
+                {/* Línea decorativa superior */}
+                <EditorialDivider />
+
+                <EditorialLayout>
+                    {/* Imagen izquierda */}
+                    {editorial.editorialImage1 && (
+                        <EditorialImgWrap side="left">
+                            <img src={editorial.editorialImage1} alt="editorial" />
+                        </EditorialImgWrap>
                     )}
-                    {editorial.editorialQuote && (
-                        <EditorialQuote>{editorial.editorialQuote}</EditorialQuote>
+
+                    {/* Texto central */}
+                    <EditorialInner hasImages={editorial.editorialImage1 || editorial.editorialImage2}>
+                        {editorial.editorialLabel && (
+                            <EditorialLabel>{editorial.editorialLabel}</EditorialLabel>
+                        )}
+                        {editorial.editorialQuote && (
+                            <EditorialQuote>{editorial.editorialQuote}</EditorialQuote>
+                        )}
+                        {editorial.editorialBody && (
+                            <EditorialBody>{editorial.editorialBody}</EditorialBody>
+                        )}
+                        {editorial.editorialCta && (
+                            <EditorialCta>{editorial.editorialCta}</EditorialCta>
+                        )}
+                    </EditorialInner>
+
+                    {/* Imagen derecha */}
+                    {editorial.editorialImage2 && (
+                        <EditorialImgWrap side="right">
+                            <img src={editorial.editorialImage2} alt="editorial" />
+                        </EditorialImgWrap>
                     )}
-                    {editorial.editorialBody && (
-                        <EditorialBody>{editorial.editorialBody}</EditorialBody>
-                    )}
-                    {editorial.editorialCta && (
-                        <EditorialCta>{editorial.editorialCta}</EditorialCta>
-                    )}
-                </EditorialInner>
+                </EditorialLayout>
             </EditorialSection>
         )}
 
@@ -394,22 +414,61 @@ const ArtVideoWrap = styled.div`
 /* ── EDITORIAL ───────────────────────────────────────────────────────────── */
 const EditorialSection = styled.section`
     background: #fff;
-    padding: 120px 24px;
-    position: relative;
-    &::before {
-        content: '';
+    padding: 100px 0 120px;
+    overflow: hidden;
+`
+
+const EditorialDivider = styled.div`
+    width: 1px;
+    height: 70px;
+    background: #ccc;
+    margin: 0 auto 80px;
+`
+
+const EditorialLayout = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    @media (max-width: 768px) {
+        flex-direction: column;
+        padding: 0 24px;
+        gap: 40px;
+    }
+`
+
+const EditorialImgWrap = styled.div`
+    flex: 0 0 30%;
+    max-width: 360px;
+    align-self: ${p => p.side === 'left' ? 'flex-start' : 'flex-end'};
+    margin-top: ${p => p.side === 'left' ? '0' : '80px'};
+    margin-bottom: ${p => p.side === 'right' ? '0' : '80px'};
+    img {
+        width: 100%;
         display: block;
-        width: 1px;
-        height: 60px;
-        background: #d0d0d0;
-        margin: 0 auto 60px;
+        object-fit: cover;
+        aspect-ratio: 3/4;
+        filter: grayscale(15%);
+    }
+    @media (max-width: 768px) {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        img { aspect-ratio: 4/3; }
     }
 `
 
 const EditorialInner = styled.div`
-    max-width: 760px;
-    margin: 0 auto;
+    flex: 1;
     text-align: center;
+    padding: ${p => p.hasImages ? '40px 60px' : '0 24px'};
+    max-width: ${p => p.hasImages ? 'none' : '760px'};
+    margin: ${p => p.hasImages ? '0' : '0 auto'};
+    @media (max-width: 768px) { padding: 0; }
 `
 
 const EditorialLabel = styled.p`
@@ -423,22 +482,23 @@ const EditorialLabel = styled.p`
 
 const EditorialQuote = styled.h2`
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(2rem, 5vw, 4.2rem);
+    font-size: clamp(1.8rem, 4vw, 3.8rem);
     font-weight: 300;
     font-style: italic;
     color: #0a0a0a;
     line-height: 1.2;
-    margin: 0 0 40px;
+    margin: 0 0 36px;
     letter-spacing: -0.01em;
+    white-space: pre-line;
 `
 
 const EditorialBody = styled.p`
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 12px;
-    line-height: 2;
-    letter-spacing: 0.08em;
-    color: #888;
-    max-width: 480px;
+    font-size: 11px;
+    line-height: 2.2;
+    letter-spacing: 0.1em;
+    color: #999;
+    max-width: 400px;
     margin: 0 auto 40px;
     white-space: pre-line;
 `
@@ -447,11 +507,11 @@ const EditorialCta = styled.span`
     display: inline-block;
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     font-size: 9px;
-    letter-spacing: 0.4em;
+    letter-spacing: 0.45em;
     text-transform: uppercase;
     color: #0a0a0a;
     border-bottom: 1px solid #0a0a0a;
-    padding-bottom: 2px;
+    padding-bottom: 3px;
 `
 
 /* ── MODAL PRODUCTO HOMEPAGE ─────────────────────────────────────────────── */

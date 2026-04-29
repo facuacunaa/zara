@@ -30,6 +30,11 @@ const AdminPage = () => {
     const [homeVideoProgress, setHomeVideoProgress] = useState(0)
     const homeVideoRef = React.useRef()
     const [editorial, setEditorial] = useState({ editorialLabel: '', editorialQuote: '', editorialBody: '', editorialCta: '' })
+    const [editorialImg1, setEditorialImg1] = useState('')
+    const [editorialImg2, setEditorialImg2] = useState('')
+    const [imgProgress, setImgProgress] = useState({ 1: 0, 2: 0 })
+    const editorialImgRef1 = React.useRef()
+    const editorialImgRef2 = React.useRef()
 
     const headers = { Authorization: `Bearer ${token}` }
 
@@ -62,6 +67,8 @@ const AdminPage = () => {
                 editorialBody:  res.data.editorialBody  || '',
                 editorialCta:   res.data.editorialCta   || '',
             })
+            setEditorialImg1(res.data.editorialImage1 || '')
+            setEditorialImg2(res.data.editorialImage2 || '')
         } catch {}
     }
 
@@ -416,6 +423,45 @@ const AdminPage = () => {
                             <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '24px' }}>
                                 Aparece debajo del video, con tipografía editorial estilo Zara. Dejá vacío lo que no quieras mostrar.
                             </p>
+                            {/* Imágenes editoriales */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
+                                {[{n:1, state: editorialImg1, ref: editorialImgRef1, set: setEditorialImg1},
+                                  {n:2, state: editorialImg2, ref: editorialImgRef2, set: setEditorialImg2}].map(({n, state, ref, set}) => (
+                                    <div key={n}>
+                                        <SectionLabel>Imagen {n === 1 ? 'izquierda' : 'derecha'}</SectionLabel>
+                                        <div
+                                            onClick={() => ref.current?.click()}
+                                            style={{ width:'100%', aspectRatio:'3/4', background:'#f0f0f0', cursor:'pointer', overflow:'hidden', position:'relative', maxHeight:'240px' }}
+                                        >
+                                            {state
+                                                ? <img src={state} alt={`editorial ${n}`} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} />
+                                                : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'#bbb', fontSize:'12px' }}>+ Subir imagen</div>
+                                            }
+                                            {imgProgress[n] > 0 && (
+                                                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'3px', background:'#eee' }}>
+                                                    <div style={{ height:'100%', background:'#000', width:`${imgProgress[n]}%`, transition:'width .3s' }} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <input ref={ref} type="file" accept="image/*" hidden onChange={async e => {
+                                            const file = e.target.files[0]; if (!file) return
+                                            setImgProgress(p => ({ ...p, [n]: 0 }))
+                                            const fd = new FormData(); fd.append('image', file)
+                                            try {
+                                                const res = await axios.post(`${API}/settings/editorial-image/${n}`, fd, {
+                                                    headers,
+                                                    onUploadProgress: ev => setImgProgress(p => ({ ...p, [n]: Math.round(ev.loaded * 100 / ev.total) }))
+                                                })
+                                                set(res.data.url)
+                                                setMsg(`✅ Imagen ${n} subida`)
+                                            } catch { setMsg('❌ Error subiendo imagen') }
+                                            setImgProgress(p => ({ ...p, [n]: 0 }))
+                                            setTimeout(() => setMsg(''), 3000)
+                                        }} />
+                                    </div>
+                                ))}
+                            </div>
+
                             <FormGrid>
                                 <FormGroup span={2}>
                                     <label>Etiqueta pequeña (ej: — Nueva Colección · 2024)</label>

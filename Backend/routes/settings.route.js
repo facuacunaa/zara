@@ -39,6 +39,29 @@ settingsRouter.post("/home-video", adminAuth, uploadVideo.single("video"), async
     }
 })
 
+// ── SUBIR IMAGEN EDITORIAL (solo admin) ──────────────────────────────────
+settingsRouter.post("/editorial-image/:slot", adminAuth, async (req, res) => {
+    const slot = req.params.slot // '1' o '2'
+    if (!['1','2'].includes(slot)) return res.status(400).json({ msg: "Slot inválido" })
+    const { upload } = require("../config/cloudinary")
+    upload.single("image")(req, res, async (err) => {
+        if (err) return res.status(500).json({ msg: "Error subiendo imagen", error: err.message })
+        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
+        const url = req.file.path
+        const field = `editorialImage${slot}`
+        try {
+            const settings = await SettingsModel.findOneAndUpdate(
+                { key: "homepage" },
+                { $set: { [field]: url } },
+                { new: true, upsert: true, strict: false }
+            )
+            res.json({ msg: "Imagen subida", url, settings })
+        } catch (e) {
+            res.status(500).json({ msg: "Error guardando", error: e.message })
+        }
+    })
+})
+
 // ── GUARDAR TEXTOS EDITORIALES (solo admin) ───────────────────────────────
 settingsRouter.put("/editorial", adminAuth, async (req, res) => {
     const { editorialLabel, editorialQuote, editorialBody, editorialCta } = req.body

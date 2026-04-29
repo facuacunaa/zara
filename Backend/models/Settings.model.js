@@ -5,10 +5,12 @@ const settingsSchema = new mongoose.Schema({
     heroVideo:  { type: String, default: "" },
 
     // ── SECCIÓN EDITORIAL ─────────────────────────────────────────────────
-    editorialLabel:  { type: String, default: "" },  // etiqueta pequeña
-    editorialQuote:  { type: String, default: "" },  // frase grande itálica
-    editorialBody:   { type: String, default: "" },  // párrafo de apoyo
-    editorialCta:    { type: String, default: "" },  // botón / llamada a acción
+    editorialLabel:  { type: String, default: "" },
+    editorialQuote:  { type: String, default: "" },
+    editorialBody:   { type: String, default: "" },
+    editorialCta:    { type: String, default: "" },
+    editorialImage1: { type: String, default: "" },  // imagen izquierda
+    editorialImage2: { type: String, default: "" },  // imagen derecha
 }, { timestamps: true, strict: false })
 
 const SettingsModel = mongoose.model("Settings", settingsSchema)
