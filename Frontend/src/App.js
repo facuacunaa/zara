@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import "swiper/css/bundle";
 
 // Rutas donde el Navbar global NO debe aparecer
-const HIDDEN_NAVBAR_ROUTES = ['/artist-portal', '/admin']
+const HIDDEN_NAVBAR_ROUTES = ['/artist-portal', '/admin', '/']
 
 function App() {
   const location = useLocation()
