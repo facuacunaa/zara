@@ -172,7 +172,6 @@ export default function ArtistPage() {
   const products  = useSelector(s => s.AppReducer.products)
   const [artist,   setArtist]   = useState(null)
   const [notFound, setNotFound] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
 
   const f1 = useFadeIn(), f2 = useFadeIn(), f3 = useFadeIn()
   const f4 = useFadeIn(), f5 = useFadeIn(), f6 = useFadeIn()
@@ -187,12 +186,6 @@ export default function ArtistPage() {
   }, [slug])
 
   useEffect(() => { dispatch(getProduct('women1', 8)) }, [dispatch])
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
 
   // Helpers para obtener valor del artista o el default
   const g = (key) => (artist && artist[key]) ? artist[key] : DEFAULTS[key]
@@ -217,24 +210,8 @@ export default function ArtistPage() {
   return (
     <div className="bg-chalk font-sans text-ink antialiased">
 
-      {/* ── FLOATING NAV ─────────────────────────────────────────────── */}
-      <nav className={`
-        fixed top-0 left-0 right-0 z-50 flex items-center justify-between
-        px-8 py-5 transition-all duration-500
-        ${scrolled ? 'bg-chalk/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}
-      `}>
-        <Link to="/" className={`font-sans text-[10px] tracking-widest3 uppercase ${scrolled ? 'text-ink' : 'text-white'}`}>
-          ← VOLVER
-        </Link>
-        <span className={`font-serif text-base italic ${scrolled ? 'text-ink' : 'text-white'}`}>
-          {fullName}
-        </span>
-        <span className={`font-sans text-[10px] tracking-widest2 uppercase ${scrolled ? 'text-ink' : 'text-white'}`}>
-          COLECCIÓN
-        </span>
-      </nav>
-
       {/* ── HERO FULL BLEED ──────────────────────────────────────────── */}
+      {/* pt-[70px] deja espacio para el navbar global fijo */}
       <section className="relative h-screen w-full overflow-hidden bg-ink">
         {artist?.heroVideo ? (
           <video
