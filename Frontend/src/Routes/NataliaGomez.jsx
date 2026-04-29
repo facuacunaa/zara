@@ -382,8 +382,8 @@ export default function ArtistPage() {
         {/* Large portrait left */}
         <div ref={f2} className="md:row-span-2">
           {img(0)
-            ? <LazyImg src={img(0)} alt="editorial 1" className="h-[70vh] md:h-full w-full" />
-            : <div className="h-[70vh] md:h-full w-full bg-mist flex items-center justify-center">
+            ? <LazyImg src={img(0)} alt="editorial 1" className="h-[45vh] md:h-full w-full" />
+            : <div className="h-[45vh] md:h-full w-full bg-mist flex items-center justify-center">
                 <span className="text-ash text-xs tracking-widest2 uppercase">Foto 1</span>
               </div>
           }
@@ -391,8 +391,8 @@ export default function ArtistPage() {
         {/* Small top right */}
         <div>
           {img(1)
-            ? <LazyImg src={img(1)} alt="editorial 2" className="h-[35vh] w-full" />
-            : <div className="h-[35vh] w-full bg-mist/70 flex items-center justify-center">
+            ? <LazyImg src={img(1)} alt="editorial 2" className="h-[22vh] w-full" />
+            : <div className="h-[22vh] w-full bg-mist/70 flex items-center justify-center">
                 <span className="text-ash text-xs tracking-widest2 uppercase">Foto 2</span>
               </div>
           }
@@ -416,8 +416,8 @@ export default function ArtistPage() {
       {/* ── FULL WIDTH IMAGE + PULLQUOTE ────────────────────────────── */}
       <section ref={f3} className="relative">
         {img(2)
-          ? <LazyImg src={img(2)} alt="editorial wide" className="h-[60vh] md:h-[80vh] w-full" />
-          : <div className="h-[60vh] md:h-[80vh] w-full bg-mist flex items-center justify-center">
+          ? <LazyImg src={img(2)} alt="editorial wide" className="h-[40vh] md:h-[55vh] w-full" />
+          : <div className="h-[40vh] md:h-[55vh] w-full bg-mist flex items-center justify-center">
               <span className="text-ash text-xs tracking-widest2 uppercase">Foto 3 (full width)</span>
             </div>
         }
@@ -437,16 +437,16 @@ export default function ArtistPage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-px bg-mist mt-px">
         <div className="md:col-span-2">
           {img(3)
-            ? <LazyImg src={img(3)} alt="editorial 4" className="h-[50vh] w-full" />
-            : <div className="h-[50vh] w-full bg-mist/60 flex items-center justify-center">
+            ? <LazyImg src={img(3)} alt="editorial 4" className="h-[35vh] w-full" />
+            : <div className="h-[35vh] w-full bg-mist/60 flex items-center justify-center">
                 <span className="text-ash text-xs tracking-widest2 uppercase">Foto 4 (wide)</span>
               </div>
           }
         </div>
         <div className="flex flex-col gap-px">
           {img(4)
-            ? <LazyImg src={img(4)} alt="editorial 5" className="h-[25vh] w-full flex-1" />
-            : <div className="h-[25vh] w-full bg-mist/40 flex items-center justify-center">
+            ? <LazyImg src={img(4)} alt="editorial 5" className="h-[17vh] w-full flex-1" />
+            : <div className="h-[17vh] w-full bg-mist/40 flex items-center justify-center">
                 <span className="text-ash text-xs tracking-widest2 uppercase">Foto 5</span>
               </div>
           }
