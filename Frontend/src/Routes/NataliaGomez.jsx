@@ -115,11 +115,6 @@ function Hotspot({ x, y, name, price }) {
           <p className="font-serif text-sm text-ink">{price}</p>
         </div>
       </div>
-      {/* ── MODAL DETALLE DE PRODUCTO ───────────────────────────────── */}
-      {selectedProd && (
-        <ProductModal product={selectedProd} artistName={artist?.name || ''} onClose={() => setSelectedProd(null)} />
-      )}
-
     </div>
   )
 }
@@ -597,6 +592,15 @@ export default function ArtistPage() {
           Volver al inicio
         </Link>
       </section>
+
+      {/* ── PRODUCT MODAL ────────────────────────────────────────────── */}
+      {selectedProd && (
+        <ProductModal
+          product={selectedProd}
+          artistName={artist?.name || ''}
+          onClose={() => setSelectedProd(null)}
+        />
+      )}
 
     </div>
   )
