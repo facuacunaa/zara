@@ -19,10 +19,14 @@ const AdminPage = () => {
     const [editingId, setEditingId] = useState(null)
     const [msg, setMsg] = useState('')
     const [loading, setLoading] = useState(false)
-    const [tab, setTab] = useState('products') // 'products' | 'add' | 'artists'
+    const [tab, setTab] = useState('products') // 'products' | 'add' | 'artists' | 'home'
     const [searchTerm, setSearchTerm] = useState('')
     const [artistForm, setArtistForm] = useState({ name: '', slug: '', email: '', password: '' })
     const [artists, setArtists] = useState([])
+    const [homeVideo, setHomeVideo] = useState('')
+    const [homeVideoFile, setHomeVideoFile] = useState(null)
+    const [homeVideoProgress, setHomeVideoProgress] = useState(0)
+    const homeVideoRef = React.useRef()
 
     const headers = { Authorization: `Bearer ${token}` }
 
@@ -36,9 +40,39 @@ const AdminPage = () => {
         }
     }
 
+    // ── Fetch settings ──────────────────────────────────────────────────────
+    const fetchSettings = async () => {
+        try {
+            const res = await axios.get(`${API}/settings`)
+            setHomeVideo(res.data.heroVideo || '')
+        } catch {}
+    }
+
     useEffect(() => {
-        if (token) fetchProducts()
+        if (token) { fetchProducts(); fetchSettings() }
     }, [token])
+
+    // ── Upload home video ───────────────────────────────────────────────────
+    const uploadHomeVideo = async () => {
+        if (!homeVideoFile) return
+        setLoading(true); setHomeVideoProgress(0); setMsg('')
+        const fd = new FormData()
+        fd.append('video', homeVideoFile)
+        try {
+            const res = await axios.post(`${API}/settings/home-video`, fd, {
+                headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: e => setHomeVideoProgress(Math.round(e.loaded * 100 / e.total))
+            })
+            setHomeVideo(res.data.url)
+            setHomeVideoFile(null)
+            if (homeVideoRef.current) homeVideoRef.current.value = ''
+            setMsg('✅ Video del home actualizado')
+        } catch {
+            setMsg('❌ Error subiendo video')
+        }
+        setLoading(false); setHomeVideoProgress(0)
+        setTimeout(() => setMsg(''), 4000)
+    }
 
     // ── Login ───────────────────────────────────────────────────────────────
     const handleLogin = async (e) => {
@@ -169,6 +203,9 @@ const AdminPage = () => {
                     <SidebarItem active={tab === 'artists'} onClick={() => setTab('artists')}>
                         🎨 Artistas
                     </SidebarItem>
+                    <SidebarItem active={tab === 'home'} onClick={() => setTab('home')}>
+                        🎬 Inicio
+                    </SidebarItem>
                 </SidebarNav>
                 <LogoutBtn onClick={handleLogout}>Cerrar sesión</LogoutBtn>
             </Sidebar>
@@ -257,6 +294,58 @@ const AdminPage = () => {
                             <p style={{fontSize:'11px',color:'#999',marginTop:'12px'}}>
                                 El artista accede en: <strong>/artist-portal</strong> con su email y contraseña.
                             </p>
+                        </Form>
+                    </>
+                )}
+
+                {/* ── HOME ── */}
+                {tab === 'home' && (
+                    <>
+                        <PageTitle>Video del Inicio</PageTitle>
+                        <Form as="div">
+                            <p style={{ fontSize: '11px', color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '24px' }}>
+                                Este video aparece en la sección "No somos una tienda, somos arte" del homepage.
+                            </p>
+
+                            {/* Preview actual */}
+                            {homeVideo && (
+                                <div style={{ marginBottom: '28px' }}>
+                                    <p style={{ fontSize: '10px', color: '#aaa', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '10px' }}>Video actual</p>
+                                    <video
+                                        src={homeVideo} controls muted
+                                        style={{ width: '100%', maxWidth: '560px', maxHeight: '315px', objectFit: 'cover', display: 'block', background: '#000' }}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Upload */}
+                            <FormGroup style={{ maxWidth: '480px' }}>
+                                <label>Subir nuevo video (mp4, mov, webm — máx 200MB)</label>
+                                <input
+                                    ref={homeVideoRef}
+                                    type="file" accept="video/*"
+                                    onChange={e => setHomeVideoFile(e.target.files[0])}
+                                    style={{ border: 'none', borderBottom: '1px solid #ddd', padding: '8px 0', fontSize: '12px' }}
+                                />
+                            </FormGroup>
+
+                            {homeVideoFile && (
+                                <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>
+                                    Seleccionado: {homeVideoFile.name}
+                                </p>
+                            )}
+
+                            {homeVideoProgress > 0 && homeVideoProgress < 100 && (
+                                <div style={{ marginTop: '16px', background: '#f0f0f0', height: '4px', borderRadius: '2px', maxWidth: '480px' }}>
+                                    <div style={{ height: '100%', background: '#000', borderRadius: '2px', width: `${homeVideoProgress}%`, transition: 'width 0.3s' }} />
+                                </div>
+                            )}
+
+                            <FormActions style={{ marginTop: '28px' }}>
+                                <SubmitBtn type="button" disabled={loading || !homeVideoFile} onClick={uploadHomeVideo}>
+                                    {loading ? `Subiendo... ${homeVideoProgress}%` : 'SUBIR VIDEO'}
+                                </SubmitBtn>
+                            </FormActions>
                         </Form>
                     </>
                 )}

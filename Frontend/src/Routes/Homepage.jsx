@@ -8,10 +8,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Mousewheel, Pagination } from 'swiper';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
 SwiperCore.use([Mousewheel, Pagination]);
+
+const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
+
 const Homepage = () => {
     const Women = [
         {
@@ -88,7 +92,15 @@ const Homepage = () => {
     const [activeIndexs, setactiveIndex] = useState(0);
     const [indexNo, setIndex] = useState(0);
     const category = ['Women', 'Men', 'Kids'];
+    const [homeVideo, setHomeVideo] = useState('')
+
+    useEffect(() => {
+        axios.get(`${API}/settings`)
+            .then(r => setHomeVideo(r.data.heroVideo || ''))
+            .catch(() => {})
+    }, [])
     return (
+    <HomeWrap>
         <Container activeIndexs={activeIndexs}>
             <Navbar style={{ display: "none" }} activeIndexs={activeIndexs} setIndex={setIndex}/>
             <Swiper
@@ -132,7 +144,24 @@ const Homepage = () => {
                     }
                 </div>
             </Swiper>
-        </Container >
+        </Container>
+
+        {/* ── SECCIÓN ARTE ───────────────────────────────────────────── */}
+        {homeVideo && (
+            <ArtSection>
+                <ArtText>
+                    <ArtLabel>— Manifiesto</ArtLabel>
+                    <ArtHeadline>No somos una tienda,<br />somos arte.</ArtHeadline>
+                </ArtText>
+                <ArtVideoWrap>
+                    <video
+                        src={homeVideo}
+                        autoPlay loop muted playsInline
+                    />
+                </ArtVideoWrap>
+            </ArtSection>
+        )}
+    </HomeWrap>
     );
 }
 
@@ -243,5 +272,54 @@ const Container = styled.div`
 `
 
 
+
+const HomeWrap = styled.div`
+    display: flex;
+    flex-direction: column;
+`
+
+const ArtSection = styled.section`
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 24px 0;
+    gap: 0;
+`
+
+const ArtText = styled.div`
+    text-align: center;
+    margin-bottom: 48px;
+`
+
+const ArtLabel = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin: 0 0 20px;
+`
+
+const ArtHeadline = styled.h2`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #ffffff;
+    line-height: 1.15;
+    margin: 0;
+`
+
+const ArtVideoWrap = styled.div`
+    width: 100%;
+    max-width: 1000px;
+    video {
+        width: 100%;
+        display: block;
+        object-fit: cover;
+        max-height: 600px;
+    }
+`
 
 export default Homepage
