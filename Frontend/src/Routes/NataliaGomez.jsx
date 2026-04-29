@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getProduct } from '../Redux/App/action'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
+import AddCart from '../Components/Product-Page-Component/AddCart'
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
@@ -392,21 +393,41 @@ export default function ArtistPage() {
               Las prendas del look
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-              {artist.shopProducts.map((p, i) => (
-                <div key={i} className="group cursor-pointer">
-                  <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
-                    {p.image && (
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-800 group-hover:scale-105"
-                      />
-                    )}
+              {artist.shopProducts.map((p, i) => {
+                // Formateamos el producto para que sea compatible con el sistema de carrito existente
+                const cartData = {
+                  producttitle: p.name,
+                  image:        p.image,
+                  price:        p.price,
+                  pricenum:     parseFloat(p.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
+                  quantity:     1,
+                  color:        '',
+                  id:           `shop-${i}`,
+                }
+                return (
+                  <div key={i} className="group">
+                    {/* Imagen */}
+                    <div className="relative overflow-hidden bg-mist mb-3" style={{ paddingBottom: '130%' }}>
+                      {p.image && (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-800 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    {/* Info + botón carrito */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate">{p.name}</p>
+                        <p className="font-serif text-sm text-ash">{p.price}</p>
+                      </div>
+                      {/* Mismo componente AddCart que usa el resto de la web */}
+                      <AddCart data={cartData} />
+                    </div>
                   </div>
-                  <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed">{p.name}</p>
-                  <p className="font-serif text-sm text-ash">{p.price}</p>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
