@@ -111,7 +111,7 @@ artistRouter.put("/content/update", artistAuth, async (req, res) => {
                 landscapeQuote,
                 footerLabel,    footerWord,
             }},
-            { new: true }
+            { new: true, strict: false }
         ).select("-password")
         res.json({ msg: "Contenido actualizado", artist })
     } catch (err) {
