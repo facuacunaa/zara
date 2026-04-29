@@ -4,14 +4,12 @@ import styled from 'styled-components'
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
-/* ── Etiquetas de los 6 slots de imágenes ─────────────────────────────────── */
+/* ── Etiquetas de los slots de imágenes ───────────────────────────────────── */
 const IMAGE_SLOTS = [
-  { label: 'Portrait izquierda',   hint: 'Sección 3 – columna izquierda (grande)' },
-  { label: 'Portrait derecha sup', hint: 'Sección 3 – columna derecha arriba'     },
-  { label: 'Full width 1',         hint: 'Sección 4 – imagen de ancho completo'   },
-  { label: 'Full width 2',         hint: 'Sección 5 – imagen 2/3 ancho'           },
-  { label: 'Portrait derecha inf', hint: 'Sección 5 – columna derecha arriba'     },
-  { label: 'Landscape',            hint: 'Sección 7 – imagen de paisaje'           },
+  { label: 'Imagen hero',           hint: 'Aparece de fondo en el hero si no hay video' },
+  { label: 'Imagen junto al texto', hint: 'Sección 3 – imagen a la derecha del texto'   },
+  { label: 'Imagen par izquierda',  hint: 'Sección 4 – primera imagen lado a lado'      },
+  { label: 'Imagen par derecha',    hint: 'Sección 4 – segunda imagen lado a lado'      },
 ]
 
 /* ── Estado inicial de textos ─────────────────────────────────────────────── */
@@ -20,14 +18,10 @@ const EMPTY_TEXTS = {
   editorialLabel:        '',
   editorialQuote:        '',
   editorialDescription:  '',
-  section1Label:         '',
-  section1Headline:      '',
-  section1Body:          '',
-  section2Label:         '',
-  section2Quote:         '',
+  blockTitle:            '',
+  blockBody:             '',
   shopTitle:             '',
   shopDescription:       '',
-  landscapeQuote:        '',
   footerLabel:           '',
   footerWord:            '',
 }
@@ -75,14 +69,10 @@ export default function ArtistPortal() {
       editorialLabel:       artist.editorialLabel       || '',
       editorialQuote:       artist.editorialQuote       || '',
       editorialDescription: artist.editorialDescription || '',
-      section1Label:        artist.section1Label        || '',
-      section1Headline:     artist.section1Headline     || '',
-      section1Body:         artist.section1Body         || '',
-      section2Label:        artist.section2Label        || '',
-      section2Quote:        artist.section2Quote        || '',
+      blockTitle:           artist.blockTitle           || '',
+      blockBody:            artist.blockBody            || '',
       shopTitle:            artist.shopTitle            || '',
       shopDescription:      artist.shopDescription      || '',
-      landscapeQuote:       artist.landscapeQuote       || '',
       footerLabel:          artist.footerLabel          || '',
       footerWord:           artist.footerWord           || '',
     })
@@ -417,9 +407,10 @@ export default function ArtistPortal() {
               {/* ── Hero ── */}
               <Section>
                 <SectionTitle>Hero</SectionTitle>
+                <SectionSub>Texto que aparece sobre el nombre en la pantalla de inicio.</SectionSub>
                 <InfoGrid>
                   <InfoGroup full>
-                    <InfoLabel>Subtítulo del hero</InfoLabel>
+                    <InfoLabel>Subtítulo</InfoLabel>
                     <InfoInput value={texts.subtitle}
                       onChange={e => setTexts({...texts, subtitle: e.target.value})}
                       placeholder="COLECCIÓN EXCLUSIVA · 2024" />
@@ -427,24 +418,25 @@ export default function ArtistPortal() {
                 </InfoGrid>
               </Section>
 
-              {/* ── Sección 2: Statement editorial ── */}
+              {/* ── Statement ── */}
               <Section>
-                <SectionTitle>Sección 2 — Statement editorial</SectionTitle>
+                <SectionTitle>Frase editorial</SectionTitle>
+                <SectionSub>Aparece centrada debajo del hero. Si dejás vacío, no se muestra.</SectionSub>
                 <InfoGrid>
                   <InfoGroup>
-                    <InfoLabel>Etiqueta (ej: — La colección)</InfoLabel>
+                    <InfoLabel>Etiqueta pequeña (ej: — La colección)</InfoLabel>
                     <InfoInput value={texts.editorialLabel}
                       onChange={e => setTexts({...texts, editorialLabel: e.target.value})}
                       placeholder="— La colección" />
                   </InfoGroup>
                   <InfoGroup full>
-                    <InfoLabel>Frase principal (entre comillas)</InfoLabel>
+                    <InfoLabel>Frase principal</InfoLabel>
                     <InfoTextarea value={texts.editorialQuote}
                       onChange={e => setTexts({...texts, editorialQuote: e.target.value})}
-                      placeholder={`"Una conversación entre la forma y el silencio que la rodea."`} rows={3} />
+                      placeholder={`"Una conversación entre la forma y el silencio."`} rows={3} />
                   </InfoGroup>
                   <InfoGroup full>
-                    <InfoLabel>Descripción (texto pequeño debajo)</InfoLabel>
+                    <InfoLabel>Descripción (texto chico debajo)</InfoLabel>
                     <InfoTextarea value={texts.editorialDescription}
                       onChange={e => setTexts({...texts, editorialDescription: e.target.value})}
                       placeholder="Tejidos naturales. Siluetas sin género…" rows={2} />
@@ -452,78 +444,42 @@ export default function ArtistPortal() {
                 </InfoGrid>
               </Section>
 
-              {/* ── Sección 3: Grid asimétrico I ── */}
+              {/* ── Bloque Texto + Imagen ── */}
               <Section>
-                <SectionTitle>Sección 3 — Grid asimétrico (texto inferior derecha)</SectionTitle>
+                <SectionTitle>Texto junto a la imagen</SectionTitle>
+                <SectionSub>Este texto aparece a la izquierda, con la "Imagen junto al texto" a la derecha.</SectionSub>
                 <InfoGrid>
-                  <InfoGroup>
-                    <InfoLabel>Etiqueta (ej: 01 / Estructura)</InfoLabel>
-                    <InfoInput value={texts.section1Label}
-                      onChange={e => setTexts({...texts, section1Label: e.target.value})}
-                      placeholder="01 / Estructura" />
-                  </InfoGroup>
-                  <InfoGroup>
-                    <InfoLabel>Titular</InfoLabel>
-                    <InfoInput value={texts.section1Headline}
-                      onChange={e => setTexts({...texts, section1Headline: e.target.value})}
+                  <InfoGroup full>
+                    <InfoLabel>Título (itálica grande)</InfoLabel>
+                    <InfoInput value={texts.blockTitle}
+                      onChange={e => setTexts({...texts, blockTitle: e.target.value})}
                       placeholder="El cuerpo como arquitectura." />
                   </InfoGroup>
                   <InfoGroup full>
-                    <InfoLabel>Cuerpo de texto (podés usar salto de línea)</InfoLabel>
-                    <InfoTextarea value={texts.section1Body}
-                      onChange={e => setTexts({...texts, section1Body: e.target.value})}
-                      placeholder={"Cada costura es una decisión.\nCada doblez, una intención."} rows={3} />
+                    <InfoLabel>Párrafo de texto</InfoLabel>
+                    <InfoTextarea value={texts.blockBody}
+                      onChange={e => setTexts({...texts, blockBody: e.target.value})}
+                      placeholder={"Cada costura es una decisión.\nCada doblez, una intención."} rows={5} />
                   </InfoGroup>
                 </InfoGrid>
               </Section>
 
-              {/* ── Sección 4: Full width + pullquote ── */}
+              {/* ── Productos ── */}
               <Section>
-                <SectionTitle>Sección 4 — Pullquote sobre imagen</SectionTitle>
-                <InfoGrid>
-                  <InfoGroup>
-                    <InfoLabel>Etiqueta (ej: 02 / Movimiento)</InfoLabel>
-                    <InfoInput value={texts.section2Label}
-                      onChange={e => setTexts({...texts, section2Label: e.target.value})}
-                      placeholder="02 / Movimiento" />
-                  </InfoGroup>
-                  <InfoGroup full>
-                    <InfoLabel>Cita / quote</InfoLabel>
-                    <InfoTextarea value={texts.section2Quote}
-                      onChange={e => setTexts({...texts, section2Quote: e.target.value})}
-                      placeholder={`"Nada se impone.\nTodo fluye."`} rows={2} />
-                  </InfoGroup>
-                </InfoGrid>
-              </Section>
-
-              {/* ── Sección 6: Shop the Look (textos) ── */}
-              <Section>
-                <SectionTitle>Sección 6 — Shop the Look (texto del panel)</SectionTitle>
+                <SectionTitle>Sección de productos</SectionTitle>
+                <SectionSub>Encabezado que aparece arriba del grid de todos los productos.</SectionSub>
                 <InfoGrid>
                   <InfoGroup full>
-                    <InfoLabel>Título</InfoLabel>
+                    <InfoLabel>Título de la sección</InfoLabel>
                     <InfoInput value={texts.shopTitle}
                       onChange={e => setTexts({...texts, shopTitle: e.target.value})}
-                      placeholder="Vestite la historia." />
+                      placeholder="La Colección" />
                   </InfoGroup>
                   <InfoGroup full>
                     <InfoLabel>Descripción</InfoLabel>
                     <InfoTextarea value={texts.shopDescription}
                       onChange={e => setTexts({...texts, shopDescription: e.target.value})}
-                      placeholder="Cada punto sobre la imagen es una prenda…" rows={2} />
-                  </InfoGroup>
-                </InfoGrid>
-              </Section>
-
-              {/* ── Sección 7: Landscape quote ── */}
-              <Section>
-                <SectionTitle>Sección 7 — Cita sobre imagen landscape</SectionTitle>
-                <InfoGrid>
-                  <InfoGroup full>
-                    <InfoLabel>Frase (podés usar salto de línea)</InfoLabel>
-                    <InfoTextarea value={texts.landscapeQuote}
-                      onChange={e => setTexts({...texts, landscapeQuote: e.target.value})}
-                      placeholder={`"La elegancia es\nuna forma de decir adiós."`} rows={2} />
+                      placeholder="Explorá cada prenda de la colección." rows={2} />
                   </InfoGroup>
                 </InfoGrid>
               </Section>

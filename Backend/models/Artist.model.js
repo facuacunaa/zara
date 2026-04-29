@@ -29,6 +29,10 @@ const artistSchema = mongoose.Schema({
     editorialQuote:       { type: String, default: "" },
     editorialDescription: { type: String, default: "" },
 
+    // ── BLOQUE: Texto + Imagen lado a lado ───────────────────────────────────
+    blockTitle: { type: String, default: "" },
+    blockBody:  { type: String, default: "" },
+
     // ── SECCIÓN 3: Grid asimétrico I (texto) ──────────────────────────────
     section1Label:    { type: String, default: "01 / Estructura" },
     section1Headline: { type: String, default: "" },
