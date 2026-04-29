@@ -18,7 +18,7 @@ app.use(cors())
 app.use(express.json())
 
 app.get("/", (req, res) => {
-    res.send("Welcome")
+    res.json({ msg: "Welcome", version: "v2-with-bio-fields" })
 })
 
 app.post("/signup", async (req, res) => {

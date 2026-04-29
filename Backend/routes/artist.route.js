@@ -76,7 +76,7 @@ artistRouter.get("/", async (req, res) => {
 // ── OBTENER ARTISTA (público) ──────────────────────────────────────────────
 artistRouter.get("/:slug", async (req, res) => {
     try {
-        const artist = await ArtistModel.findOne({ slug: req.params.slug }).select("-password")
+        const artist = await ArtistModel.findOne({ slug: req.params.slug }).select("-password").lean()
         if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
         res.json(artist)
     } catch (err) {

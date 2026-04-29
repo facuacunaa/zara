@@ -66,7 +66,7 @@ const artistSchema = mongoose.Schema({
     // [0]=grid1-izq  [1]=grid1-der  [2]=wide1  [3]=wide2  [4]=grid2-der  [5]=landscape
     images: [{ type: String }],
 
-}, { timestamps: true })
+}, { timestamps: true, strict: false })
 
 const ArtistModel = mongoose.model("artist", artistSchema)
 module.exports = { ArtistModel }
