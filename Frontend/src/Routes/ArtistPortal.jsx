@@ -18,6 +18,10 @@ const EMPTY_TEXTS = {
   editorialLabel:        '',
   editorialQuote:        '',
   editorialDescription:  '',
+  bioTitle:              '',
+  bioText:               '',
+  bioGoals:              '',
+  bioQuote:              '',
   blockTitle:            '',
   blockBody:             '',
   shopTitle:             '',
@@ -69,6 +73,10 @@ export default function ArtistPortal() {
       editorialLabel:       artist.editorialLabel       || '',
       editorialQuote:       artist.editorialQuote       || '',
       editorialDescription: artist.editorialDescription || '',
+      bioTitle:             artist.bioTitle             || '',
+      bioText:              artist.bioText              || '',
+      bioGoals:             artist.bioGoals             || '',
+      bioQuote:             artist.bioQuote             || '',
       blockTitle:           artist.blockTitle           || '',
       blockBody:            artist.blockBody            || '',
       shopTitle:            artist.shopTitle            || '',
@@ -268,10 +276,11 @@ export default function ArtistPortal() {
         <SideName>{artist.name}</SideName>
         <SideSlug>/{artist.slug}</SideSlug>
         <SideNav>
-          <SideItem active={tab === 'hero'}   onClick={() => setTab('hero')}>🎬 Hero</SideItem>
+          <SideItem active={tab === 'hero'}    onClick={() => setTab('hero')}>🎬 Hero</SideItem>
+          <SideItem active={tab === 'bio'}    onClick={() => setTab('bio')}>📖 Mi Historia</SideItem>
           <SideItem active={tab === 'images'} onClick={() => setTab('images')}>🖼️ Imágenes</SideItem>
           <SideItem active={tab === 'texts'}  onClick={() => setTab('texts')}>✏️ Textos</SideItem>
-          <SideItem active={tab === 'shop'}   onClick={() => setTab('shop')}>🛍️ Shop the Look</SideItem>
+          <SideItem active={tab === 'shop'}   onClick={() => setTab('shop')}>🛍️ Productos</SideItem>
         </SideNav>
         <PreviewLink href={`/${artist.slug}`} target="_blank">Ver página ↗</PreviewLink>
         <LogoutBtn onClick={logout}>Cerrar sesión</LogoutBtn>
@@ -343,6 +352,73 @@ export default function ArtistPortal() {
                 {loading ? 'Guardando…' : 'GUARDAR SUBTÍTULO'}
               </SaveBtn>
             </Section>
+          </>
+        )}
+
+        {/* ══════════════════════ TAB: HISTORIA ══════════════════════════ */}
+        {tab === 'bio' && (
+          <>
+            <PageTitle>Mi Historia</PageTitle>
+            <form onSubmit={saveTexts}>
+
+              <Section>
+                <SectionTitle>Título de la sección</SectionTitle>
+                <SectionSub>Aparece como etiqueta pequeña antes de tu historia. Por defecto: "Mi historia"</SectionSub>
+                <InfoGroup full>
+                  <InfoLabel>Título (ej: Mi historia · Sobre mí · Quién soy)</InfoLabel>
+                  <InfoInput
+                    value={texts.bioTitle}
+                    onChange={e => setTexts({...texts, bioTitle: e.target.value})}
+                    placeholder="Mi historia"
+                  />
+                </InfoGroup>
+              </Section>
+
+              <Section>
+                <SectionTitle>Tu historia</SectionTitle>
+                <SectionSub>Contá quién sos, de dónde venís, qué te llevó a la moda y al arte.</SectionSub>
+                <InfoGroup full>
+                  <InfoLabel>Texto libre (podés usar saltos de línea)</InfoLabel>
+                  <InfoTextarea
+                    value={texts.bioText}
+                    onChange={e => setTexts({...texts, bioText: e.target.value})}
+                    placeholder={"Nací en Buenos Aires y desde pequeña sentí que la ropa era más que tela.\nEmpecé diseñando para mis amigas con telas que encontraba en los mercados del Once…"}
+                    rows={8}
+                  />
+                </InfoGroup>
+              </Section>
+
+              <Section>
+                <SectionTitle>Tus metas y lo que intentás retratar</SectionTitle>
+                <SectionSub>Contá cuál es tu visión, qué emoción o mensaje querés transmitir con cada colección.</SectionSub>
+                <InfoGroup full>
+                  <InfoLabel>Metas y visión</InfoLabel>
+                  <InfoTextarea
+                    value={texts.bioGoals}
+                    onChange={e => setTexts({...texts, bioGoals: e.target.value})}
+                    placeholder={"Mi meta es que cada prenda sea una conversación entre quien la lleva y el mundo.\nIntento retratar la identidad latinoamericana sin filtros — cruda, vibrante y en movimiento."}
+                    rows={6}
+                  />
+                </InfoGroup>
+              </Section>
+
+              <Section>
+                <SectionTitle>Tu frase personal</SectionTitle>
+                <SectionSub>Una cita tuya que defina tu filosofía. Aparece destacada al final de tu historia.</SectionSub>
+                <InfoGroup full>
+                  <InfoLabel>Frase (sin comillas, las agrega automático)</InfoLabel>
+                  <InfoInput
+                    value={texts.bioQuote}
+                    onChange={e => setTexts({...texts, bioQuote: e.target.value})}
+                    placeholder="La moda es política cuando la lleva quien quiere cambiar el mundo."
+                  />
+                </InfoGroup>
+              </Section>
+
+              <SaveBtn type="submit" disabled={loading}>
+                {loading ? 'Guardando…' : 'GUARDAR HISTORIA'}
+              </SaveBtn>
+            </form>
           </>
         )}
 

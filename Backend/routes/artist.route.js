@@ -89,6 +89,7 @@ artistRouter.put("/content/update", artistAuth, async (req, res) => {
     const {
         subtitle,
         editorialLabel, editorialQuote, editorialDescription,
+        bioTitle, bioText, bioGoals, bioQuote,
         blockTitle,     blockBody,
         section1Label,  section1Headline, section1Body,
         section2Label,  section2Quote,
@@ -102,6 +103,7 @@ artistRouter.put("/content/update", artistAuth, async (req, res) => {
             {
                 subtitle,
                 editorialLabel, editorialQuote, editorialDescription,
+                bioTitle, bioText, bioGoals, bioQuote,
                 blockTitle,     blockBody,
                 section1Label,  section1Headline, section1Body,
                 section2Label,  section2Quote,

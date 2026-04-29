@@ -29,6 +29,12 @@ const artistSchema = mongoose.Schema({
     editorialQuote:       { type: String, default: "" },
     editorialDescription: { type: String, default: "" },
 
+    // ── HISTORIA DEL ARTISTA ──────────────────────────────────────────────────
+    bioTitle:  { type: String, default: "" },   // ej: "Mi historia"
+    bioText:   { type: String, default: "" },   // párrafo largo — quién soy
+    bioGoals:  { type: String, default: "" },   // mis metas / lo que intento
+    bioQuote:  { type: String, default: "" },   // frase personal / firma
+
     // ── BLOQUE: Texto + Imagen lado a lado ───────────────────────────────────
     blockTitle: { type: String, default: "" },
     blockBody:  { type: String, default: "" },

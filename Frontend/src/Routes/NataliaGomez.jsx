@@ -164,7 +164,52 @@ export default function ArtistPage() {
         </div>
       </section>
 
-      {/* ── 2. STATEMENT EDITORIAL ──────────────────────────────────────── */}
+      {/* ── 2. HISTORIA DEL ARTISTA ─────────────────────────────────────── */}
+      {(g('bioText') || g('bioGoals') || g('bioQuote')) && (
+        <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto">
+          {/* Encabezado */}
+          <p className="font-sans text-[8px] tracking-widest3 uppercase text-ash mb-10">
+            — {g('bioTitle') || 'Mi historia'}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+            {/* Columna izquierda: historia */}
+            {g('bioText') && (
+              <div>
+                <p className="font-sans text-[13px] text-ink leading-[2] tracking-wide whitespace-pre-line">
+                  {g('bioText')}
+                </p>
+              </div>
+            )}
+
+            {/* Columna derecha: metas + quote */}
+            <div className="flex flex-col gap-10">
+              {g('bioGoals') && (
+                <div>
+                  <p className="font-sans text-[8px] tracking-widest3 uppercase text-ash mb-4">
+                    Lo que intento retratar
+                  </p>
+                  <p className="font-sans text-[13px] text-ash leading-[2] tracking-wide whitespace-pre-line">
+                    {g('bioGoals')}
+                  </p>
+                </div>
+              )}
+              {g('bioQuote') && (
+                <blockquote className="border-l-2 border-ink pl-6">
+                  <p className="font-serif text-xl md:text-2xl font-light italic text-ink leading-snug">
+                    "{g('bioQuote')}"
+                  </p>
+                  <footer className="mt-4 font-sans text-[9px] tracking-widest2 uppercase text-ash">
+                    — {artist.name}
+                  </footer>
+                </blockquote>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 3. STATEMENT EDITORIAL ──────────────────────────────────────── */}
       {(g('editorialQuote') || g('editorialDescription')) && (
         <section className="py-24 px-8 text-center max-w-3xl mx-auto">
           {g('editorialLabel') && (
