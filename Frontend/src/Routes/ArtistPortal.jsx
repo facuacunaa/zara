@@ -111,11 +111,16 @@ export default function ArtistPortal() {
   }
 
   /* ── Refresh artista ─────────────────────────────────────────────────── */
+  /* Actualiza el estado del artista desde un objeto ya recibido */
+  const applyArtist = (data) => {
+    setArtist(data)
+    localStorage.setItem('artistData', JSON.stringify(data))
+  }
+
   const refreshArtist = async () => {
     try {
       const res = await axios.get(`${API}/artist/${artist.slug}`)
-      setArtist(res.data)
-      localStorage.setItem('artistData', JSON.stringify(res.data))
+      applyArtist(res.data)
     } catch {}
   }
 
@@ -128,11 +133,11 @@ export default function ArtistPortal() {
     const form = new FormData()
     form.append('video', file)
     try {
-      await axios.post(`${API}/artist/video/upload`, form, {
+      const res = await axios.post(`${API}/artist/video/upload`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setVideoProgress(Math.round((e.loaded * 100) / e.total))
       })
-      await refreshArtist()
+      if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Video subido correctamente')
     } catch {
       flash('❌ Error al subir el video')
@@ -148,11 +153,11 @@ export default function ArtistPortal() {
     const form = new FormData()
     form.append('image', file)
     try {
-      await axios.post(`${API}/artist/images/slot/${slot}`, form, {
+      const res = await axios.post(`${API}/artist/images/slot/${slot}`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setSlotProgress(p => ({ ...p, [slot]: Math.round((e.loaded * 100) / e.total) }))
       })
-      await refreshArtist()
+      if (res.data?.artist) applyArtist(res.data.artist)
       flash(`✅ Imagen ${slot + 1} actualizada`)
     } catch {
       flash('❌ Error al subir imagen')
@@ -168,11 +173,11 @@ export default function ArtistPortal() {
     const form = new FormData()
     form.append('image', file)
     try {
-      await axios.post(`${API}/artist/images/shop`, form, {
+      const res = await axios.post(`${API}/artist/images/shop`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setShopProgress(Math.round((e.loaded * 100) / e.total))
       })
-      await refreshArtist()
+      if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Imagen Shop the Look actualizada')
     } catch {
       flash('❌ Error al subir imagen')
@@ -184,8 +189,8 @@ export default function ArtistPortal() {
   const saveTexts = async (e) => {
     e.preventDefault(); setLoading(true)
     try {
-      await axios.put(`${API}/artist/content/update`, texts, { headers })
-      await refreshArtist()
+      const res = await axios.put(`${API}/artist/content/update`, texts, { headers })
+      if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Textos guardados')
     } catch { flash('❌ Error al guardar') }
     setLoading(false)
@@ -201,11 +206,11 @@ export default function ArtistPortal() {
     form.append('name',  newProduct.name)
     form.append('price', newProduct.price)
     try {
-      await axios.post(`${API}/artist/shop-products`, form, {
+      const res = await axios.post(`${API}/artist/shop-products`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setProductProgress(Math.round((e.loaded * 100) / e.total))
       })
-      await refreshArtist()
+      if (res.data?.artist) applyArtist(res.data.artist)
       setNewProduct({ name: '', price: '', file: null, preview: null })
       flash('✅ Producto agregado')
     } catch {
@@ -218,8 +223,8 @@ export default function ArtistPortal() {
   const deleteShopProduct = async (idx) => {
     if (!window.confirm('¿Eliminar este producto?')) return
     try {
-      await axios.delete(`${API}/artist/shop-products/${idx}`, { headers })
-      await refreshArtist()
+      const res = await axios.delete(`${API}/artist/shop-products/${idx}`, { headers })
+      if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Producto eliminado')
     } catch { flash('❌ Error al eliminar') }
   }
@@ -228,8 +233,8 @@ export default function ArtistPortal() {
   const saveHotspots = async () => {
     setLoading(true)
     try {
-      await axios.put(`${API}/artist/hotspots`, { hotspots }, { headers })
-      await refreshArtist()
+      const res = await axios.put(`${API}/artist/hotspots`, { hotspots }, { headers })
+      if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Hotspots guardados')
     } catch { flash('❌ Error al guardar hotspots') }
     setLoading(false)
@@ -342,8 +347,8 @@ export default function ArtistPortal() {
                 onClick={async () => {
                   setLoading(true)
                   try {
-                    await axios.put(`${API}/artist/content/update`, { ...texts }, { headers })
-                    await refreshArtist()
+                    const r = await axios.put(`${API}/artist/content/update`, { ...texts }, { headers })
+                    if (r.data?.artist) applyArtist(r.data.artist)
                     flash('✅ Subtítulo guardado')
                   } catch { flash('❌ Error al guardar') }
                   setLoading(false)
