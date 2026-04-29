@@ -82,10 +82,14 @@ const Navbar = ({ activeIndexs }) => {
         ? (scrolled ? 'white' : 'transparent')
         : (location.pathname === '/' ? 'transparent' : 'white')
 
-    const iconColor = needsTransparency && !scrolled ? 'white' : theme
-    const navBg     = needsTransparency
-        ? (scrolled ? 'white' : 'transparent')
-        : (onHomePage ? 'transparent' : 'white')
+    // Homepage: siempre transparente, íconos blancos, sin cambio al scroll
+    // Artista: transparente arriba → blanco al bajar
+    const iconColor = (onHomePage || (onArtistPage && !scrolled)) ? 'white' : theme
+    const navBg     = onHomePage
+        ? 'transparent'
+        : onArtistPage
+            ? (scrolled ? 'white' : 'transparent')
+            : 'white'
 
     return (
         <>
