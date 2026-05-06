@@ -20,6 +20,9 @@ const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.ap
 const Homepage = () => {
     const Women = [
         {
+            video: 'https://videos.pexels.com/video-files/6214486/6214486-hd_1920_1080_25fps.mp4'
+        },
+        {
             path: 'women1',
             img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-woman-new/subhome-xmedia-38-3//w/1922/IMAGE-landscape-default-fill-3826ba34-9fad-4264-9ecd-6d2bc9295d9c-default_0.jpg?ts=1663773455159'
         },
