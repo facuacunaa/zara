@@ -158,6 +158,24 @@ const Homepage = () => {
                 </Swiper>
             </Container>
 
+            {/* ── SPACER HERO ────────────────────────────────────────── */}
+            <HeroSpacer />
+
+            {/* ── CARRUSEL DE ARTISTAS ───────────────────────────────── */}
+            {artists.length > 0 && (
+                <ArtistsTicker>
+                    <ArtistsTrack>
+                        {/* duplicamos dos veces para el loop continuo */}
+                        {[...artists, ...artists, ...artists].map((a, i) => (
+                            <ArtistsTickerItem key={i}>
+                                <Link to={`/${a.slug}`}>{a.name.toUpperCase()}</Link>
+                                <ArtistsTickerDot>·</ArtistsTickerDot>
+                            </ArtistsTickerItem>
+                        ))}
+                    </ArtistsTrack>
+                </ArtistsTicker>
+            )}
+
             {/* ── SECCIÓN ARTE / MANIFIESTO ──────────────────────────── */}
             {homeVideo && (
                 <ArtSection>
@@ -348,6 +366,63 @@ const Container = styled.div`
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO SPACER
+═══════════════════════════════════════════════════════════════ */
+const HeroSpacer = styled.div`
+    height: 100vh;
+    pointer-events: none;
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   TICKER DE ARTISTAS
+═══════════════════════════════════════════════════════════════ */
+const ArtistsTicker = styled.div`
+    background: #0a0a0a;
+    overflow: hidden;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+`
+
+const ArtistsTrack = styled.div`
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: tickerScroll 22s linear infinite;
+
+    @keyframes tickerScroll {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-33.333%); }
+    }
+
+    &:hover { animation-play-state: paused; }
+`
+
+const ArtistsTickerItem = styled.span`
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+
+    a {
+        font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.45em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.45);
+        text-decoration: none;
+        transition: color 0.25s;
+        &:hover { color: #fff; }
+    }
+`
+
+const ArtistsTickerDot = styled.span`
+    font-size: 16px;
+    color: rgba(255,255,255,0.15);
+    margin: 0 20px;
+    line-height: 1;
 `
 
 /* ═══════════════════════════════════════════════════════════════
