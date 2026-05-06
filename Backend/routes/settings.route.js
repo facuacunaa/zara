@@ -39,6 +39,20 @@ settingsRouter.post("/home-video", adminAuth, uploadVideo.single("video"), async
     }
 })
 
+// ── ELIMINAR VIDEO HERO DEL HOME (solo admin) ────────────────────────────
+settingsRouter.delete("/home-video", adminAuth, async (req, res) => {
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { heroVideo: "" },
+            { new: true, upsert: true }
+        )
+        res.json({ msg: "Video eliminado", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error eliminando video", error: err.message })
+    }
+})
+
 // ── SUBIR IMAGEN EDITORIAL (solo admin) ──────────────────────────────────
 settingsRouter.post("/editorial-image/:slot", adminAuth, async (req, res) => {
     const slot = req.params.slot // '1' o '2'

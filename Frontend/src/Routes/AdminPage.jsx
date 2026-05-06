@@ -98,6 +98,21 @@ const AdminPage = () => {
         setTimeout(() => setMsg(''), 4000)
     }
 
+    // ── Delete home video ───────────────────────────────────────────────────
+    const deleteHomeVideo = async () => {
+        if (!window.confirm('¿Eliminar el video del inicio?')) return
+        setLoading(true); setMsg('')
+        try {
+            await axios.delete(`${API}/settings/home-video`, { headers })
+            setHomeVideo('')
+            setMsg('✅ Video eliminado')
+        } catch {
+            setMsg('❌ Error eliminando video')
+        }
+        setLoading(false)
+        setTimeout(() => setMsg(''), 4000)
+    }
+
     // ── Login ───────────────────────────────────────────────────────────────
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -384,6 +399,14 @@ const AdminPage = () => {
                                         src={homeVideo} controls muted
                                         style={{ width: '100%', maxWidth: '560px', maxHeight: '315px', objectFit: 'cover', display: 'block', background: '#000' }}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={deleteHomeVideo}
+                                        disabled={loading}
+                                        style={{ marginTop: '12px', background: 'none', border: '1px solid #ccc', padding: '6px 16px', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', color: '#c00' }}
+                                    >
+                                        Eliminar video
+                                    </button>
                                 </div>
                             )}
 
