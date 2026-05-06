@@ -28,6 +28,7 @@ const AdminPage = () => {
     const [homeVideo, setHomeVideo] = useState('')
     const [homeVideoFile, setHomeVideoFile] = useState(null)
     const [homeVideoProgress, setHomeVideoProgress] = useState(0)
+    const [heroVideoText, setHeroVideoText] = useState('')
     const homeVideoRef = React.useRef()
     const [editorial, setEditorial] = useState({ editorialLabel: '', editorialQuote: '', editorialBody: '', editorialCta: '' })
     const [editorialImg1, setEditorialImg1] = useState('')
@@ -61,6 +62,7 @@ const AdminPage = () => {
         try {
             const res = await axios.get(`${API}/settings`)
             setHomeVideo(res.data.heroVideo || '')
+            setHeroVideoText(res.data.heroVideoText || '')
             setEditorial({
                 editorialLabel: res.data.editorialLabel || '',
                 editorialQuote: res.data.editorialQuote || '',
@@ -95,6 +97,19 @@ const AdminPage = () => {
             setMsg('❌ Error subiendo video')
         }
         setLoading(false); setHomeVideoProgress(0)
+        setTimeout(() => setMsg(''), 4000)
+    }
+
+    // ── Save hero video text ────────────────────────────────────────────────
+    const saveHeroVideoText = async () => {
+        setLoading(true); setMsg('')
+        try {
+            await axios.put(`${API}/settings/hero-video-text`, { heroVideoText }, { headers })
+            setMsg('✅ Texto guardado')
+        } catch {
+            setMsg('❌ Error guardando texto')
+        }
+        setLoading(false)
         setTimeout(() => setMsg(''), 4000)
     }
 
@@ -409,6 +424,21 @@ const AdminPage = () => {
                                     </button>
                                 </div>
                             )}
+
+                            {/* Texto sobre el video */}
+                            <FormGroup style={{ maxWidth: '480px', marginBottom: '28px' }}>
+                                <label>Texto sobre el video</label>
+                                <textarea
+                                    rows={3}
+                                    value={heroVideoText}
+                                    onChange={e => setHeroVideoText(e.target.value)}
+                                    placeholder="Escribí el texto que aparecerá encima del video..."
+                                    style={{ width: '100%', border: 'none', borderBottom: '1px solid #ddd', padding: '8px 0', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit', outline: 'none', background: 'transparent' }}
+                                />
+                                <SubmitBtn type="button" disabled={loading} onClick={saveHeroVideoText} style={{ marginTop: '12px' }}>
+                                    GUARDAR TEXTO
+                                </SubmitBtn>
+                            </FormGroup>
 
                             {/* Upload */}
                             <FormGroup style={{ maxWidth: '480px' }}>

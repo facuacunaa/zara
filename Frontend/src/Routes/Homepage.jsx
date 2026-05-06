@@ -97,6 +97,7 @@ const Homepage = () => {
     const [indexNo, setIndex] = useState(0);
     const category = ['Women', 'Men', 'Kids'];
     const [homeVideo, setHomeVideo] = useState('')
+    const [heroVideoText, setHeroVideoText] = useState('')
     const [editorial, setEditorial] = useState({})
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd, setSelectedProd] = useState(null)
@@ -112,6 +113,7 @@ const Homepage = () => {
         axios.get(`${API}/settings`)
             .then(r => {
                 setHomeVideo(r.data.heroVideo || '')
+                setHeroVideoText(r.data.heroVideoText || '')
                 setEditorial(r.data)
             })
             .catch(() => {})
@@ -140,12 +142,22 @@ const Homepage = () => {
                 >
                     {eval(category[indexNo])?.map((ele, index) => (
                         <SwiperSlide className="swiper-slide" key={index}>
-                            <Link to={`/products`} state={{ query: ele.path }}>
+                            <Link to={`/products`} state={{ query: ele.path }} style={{ display: 'block', position: 'relative', width: '100%', height: '100%' }}>
                                 {ele.img
                                     ? <img src={ele.img} alt={ele.img} className={`main${category[indexNo]}${index}`}/>
-                                    : <video autoPlay loop muted controls={ele.cat === 'kids' ? false : true}>
-                                        <source src={ele.video} type="video/mp4" />
-                                      </video>
+                                    : <>
+                                        <video autoPlay loop muted controls={ele.cat === 'kids' ? false : true} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}>
+                                            <source src={ele.video} type="video/mp4" />
+                                        </video>
+                                        {index === 0 && indexNo === 0 && heroVideoText && (
+                                            <>
+                                                <ArtGradient />
+                                                <ArtTextOverlay>
+                                                    <ArtHeadline>{heroVideoText}</ArtHeadline>
+                                                </ArtTextOverlay>
+                                            </>
+                                        )}
+                                      </>
                                 }
                             </Link>
                         </SwiperSlide>

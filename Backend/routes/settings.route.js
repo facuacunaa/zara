@@ -39,6 +39,21 @@ settingsRouter.post("/home-video", adminAuth, uploadVideo.single("video"), async
     }
 })
 
+// ── GUARDAR TEXTO SOBRE EL VIDEO HERO (solo admin) ───────────────────────
+settingsRouter.put("/hero-video-text", adminAuth, async (req, res) => {
+    const { heroVideoText } = req.body
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { $set: { heroVideoText: heroVideoText || "" } },
+            { new: true, upsert: true, strict: false }
+        )
+        res.json({ msg: "Texto actualizado", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── ELIMINAR VIDEO HERO DEL HOME (solo admin) ────────────────────────────
 settingsRouter.delete("/home-video", adminAuth, async (req, res) => {
     try {
