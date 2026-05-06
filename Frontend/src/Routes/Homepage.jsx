@@ -97,6 +97,13 @@ const Homepage = () => {
     const [editorial, setEditorial] = useState({})
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd, setSelectedProd] = useState(null)
+    const [artists, setArtists] = useState([])
+
+    useEffect(() => {
+        axios.get(`${API}/artist`)
+            .then(r => setArtists(r.data || []))
+            .catch(() => {})
+    }, [])
 
     useEffect(() => {
         axios.get(`${API}/settings`)
