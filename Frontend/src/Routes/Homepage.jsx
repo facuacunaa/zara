@@ -232,9 +232,9 @@ const Homepage = () => {
 
                     <ArtistsSectionTitle>La colección</ArtistsSectionTitle>
 
-                    <ArtistsGrid>
+                    <ArtistsRunway>
                         {artistProducts.map((p, i) => (
-                            <ArtistProductCard key={p._id || i} featured={i === 0} onClick={() => setSelectedProd(p)}>
+                            <ArtistProductCard key={p._id || i} onClick={() => setSelectedProd(p)}>
                                 <ArtistProductImg>
                                     {p.image
                                         ? <img src={p.image} alt={p.name} />
@@ -253,7 +253,7 @@ const Homepage = () => {
                                 </ArtistProductInfo>
                             </ArtistProductCard>
                         ))}
-                    </ArtistsGrid>
+                    </ArtistsRunway>
                 </ArtistsSection>
             )}
 
@@ -634,28 +634,38 @@ const ArtistsSectionTitle = styled.h2`
     letter-spacing: -0.02em;
 `
 
-const ArtistsGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+/* Pasillo horizontal con scroll */
+const ArtistsRunway = styled.div`
+    display: flex;
+    flex-direction: row;
     gap: 2px;
-    max-width: 1200px;
-    margin: 0 auto;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 24px;
+    cursor: grab;
+    &:active { cursor: grabbing; }
 
-    @media (min-width: 640px)  { grid-template-columns: repeat(3, 1fr); }
-    @media (min-width: 1024px) { grid-template-columns: repeat(4, 1fr); }
+    /* scrollbar discreta */
+    &::-webkit-scrollbar { height: 2px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+
+    /* fade en los bordes para sugerir que hay más */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
 `
 
 const ArtistProductCard = styled.div`
+    flex: 0 0 260px;
+    scroll-snap-align: start;
     cursor: pointer;
     background: #fff;
-    padding: 2px;
-
-    /* primer producto destacado: ocupa 2 columnas */
-    ${p => p.featured && `
-        grid-column: span 2;
-    `}
 
     &:hover img { transform: scale(1.04); }
+
+    @media (max-width: 640px) { flex: 0 0 200px; }
 `
 
 const ArtistProductImg = styled.div`
