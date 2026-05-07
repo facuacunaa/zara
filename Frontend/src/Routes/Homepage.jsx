@@ -181,7 +181,38 @@ const Homepage = () => {
             {/* ── SPACER HERO ────────────────────────────────────────── */}
             <HeroSpacer />
 
-            {/* ── CARRUSEL DE ARTISTAS ───────────────────────────────── */}
+            {/* ── ARTISTAS: PERFILES ─────────────────────────────────── */}
+            {artists.length > 0 && (
+                <ArtistsShowcase>
+                    <ArtistsShowcaseHeader>
+                        <ArtistsShowcaseEyebrow>— Nuestros artistas</ArtistsShowcaseEyebrow>
+                        <ArtistsShowcaseTitle>Conocé a quienes<br/>dan vida al arte</ArtistsShowcaseTitle>
+                    </ArtistsShowcaseHeader>
+                    <ArtistsGrid count={artists.length}>
+                        {artists.map(a => (
+                            <ArtistProfileCard key={a._id || a.slug}>
+                                <Link to={`/${a.slug}`}>
+                                    <ArtistCardMedia>
+                                        {a.heroImage
+                                            ? <img src={a.heroImage} alt={a.name} loading="lazy" />
+                                            : <ArtistCardPlaceholder>
+                                                <span>{a.name.charAt(0).toUpperCase()}</span>
+                                              </ArtistCardPlaceholder>
+                                        }
+                                        <ArtistCardGradient />
+                                    </ArtistCardMedia>
+                                    <ArtistCardInfo>
+                                        <ArtistCardName>{a.name}</ArtistCardName>
+                                        <ArtistCardCta>Ver perfil &nbsp;→</ArtistCardCta>
+                                    </ArtistCardInfo>
+                                </Link>
+                            </ArtistProfileCard>
+                        ))}
+                    </ArtistsGrid>
+                </ArtistsShowcase>
+            )}
+
+            {/* ── CARRUSEL DE ARTISTAS (ticker) ──────────────────────── */}
             {artists.length > 0 && (
                 <ArtistsTicker>
                     <ArtistsTrack>
@@ -394,6 +425,135 @@ const HomeWrap = styled.div`
 const HeroSpacer = styled.div`
     height: 100vh;
     pointer-events: none;
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   ARTISTAS: PERFILES
+═══════════════════════════════════════════════════════════════ */
+const ArtistsShowcase = styled.section`
+    background: #0a0a0a;
+    padding: 100px 40px 120px;
+
+    @media (max-width: 640px) { padding: 72px 20px 96px; }
+`
+
+const ArtistsShowcaseHeader = styled.div`
+    text-align: center;
+    margin-bottom: 64px;
+`
+
+const ArtistsShowcaseEyebrow = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin: 0 0 24px;
+`
+
+const ArtistsShowcaseTitle = styled.h2`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    line-height: 1.12;
+    margin: 0;
+    letter-spacing: -0.02em;
+`
+
+const ArtistsGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(${p => Math.min(p.count, 3)}, 1fr);
+    gap: 3px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 520px) { grid-template-columns: 1fr; }
+`
+
+const ArtistProfileCard = styled.div`
+    position: relative;
+    overflow: hidden;
+    background: #111;
+
+    a {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    &:hover img { transform: scale(1.06); }
+    &:hover div[data-cta] { letter-spacing: 0.5em; }
+`
+
+const ArtistCardMedia = styled.div`
+    position: relative;
+    padding-bottom: 125%;
+    overflow: hidden;
+    background: #1a1a1a;
+
+    img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+`
+
+const ArtistCardPlaceholder = styled.div`
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+
+    span {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(4rem, 12vw, 8rem);
+        font-weight: 300;
+        font-style: italic;
+        color: rgba(255,255,255,0.15);
+    }
+`
+
+const ArtistCardGradient = styled.div`
+    position: absolute; inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 30%,
+        rgba(0,0,0,0.75) 100%
+    );
+`
+
+const ArtistCardInfo = styled.div`
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 28px 24px;
+    z-index: 2;
+`
+
+const ArtistCardName = styled.p`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    margin: 0 0 10px;
+    line-height: 1.2;
+`
+
+const ArtistCardCta = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin: 0;
+    transition: letter-spacing 0.35s ease, color 0.3s;
+
+    ${ArtistProfileCard}:hover & {
+        color: #fff;
+    }
 `
 
 /* ═══════════════════════════════════════════════════════════════
