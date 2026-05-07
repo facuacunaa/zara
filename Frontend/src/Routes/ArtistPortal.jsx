@@ -124,20 +124,34 @@ export default function ArtistPortal() {
     } catch {}
   }
 
-  /* ── Subir video ─────────────────────────────────────────────────────── */
+  /* ── Subir video directo a Cloudinary (evita límite 4.5MB de Vercel) ── */
   const uploadVideo = async (file) => {
     if (!file) return
     if (!file.type.startsWith('video/')) return flash('❌ Seleccioná un archivo de video')
     if (file.size > 200 * 1024 * 1024) return flash('❌ El video supera 200MB')
     setLoading(true); setVideoProgress(0)
-    const form = new FormData()
-    form.append('video', file)
     try {
-      const res = await axios.post(`${API}/artist/video/upload`, form, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: e => setVideoProgress(Math.round((e.loaded * 100) / e.total))
-      })
-      if (res.data?.artist) applyArtist(res.data.artist)
+      // 1. Pedir firma al backend
+      const { data: sig } = await axios.get(`${API}/artist/video-signature`, { headers })
+
+      // 2. Subir directo a Cloudinary
+      const form = new FormData()
+      form.append('file', file)
+      form.append('api_key',   sig.api_key)
+      form.append('timestamp', sig.timestamp)
+      form.append('signature', sig.signature)
+      form.append('folder',    sig.folder)
+
+      const cdnRes = await axios.post(
+        `https://api.cloudinary.com/v1_1/${sig.cloud_name}/video/upload`,
+        form,
+        { onUploadProgress: e => setVideoProgress(Math.round((e.loaded * 100) / e.total)) }
+      )
+      const url = cdnRes.data.secure_url
+
+      // 3. Guardar URL en el backend
+      const save = await axios.post(`${API}/artist/video/save-url`, { url }, { headers })
+      if (save.data?.artist) applyArtist(save.data.artist)
       flash('✅ Video subido correctamente')
     } catch {
       flash('❌ Error al subir el video')

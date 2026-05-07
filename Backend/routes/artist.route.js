@@ -1,10 +1,11 @@
 const express    = require("express")
 const bcrypt     = require("bcrypt")
 const jwt        = require("jsonwebtoken")
+const crypto     = require("crypto")
 require("dotenv").config()
 const { connectDB }   = require("../config/db")
 const { ArtistModel } = require("../models/Artist.model")
-const { upload, uploadVideo } = require("../config/cloudinary")
+const { cloudinary, upload, uploadVideo } = require("../config/cloudinary")
 
 const artistRouter = express.Router()
 
@@ -157,6 +158,41 @@ artistRouter.post("/video/upload", artistAuth, uploadVideo.single("video"), asyn
         res.json({ msg: "Video subido", url, artist })
     } catch (err) {
         res.status(500).json({ msg: "Error subiendo video", error: err.message })
+    }
+})
+
+// ── FIRMA PARA UPLOAD DIRECTO A CLOUDINARY (evita límite 4.5MB de Vercel) ─
+artistRouter.get("/video-signature", artistAuth, (req, res) => {
+    try {
+        const timestamp = Math.round(Date.now() / 1000)
+        const folder    = "zara-artists/videos"
+        const paramsToSign = { folder, timestamp }
+        const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET)
+        res.json({
+            signature,
+            timestamp,
+            folder,
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key:    process.env.CLOUDINARY_API_KEY,
+        })
+    } catch (err) {
+        res.status(500).json({ msg: "Error generando firma", error: err.message })
+    }
+})
+
+// ── GUARDAR URL DE VIDEO (después de upload directo a Cloudinary) ──────────
+artistRouter.post("/video/save-url", artistAuth, async (req, res) => {
+    try {
+        const { url } = req.body
+        if (!url) return res.status(400).json({ msg: "URL requerida" })
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { heroVideo: url },
+            { new: true }
+        ).select("-password")
+        res.json({ msg: "Video guardado", url, artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error guardando URL", error: err.message })
     }
 })
 
