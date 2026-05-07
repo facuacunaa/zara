@@ -181,6 +181,44 @@ const Homepage = () => {
             {/* ── SPACER HERO ────────────────────────────────────────── */}
             <HeroSpacer />
 
+            {/* ── TIENDA: PRODUCTOS ──────────────────────────────────── */}
+            {artistProducts.length > 0 && (
+                <ShopSection>
+                    <ShopHeader>
+                        <ShopEyebrow>— Tienda</ShopEyebrow>
+                        <ShopTitle>La colección</ShopTitle>
+                        <ShopSubtitle>Obras originales de artistas chaqueños</ShopSubtitle>
+                    </ShopHeader>
+                    <ShopGrid>
+                        {artistProducts.map((p, i) => (
+                            <ShopCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                                <ShopCardMedia>
+                                    {p.image
+                                        ? <img src={p.image} alt={p.name} loading={i < 4 ? 'eager' : 'lazy'} />
+                                        : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
+                                    }
+                                    <ShopCardOverlay>
+                                        <ShopCardOverlayBtn>Agregar al carrito</ShopCardOverlayBtn>
+                                    </ShopCardOverlay>
+                                </ShopCardMedia>
+                                <ShopCardBody>
+                                    <ShopCardArtist>
+                                        <Link
+                                            to={`/${p.artistSlug}`}
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            {p.artistName}
+                                        </Link>
+                                    </ShopCardArtist>
+                                    <ShopCardName>{p.name}</ShopCardName>
+                                    <ShopCardPrice>{p.price}</ShopCardPrice>
+                                </ShopCardBody>
+                            </ShopCard>
+                        ))}
+                    </ShopGrid>
+                </ShopSection>
+            )}
+
             {/* ── ARTISTAS: PERFILES ─────────────────────────────────── */}
             {artists.length > 0 && (
                 <ArtistsShowcase>
@@ -288,42 +326,6 @@ const Homepage = () => {
                         )}
                     </EditorialLayout>
                 </EditorialSection>
-            )}
-
-            {/* ── PRODUCTOS DE ARTISTAS ──────────────────────────────── */}
-            {artistProducts.length > 0 && (
-                <ArtistsSection>
-                    <ArtistsSectionTag>
-                        <EditorialSectionNum dark>02</EditorialSectionNum>
-                        <EditorialSectionLine dark />
-                        <EditorialSectionWord dark>Artistas</EditorialSectionWord>
-                    </ArtistsSectionTag>
-
-                    <ArtistsSectionTitle>La colección</ArtistsSectionTitle>
-
-                    <ArtistsRunway>
-                        {artistProducts.map((p, i) => (
-                            <ArtistProductCard key={p._id || i} onClick={() => setSelectedProd(p)}>
-                                <ArtistProductImg>
-                                    {p.image
-                                        ? <img src={p.image} alt={p.name} loading="lazy" />
-                                        : <ArtistProductNoImg>Sin imagen</ArtistProductNoImg>
-                                    }
-                                    <ArtistProductOverlay>
-                                        <span>Ver detalle</span>
-                                    </ArtistProductOverlay>
-                                </ArtistProductImg>
-                                <ArtistProductInfo>
-                                    <ArtistProductArtist>
-                                        <Link to={`/artist/${p.artistSlug}`}>{p.artistName}</Link>
-                                    </ArtistProductArtist>
-                                    <ArtistProductName>{p.name}</ArtistProductName>
-                                    <ArtistProductPrice>{p.price}</ArtistProductPrice>
-                                </ArtistProductInfo>
-                            </ArtistProductCard>
-                        ))}
-                    </ArtistsRunway>
-                </ArtistsSection>
             )}
 
             {/* ── FOOTER STRIP ───────────────────────────────────────── */}
@@ -869,134 +871,149 @@ const EditorialCta = styled.span`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   ARTISTAS
+   TIENDA: PRODUCTOS
 ═══════════════════════════════════════════════════════════════ */
-const ArtistsSection = styled.section`
-    background: #f8f8f6;
+const ShopSection = styled.section`
+    background: #f7f7f5;
     padding: 100px 40px 120px;
 
-    @media (max-width: 640px) { padding: 80px 20px 100px; }
+    @media (max-width: 640px) { padding: 72px 20px 96px; }
 `
 
-const ArtistsSectionTitle = styled.h2`
+const ShopHeader = styled.div`
+    text-align: center;
+    margin-bottom: 72px;
+`
+
+const ShopEyebrow = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin: 0 0 20px;
+`
+
+const ShopTitle = styled.h2`
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-size: clamp(2.5rem, 5.5vw, 5rem);
     font-weight: 300;
     font-style: italic;
     color: #0a0a0a;
-    text-align: center;
-    margin: 40px 0 72px;
+    line-height: 1.1;
+    margin: 0 0 16px;
     letter-spacing: -0.02em;
 `
 
-/* Pasillo horizontal con scroll */
-const ArtistsRunway = styled.div`
-    display: flex;
-    flex-direction: row;
-    gap: 2px;
-    overflow-x: auto;
-    overflow-y: visible;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 24px;
-    cursor: grab;
-    &:active { cursor: grabbing; }
-
-    /* scrollbar discreta */
-    &::-webkit-scrollbar { height: 2px; }
-    &::-webkit-scrollbar-track { background: transparent; }
-    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
-
-    /* fade en los bordes para sugerir que hay más */
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+const ShopSubtitle = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #aaa;
+    margin: 0;
+    text-transform: uppercase;
 `
 
-const ArtistProductCard = styled.div`
-    flex: 0 0 260px;
-    scroll-snap-align: start;
+const ShopGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 480px) { grid-template-columns: 1fr; }
+`
+
+const ShopCard = styled.div`
     cursor: pointer;
     background: #fff;
 
-    &:hover img { transform: scale(1.04); }
-
-    @media (max-width: 640px) { flex: 0 0 200px; }
+    &:hover img { transform: scale(1.05); }
 `
 
-const ArtistProductImg = styled.div`
+const ShopCardMedia = styled.div`
     position: relative;
     overflow: hidden;
-    background: #ededea;
-    padding-bottom: 130%;
-    margin-bottom: 0;
+    background: #ececea;
+    padding-bottom: 125%;
 
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 `
 
-const ArtistProductNoImg = styled.div`
+const ShopCardNoImg = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: sans-serif; font-size: 8px;
-    letter-spacing: 0.25em; text-transform: uppercase; color: #ccc;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(0,0,0,0.1);
 `
 
-const ArtistProductOverlay = styled.div`
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    padding: 20px;
-    background: linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 50%);
+const ShopCardOverlay = styled.div`
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 24px;
+    background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 45%);
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.3s ease;
 
-    span {
-        font-family: 'DM Sans', sans-serif;
-        font-size: 8px;
-        letter-spacing: 0.35em;
-        text-transform: uppercase;
-        color: #fff;
-    }
-
-    ${ArtistProductCard}:hover & { opacity: 1; }
+    ${ShopCard}:hover & { opacity: 1; }
 `
 
-const ArtistProductInfo = styled.div`
-    padding: 14px 10px 18px;
-    border-bottom: 1px solid #ededea;
-`
-
-const ArtistProductArtist = styled.p`
+const ShopCardOverlayBtn = styled.span`
     font-family: 'DM Sans', sans-serif;
-    font-size: 7px;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    padding-bottom: 3px;
+`
+
+const ShopCardBody = styled.div`
+    padding: 16px 14px 20px;
+    border-bottom: 1px solid #f0f0ee;
+`
+
+const ShopCardArtist = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
     color: #bbb;
-    margin: 0 0 4px;
-    a { color: inherit; text-decoration: none; &:hover { color: #0a0a0a; transition: color 0.2s; } }
-`
-
-const ArtistProductName = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #1a1a1a;
     margin: 0 0 6px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s;
+        &:hover { color: #0a0a0a; }
+    }
 `
 
-const ArtistProductPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
+const ShopCardName = styled.p`
+    font-family: 'DM Sans', sans-serif;
     font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`
+
+const ShopCardPrice = styled.p`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
     font-style: italic;
-    color: #999;
+    color: #0a0a0a;
     margin: 0;
 `
 
