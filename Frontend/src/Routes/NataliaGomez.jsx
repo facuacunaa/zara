@@ -125,9 +125,18 @@ export default function ArtistPage() {
   )
 
   if (!artist) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 36, height: 36, border: '2px solid #eee', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    <div style={{ minHeight: '100vh', background: '#0a0a0a' }}>
+      {/* Skeleton hero */}
+      <div style={{ width: '100%', height: '100vh', background: 'linear-gradient(90deg, #111 25%, #1a1a1a 50%, #111 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.4s infinite' }} />
+      {/* Skeleton bloques */}
+      {[1,2,3].map(i => (
+        <div key={i} style={{ margin: '40px auto', maxWidth: 600, padding: '0 24px' }}>
+          <div style={{ height: 12, background: '#1a1a1a', borderRadius: 4, marginBottom: 16, width: '40%', animation: 'shimmer 1.4s infinite' }} />
+          <div style={{ height: 8, background: '#1a1a1a', borderRadius: 4, marginBottom: 10, animation: 'shimmer 1.4s infinite' }} />
+          <div style={{ height: 8, background: '#1a1a1a', borderRadius: 4, width: '80%', animation: 'shimmer 1.4s infinite' }} />
+        </div>
+      ))}
+      <style>{`@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
     </div>
   )
 
@@ -143,7 +152,7 @@ export default function ArtistPage() {
       <section className="relative w-full overflow-hidden bg-ink" style={{ height: '100vh' }}>
         {artist.heroVideo ? (
           <video
-            src={artist.heroVideo} autoPlay loop muted playsInline
+            src={artist.heroVideo} autoPlay loop muted playsInline preload="none"
             className="absolute inset-0 w-full h-full object-cover opacity-80"
           />
         ) : img(0) ? (
@@ -301,7 +310,7 @@ export default function ArtistPage() {
                   <div className="relative overflow-hidden bg-mist mb-4" style={{ paddingBottom: '130%' }}>
                     {p.image ? (
                       <img
-                        src={p.image} alt={p.name}
+                        src={p.image} alt={p.name} loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
