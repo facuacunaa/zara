@@ -271,145 +271,165 @@ const HomeWrap = styled.div`
    GALLERY 3D COMPONENT
 ═══════════════════════════════════════════════════════════════ */
 function Gallery3D({ slides, homeVideo, heroVideoText }) {
-    const mountRef  = useRef(null)
-    const wrapRef   = useRef(null)
-    const [activeIdx, setActiveIdx] = useState(0)
+    const mountRef      = useRef(null)
+    const targetSlide   = useRef(0)
+    const [activeIdx,  setActiveIdx]  = useState(0)
+    const [exiting,    setExiting]    = useState(false)
+    const [dismissed,  setDismissed]  = useState(false)
 
+    const total = slides.length > 0 ? slides.length : (homeVideo ? 1 : 0)
+
+    const dismiss = () => {
+        setExiting(true)
+        setTimeout(() => {
+            setDismissed(true)
+            document.body.style.overflow = ''
+        }, 900)
+    }
+
+    /* Block body scroll while gallery is active */
     useEffect(() => {
+        if (dismissed) return
+        if (total === 0) return
+        document.body.style.overflow = 'hidden'
+        return () => { document.body.style.overflow = '' }
+    }, [dismissed, total])
+
+    /* Wheel + touch navigation */
+    useEffect(() => {
+        if (dismissed || total === 0) return
+        let lastTime    = 0
+        let touchStartY = 0
+
+        const go = (dir) => {
+            const now = Date.now()
+            if (now - lastTime < 550) return
+            lastTime = now
+            const cur = targetSlide.current
+            if (dir > 0) {
+                if (cur < total - 1) {
+                    targetSlide.current = cur + 1
+                    setActiveIdx(cur + 1)
+                } else {
+                    dismiss()
+                }
+            } else {
+                if (cur > 0) {
+                    targetSlide.current = cur - 1
+                    setActiveIdx(cur - 1)
+                }
+            }
+        }
+
+        const onWheel      = (e) => { e.preventDefault(); go(e.deltaY) }
+        const onTouchStart = (e) => { touchStartY = e.touches[0].clientY }
+        const onTouchEnd   = (e) => {
+            const dy = touchStartY - e.changedTouches[0].clientY
+            if (Math.abs(dy) > 45) go(dy)
+        }
+
+        window.addEventListener('wheel',      onWheel,      { passive: false })
+        window.addEventListener('touchstart', onTouchStart, { passive: true })
+        window.addEventListener('touchend',   onTouchEnd,   { passive: true })
+        return () => {
+            window.removeEventListener('wheel',      onWheel)
+            window.removeEventListener('touchstart', onTouchStart)
+            window.removeEventListener('touchend',   onTouchEnd)
+        }
+    }, [dismissed, total]) // eslint-disable-line
+
+    /* Three.js scene */
+    useEffect(() => {
+        if (dismissed || total === 0) return
         const mount = mountRef.current
         if (!mount) return
 
-        const W = window.innerWidth
-        const H = window.innerHeight
-        const SPACING = 5
+        const W = window.innerWidth, H = window.innerHeight
+        const SPACING = 6, VIEW_DIST = 3.5
 
-        /* ── Scene ── */
-        const scene    = new THREE.Scene()
-        scene.background = new THREE.Color(0x080808)
-        scene.fog        = new THREE.FogExp2(0x080808, 0.028)
+        const scene = new THREE.Scene()
+        scene.background = new THREE.Color(0x060606)
+        scene.fog = new THREE.FogExp2(0x060606, 0.03)
 
-        /* ── Camera ── */
-        const camera = new THREE.PerspectiveCamera(62, W / H, 0.1, 120)
-        camera.position.set(0, 0, 0)
+        const camera = new THREE.PerspectiveCamera(62, W / H, 0.1, 100)
+        camera.position.set(0, 0, VIEW_DIST)
 
-        /* ── Renderer ── */
         const renderer = new THREE.WebGLRenderer({ antialias: true })
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
         renderer.setSize(W, H)
         renderer.outputColorSpace = THREE.SRGBColorSpace
         mount.appendChild(renderer.domElement)
 
-        /* ── Lights ── */
-        scene.add(new THREE.AmbientLight(0xffffff, 0.5))
-        const followLight = new THREE.PointLight(0xffeedd, 2.5, 18)
-        scene.add(followLight)
+        scene.add(new THREE.AmbientLight(0xffffff, 0.45))
+        const spot = new THREE.SpotLight(0xfff5e0, 5, 22, Math.PI / 5, 0.35)
+        spot.position.set(0, 5, VIEW_DIST + 5)
+        scene.add(spot)
 
-        /* ── Image planes ── */
-        const loader = new THREE.TextureLoader()
-        const planePositions = []
+        const loader  = new THREE.TextureLoader()
+        const planes  = []
 
         if (slides.length > 0) {
-            slides.forEach((_, i) => {
-                planePositions.push({
-                    x:    (i % 2 === 0 ? 1.4 : -1.4),
-                    y:    [0.3, -0.25, 0.15][i % 3],
-                    z:    -(i * SPACING) - SPACING,
-                    rotY: (i % 2 === 0 ? -0.18 : 0.18),
-                })
+            slides.forEach((slide, i) => {
+                const x    = (i % 2 === 0 ? 1.3 : -1.3)
+                const y    = [0, 0.25, -0.2][i % 3]
+                const z    = -i * SPACING
+                const rotY = (i % 2 === 0 ? -0.2 : 0.2)
+                const geo  = new THREE.PlaneGeometry(3.2, 4.4)
+                const mat  = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 })
+                const mesh = new THREE.Mesh(geo, mat)
+                mesh.position.set(x, y, z)
+                mesh.rotation.y = rotY
+                scene.add(mesh)
+                planes.push({ z })
+                loader.load(slide.image, tex => {
+                    tex.colorSpace = THREE.SRGBColorSpace
+                    mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true
+                }, undefined, () => {})
             })
-        } else {
-            planePositions.push({ x: 0, y: 0, z: -SPACING, rotY: 0 })
+        } else if (homeVideo) {
+            const vid = document.createElement('video')
+            vid.src = homeVideo; vid.autoplay = true; vid.loop = true
+            vid.muted = true; vid.playsInline = true; vid.play().catch(() => {})
+            const vTex = new THREE.VideoTexture(vid)
+            vTex.colorSpace = THREE.SRGBColorSpace
+            const geo = new THREE.PlaneGeometry(5, 7.5)
+            const mat = new THREE.MeshBasicMaterial({ map: vTex })
+            const mesh = new THREE.Mesh(geo, mat)
+            mesh.position.set(0, 0, 0)
+            scene.add(mesh)
+            planes.push({ z: 0 })
         }
 
-        planePositions.forEach((pos, i) => {
-            const geo = new THREE.PlaneGeometry(3.4, 4.6)
-            const mat = new THREE.MeshStandardMaterial({
-                color:     0x1a1a1a,
-                roughness: 0.85,
-                metalness: 0.05,
-            })
-            const mesh = new THREE.Mesh(geo, mat)
-            mesh.position.set(pos.x, pos.y, pos.z)
-            mesh.rotation.y = pos.rotY
-            scene.add(mesh)
-
-            if (slides[i]?.image) {
-                loader.load(slides[i].image, tex => {
-                    tex.colorSpace = THREE.SRGBColorSpace
-                    mat.map   = tex
-                    mat.color = new THREE.Color(0xffffff)
-                    mat.needsUpdate = true
-                }, undefined, () => {})
-            } else if (homeVideo) {
-                const vid      = document.createElement('video')
-                vid.src        = homeVideo
-                vid.autoplay   = true
-                vid.loop       = true
-                vid.muted      = true
-                vid.playsInline = true
-                vid.play().catch(() => {})
-                const vTex = new THREE.VideoTexture(vid)
-                vTex.colorSpace = THREE.SRGBColorSpace
-                mat.map   = vTex
-                mat.color = new THREE.Color(0xffffff)
-                mat.needsUpdate = true
-            }
-        })
-
-        /* ── Particles ── */
-        const pCount  = 400
-        const pPositions = new Float32Array(pCount * 3)
-        const totalDepth = (slides.length || 1) * SPACING + SPACING * 3
-        for (let i = 0; i < pCount; i++) {
-            pPositions[i * 3]     = (Math.random() - 0.5) * 22
-            pPositions[i * 3 + 1] = (Math.random() - 0.5) * 12
-            pPositions[i * 3 + 2] = -Math.random() * totalDepth
+        /* Particles */
+        const pN = 500, depth = total * SPACING + SPACING * 2
+        const pPos = new Float32Array(pN * 3)
+        for (let i = 0; i < pN; i++) {
+            pPos[i*3]   = (Math.random() - 0.5) * 24
+            pPos[i*3+1] = (Math.random() - 0.5) * 14
+            pPos[i*3+2] = VIEW_DIST - Math.random() * depth
         }
         const pGeo = new THREE.BufferGeometry()
-        pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3))
-        const pMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.025, transparent: true, opacity: 0.35 })
-        scene.add(new THREE.Points(pGeo, pMat))
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
+        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.022, transparent: true, opacity: 0.28 })))
 
-        /* ── Scroll ── */
-        let targetZ  = 0
-        let currentZ = 0
-        const maxTravel = slides.length > 0 ? (slides.length - 1) * SPACING : 0
-
-        const getProgress = () => {
-            const el = wrapRef.current
-            if (!el) return 0
-            const rect  = el.getBoundingClientRect()
-            const scrolled = Math.max(0, -rect.top)
-            const total    = Math.max(1, el.clientHeight - window.innerHeight)
-            return Math.min(1, scrolled / total)
-        }
-
-        const onScroll = () => {
-            const p = getProgress()
-            targetZ = -p * maxTravel
-            if (slides.length > 0) {
-                const idx = Math.min(Math.round(p * (slides.length - 1)), slides.length - 1)
-                setActiveIdx(idx)
-            }
-        }
-        window.addEventListener('scroll', onScroll, { passive: true })
-
-        /* ── RAF ── */
+        /* RAF — camera lerps to active plane */
+        let camZ = VIEW_DIST
         let rafId
         const clock = new THREE.Clock()
         const animate = () => {
             rafId = requestAnimationFrame(animate)
-            const t = clock.getElapsedTime()
-            currentZ += (targetZ - currentZ) * 0.07
-            camera.position.z = currentZ
-            camera.position.x = Math.sin(t * 0.25) * 0.14
-            camera.position.y = Math.cos(t * 0.18) * 0.09
-            followLight.position.set(camera.position.x, camera.position.y + 2, currentZ)
+            const t   = clock.getElapsedTime()
+            const idx = targetSlide.current
+            const tgt = idx < planes.length ? planes[idx].z + VIEW_DIST : VIEW_DIST
+            camZ += (tgt - camZ) * 0.055
+            camera.position.z = camZ
+            camera.position.x = Math.sin(t * 0.22) * 0.13
+            camera.position.y = Math.cos(t * 0.16) * 0.08
+            spot.position.z   = camZ + 5
             renderer.render(scene, camera)
         }
         animate()
 
-        /* ── Resize ── */
         const onResize = () => {
             const W2 = window.innerWidth, H2 = window.innerHeight
             camera.aspect = W2 / H2
@@ -420,82 +440,73 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
 
         return () => {
             cancelAnimationFrame(rafId)
-            window.removeEventListener('scroll', onScroll)
             window.removeEventListener('resize', onResize)
             renderer.dispose()
             try { mount.removeChild(renderer.domElement) } catch {}
         }
-    }, [slides.length, homeVideo])
+    }, [slides.length, homeVideo, dismissed, total]) // eslint-disable-line
+
+    if (dismissed || total === 0) return null
 
     const cur = slides[activeIdx]
-    const h   = slides.length > 1 ? `${slides.length * 100}vh` : '100vh'
 
     return (
-        <GalleryOuter ref={wrapRef} style={{ height: h }}>
-            <GallerySticky>
-                <GalleryCanvasMount ref={mountRef} />
+        <GalleryFixed $exiting={exiting}>
+            <GalleryCanvasMount ref={mountRef} />
 
-                <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
-                    <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
-                    <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                    {slides.length === 0 && heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
-                    {slides.length === 0 && (
-                        <HeroCtas style={{ marginTop: '40px' }}>
-                            <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
-                            <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
-                        </HeroCtas>
-                    )}
-                </GalleryCenterText>
-
-                {cur && (
-                    <GalleryArtistTag key={activeIdx}>
-                        <Link to={`/${cur.slug}`}>{cur.name}</Link>
-                    </GalleryArtistTag>
+            <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
+                <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
+                <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
+                {slides.length === 0 && heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
+                {slides.length === 0 && (
+                    <HeroCtas style={{ marginTop: '40px', pointerEvents: 'all' }}>
+                        <HeroCtaPrimary to="/#coleccion" onClick={dismiss}>Explorar colección</HeroCtaPrimary>
+                        <HeroCtaSecondary to="/#artistas" onClick={dismiss}>Nuestros artistas</HeroCtaSecondary>
+                    </HeroCtas>
                 )}
+            </GalleryCenterText>
 
-                {slides.length > 1 && activeIdx === slides.length - 1 && (
-                    <GalleryLastHint>
-                        <GalleryLastText>↓ Ver la colección</GalleryLastText>
-                        <GalleryLastLine />
-                    </GalleryLastHint>
-                )}
+            {cur && <GalleryArtistTag key={activeIdx}><Link to={`/${cur.slug}`}>{cur.name}</Link></GalleryArtistTag>}
 
-                {slides.length > 1 && (
+            {activeIdx === total - 1 && (
+                <GalleryLastHint onClick={dismiss} style={{ cursor: 'pointer' }}>
+                    <GalleryLastText>↓ Ver la colección</GalleryLastText>
+                    <GalleryLastLine />
+                </GalleryLastHint>
+            )}
+
+            {slides.length > 1 && (
+                <>
                     <GalleryCounter>
                         {String(activeIdx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
                     </GalleryCounter>
-                )}
-
-                {slides.length > 1 && (
                     <GalleryProgressBar>
                         <GalleryProgressFill style={{ width: `${((activeIdx + 1) / slides.length) * 100}%` }} />
                     </GalleryProgressBar>
-                )}
+                </>
+            )}
 
-                {slides.length === 0 && (
-                    <HeroScrollHint>
-                        <span>Scroll</span>
-                        <ArtScrollLine />
-                    </HeroScrollHint>
-                )}
-            </GallerySticky>
-        </GalleryOuter>
+            {activeIdx < total - 1 && (
+                <GalleryScrollHint>
+                    <span>Scroll</span>
+                    <GalleryScrollLine />
+                </GalleryScrollHint>
+            )}
+        </GalleryFixed>
     )
 }
 
 /* ═══════════════════════════════════════════════════════════════
    GALLERY HERO
 ═══════════════════════════════════════════════════════════════ */
-const GalleryOuter = styled.section`
-    position: relative;
-`
-
-const GallerySticky = styled.div`
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow: hidden;
-    background: #080808;
+const GalleryFixed = styled.div`
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    opacity: ${p => p.$exiting ? 0 : 1};
+    transition: opacity 0.9s ease;
+    pointer-events: ${p => p.$exiting ? 'none' : 'all'};
+    background: #060606;
 `
 
 const GalleryCanvasMount = styled.div`
@@ -506,31 +517,37 @@ const GalleryCanvasMount = styled.div`
     canvas { display: block; }
 `
 
-const GallerySlide = styled.div`
+const GalleryScrollHint = styled.div`
     position: absolute;
-    inset: 0;
-    opacity: ${p => p.$active ? 1 : 0};
-    transition: opacity 0.8s ease;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+
+    span {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 8px;
+        letter-spacing: 0.45em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+    }
 `
 
-const GalleryImg = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.72;
-    display: block;
-`
+const GalleryScrollLine = styled.div`
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.35), transparent);
+    animation: glPulse 2s ease-in-out infinite;
 
-const GalleryOverlay = styled.div`
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to bottom,
-        rgba(10,10,10,0.3) 0%,
-        transparent 40%,
-        rgba(10,10,10,0.65) 100%
-    );
-    z-index: 1;
+    @keyframes glPulse {
+        0%, 100% { opacity: 0.4; }
+        50%       { opacity: 1; }
+    }
 `
 
 const GalleryCenterText = styled.div`
