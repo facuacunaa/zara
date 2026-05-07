@@ -144,7 +144,7 @@ const Homepage = () => {
                         <SwiperSlide className="swiper-slide" key={index}>
                             <Link to={`/products`} state={{ query: ele.path }} style={{ display: 'block', position: 'relative', width: '100%', height: '100vh' }}>
                                 {ele.img
-                                    ? <img src={ele.img} alt={ele.img} className={`main${category[indexNo]}${index}`}/>
+                                    ? <img src={ele.img} alt={ele.img} className={`main${category[indexNo]}${index}`} loading={index === 0 ? 'eager' : 'lazy'}/>
                                     : <video autoPlay loop muted>
                                         <source src={ele.video} type="video/mp4" />
                                       </video>
@@ -229,7 +229,7 @@ const Homepage = () => {
                         {/* Imagen izquierda */}
                         {editorial.editorialImage1 && (
                             <EditorialImgWrap side="left">
-                                <img src={editorial.editorialImage1} alt="editorial" />
+                                <img src={editorial.editorialImage1} alt="editorial" loading="lazy" />
                             </EditorialImgWrap>
                         )}
 
@@ -252,7 +252,7 @@ const Homepage = () => {
                         {/* Imagen derecha */}
                         {editorial.editorialImage2 && (
                             <EditorialImgWrap side="right">
-                                <img src={editorial.editorialImage2} alt="editorial" />
+                                <img src={editorial.editorialImage2} alt="editorial" loading="lazy" />
                             </EditorialImgWrap>
                         )}
                     </EditorialLayout>
@@ -275,7 +275,7 @@ const Homepage = () => {
                             <ArtistProductCard key={p._id || i} onClick={() => setSelectedProd(p)}>
                                 <ArtistProductImg>
                                     {p.image
-                                        ? <img src={p.image} alt={p.name} />
+                                        ? <img src={p.image} alt={p.name} loading="lazy" />
                                         : <ArtistProductNoImg>Sin imagen</ArtistProductNoImg>
                                     }
                                     <ArtistProductOverlay>
