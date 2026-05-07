@@ -1,5 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { useState, useEffect, useRef, useMemo } from "react";
+import * as THREE from "three";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
@@ -14,16 +15,12 @@ const Homepage = () => {
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd,   setSelectedProd]   = useState(null)
     const [artists,        setArtists]        = useState([])
-    const [activeSlide,    setActiveSlide]    = useState(0)
-    const galleryRef = useRef(null)
-
     useEffect(() => {
         axios.get(`${API}/artist`)
             .then(r => setArtists(r.data || []))
             .catch(() => {})
     }, [])
 
-    // Construir slides de la galería con imágenes de los artistas
     const gallerySlides = useMemo(() => {
         const slides = []
         artists.forEach(a => {
@@ -33,24 +30,6 @@ const Homepage = () => {
         })
         return slides
     }, [artists])
-
-    // Scroll listener para avanzar slides
-    useEffect(() => {
-        if (gallerySlides.length === 0) return
-        const onScroll = () => {
-            const el = galleryRef.current
-            if (!el) return
-            const rect = el.getBoundingClientRect()
-            const scrolled = -rect.top
-            const idx = Math.max(0, Math.min(
-                Math.floor(scrolled / window.innerHeight),
-                gallerySlides.length - 1
-            ))
-            setActiveSlide(idx)
-        }
-        window.addEventListener('scroll', onScroll, { passive: true })
-        return () => window.removeEventListener('scroll', onScroll)
-    }, [gallerySlides.length])
 
     useEffect(() => {
         axios.get(`${API}/settings`)
@@ -72,65 +51,13 @@ const Homepage = () => {
         <HomeWrap>
             <Navbar />
 
-            {/* ── GALERÍA HERO ────────────────────────────────────────── */}
-            <GalleryOuter
-                ref={galleryRef}
-                style={{ height: gallerySlides.length > 1 ? `${gallerySlides.length * 100}vh` : '100vh' }}
-            >
-                <GallerySticky>
-                    {gallerySlides.length > 0 ? gallerySlides.map((slide, i) => (
-                        <GallerySlide key={i} $active={activeSlide === i}>
-                            <GalleryImg src={slide.image} alt={slide.name} loading={i === 0 ? 'eager' : 'lazy'} />
-                            <GalleryOverlay />
-
-                            {i === 0 && (
-                                <GalleryCenterText>
-                                    <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
-                                    <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                                </GalleryCenterText>
-                            )}
-
-                            <GalleryArtistTag>
-                                <Link to={`/${slide.slug}`}>{slide.name}</Link>
-                            </GalleryArtistTag>
-
-                            {i === gallerySlides.length - 1 && (
-                                <GalleryLastHint>
-                                    <GalleryLastText>↓ Ver la colección</GalleryLastText>
-                                    <GalleryLastLine />
-                                </GalleryLastHint>
-                            )}
-
-                            <GalleryCounter>
-                                {String(i + 1).padStart(2,'0')} / {String(gallerySlides.length).padStart(2,'0')}
-                            </GalleryCounter>
-
-                            <GalleryProgressBar>
-                                <GalleryProgressFill style={{ width: `${((i + 1) / gallerySlides.length) * 100}%` }} />
-                            </GalleryProgressBar>
-                        </GallerySlide>
-                    )) : (
-                        /* Sin imágenes de artistas: slide con el video de fondo */
-                        <GallerySlide $active={true}>
-                            {homeVideo && <HeroVideo src={homeVideo} autoPlay loop muted playsInline />}
-                            <GalleryOverlay />
-                            <GalleryCenterText>
-                                <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
-                                <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                                {heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
-                                <HeroCtas>
-                                    <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
-                                    <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
-                                </HeroCtas>
-                            </GalleryCenterText>
-                            <HeroScrollHint>
-                                <span>Scroll</span>
-                                <ArtScrollLine />
-                            </HeroScrollHint>
-                        </GallerySlide>
-                    )}
-                </GallerySticky>
-            </GalleryOuter>
+            {/* ── GALERÍA 3D HERO ─────────────────────────────────────── */}
+            <Gallery3D
+                key={gallerySlides.length}
+                slides={gallerySlides}
+                homeVideo={homeVideo}
+                heroVideoText={heroVideoText}
+            />
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
@@ -341,6 +268,222 @@ const HomeWrap = styled.div`
 `
 
 /* ═══════════════════════════════════════════════════════════════
+   GALLERY 3D COMPONENT
+═══════════════════════════════════════════════════════════════ */
+function Gallery3D({ slides, homeVideo, heroVideoText }) {
+    const mountRef  = useRef(null)
+    const wrapRef   = useRef(null)
+    const [activeIdx, setActiveIdx] = useState(0)
+
+    useEffect(() => {
+        const mount = mountRef.current
+        if (!mount) return
+
+        const W = window.innerWidth
+        const H = window.innerHeight
+        const SPACING = 5
+
+        /* ── Scene ── */
+        const scene    = new THREE.Scene()
+        scene.background = new THREE.Color(0x080808)
+        scene.fog        = new THREE.FogExp2(0x080808, 0.028)
+
+        /* ── Camera ── */
+        const camera = new THREE.PerspectiveCamera(62, W / H, 0.1, 120)
+        camera.position.set(0, 0, 0)
+
+        /* ── Renderer ── */
+        const renderer = new THREE.WebGLRenderer({ antialias: true })
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+        renderer.setSize(W, H)
+        renderer.outputColorSpace = THREE.SRGBColorSpace
+        mount.appendChild(renderer.domElement)
+
+        /* ── Lights ── */
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5))
+        const followLight = new THREE.PointLight(0xffeedd, 2.5, 18)
+        scene.add(followLight)
+
+        /* ── Image planes ── */
+        const loader = new THREE.TextureLoader()
+        const planePositions = []
+
+        if (slides.length > 0) {
+            slides.forEach((_, i) => {
+                planePositions.push({
+                    x:    (i % 2 === 0 ? 1.4 : -1.4),
+                    y:    [0.3, -0.25, 0.15][i % 3],
+                    z:    -(i * SPACING) - SPACING,
+                    rotY: (i % 2 === 0 ? -0.18 : 0.18),
+                })
+            })
+        } else {
+            planePositions.push({ x: 0, y: 0, z: -SPACING, rotY: 0 })
+        }
+
+        planePositions.forEach((pos, i) => {
+            const geo = new THREE.PlaneGeometry(3.4, 4.6)
+            const mat = new THREE.MeshStandardMaterial({
+                color:     0x1a1a1a,
+                roughness: 0.85,
+                metalness: 0.05,
+            })
+            const mesh = new THREE.Mesh(geo, mat)
+            mesh.position.set(pos.x, pos.y, pos.z)
+            mesh.rotation.y = pos.rotY
+            scene.add(mesh)
+
+            if (slides[i]?.image) {
+                loader.load(slides[i].image, tex => {
+                    tex.colorSpace = THREE.SRGBColorSpace
+                    mat.map   = tex
+                    mat.color = new THREE.Color(0xffffff)
+                    mat.needsUpdate = true
+                }, undefined, () => {})
+            } else if (homeVideo) {
+                const vid      = document.createElement('video')
+                vid.src        = homeVideo
+                vid.autoplay   = true
+                vid.loop       = true
+                vid.muted      = true
+                vid.playsInline = true
+                vid.play().catch(() => {})
+                const vTex = new THREE.VideoTexture(vid)
+                vTex.colorSpace = THREE.SRGBColorSpace
+                mat.map   = vTex
+                mat.color = new THREE.Color(0xffffff)
+                mat.needsUpdate = true
+            }
+        })
+
+        /* ── Particles ── */
+        const pCount  = 400
+        const pPositions = new Float32Array(pCount * 3)
+        const totalDepth = (slides.length || 1) * SPACING + SPACING * 3
+        for (let i = 0; i < pCount; i++) {
+            pPositions[i * 3]     = (Math.random() - 0.5) * 22
+            pPositions[i * 3 + 1] = (Math.random() - 0.5) * 12
+            pPositions[i * 3 + 2] = -Math.random() * totalDepth
+        }
+        const pGeo = new THREE.BufferGeometry()
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3))
+        const pMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.025, transparent: true, opacity: 0.35 })
+        scene.add(new THREE.Points(pGeo, pMat))
+
+        /* ── Scroll ── */
+        let targetZ  = 0
+        let currentZ = 0
+        const maxTravel = slides.length > 0 ? (slides.length - 1) * SPACING : 0
+
+        const getProgress = () => {
+            const el = wrapRef.current
+            if (!el) return 0
+            const rect  = el.getBoundingClientRect()
+            const scrolled = Math.max(0, -rect.top)
+            const total    = Math.max(1, el.clientHeight - window.innerHeight)
+            return Math.min(1, scrolled / total)
+        }
+
+        const onScroll = () => {
+            const p = getProgress()
+            targetZ = -p * maxTravel
+            if (slides.length > 0) {
+                const idx = Math.min(Math.round(p * (slides.length - 1)), slides.length - 1)
+                setActiveIdx(idx)
+            }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
+
+        /* ── RAF ── */
+        let rafId
+        const clock = new THREE.Clock()
+        const animate = () => {
+            rafId = requestAnimationFrame(animate)
+            const t = clock.getElapsedTime()
+            currentZ += (targetZ - currentZ) * 0.07
+            camera.position.z = currentZ
+            camera.position.x = Math.sin(t * 0.25) * 0.14
+            camera.position.y = Math.cos(t * 0.18) * 0.09
+            followLight.position.set(camera.position.x, camera.position.y + 2, currentZ)
+            renderer.render(scene, camera)
+        }
+        animate()
+
+        /* ── Resize ── */
+        const onResize = () => {
+            const W2 = window.innerWidth, H2 = window.innerHeight
+            camera.aspect = W2 / H2
+            camera.updateProjectionMatrix()
+            renderer.setSize(W2, H2)
+        }
+        window.addEventListener('resize', onResize)
+
+        return () => {
+            cancelAnimationFrame(rafId)
+            window.removeEventListener('scroll', onScroll)
+            window.removeEventListener('resize', onResize)
+            renderer.dispose()
+            try { mount.removeChild(renderer.domElement) } catch {}
+        }
+    }, [slides.length, homeVideo])
+
+    const cur = slides[activeIdx]
+    const h   = slides.length > 1 ? `${slides.length * 100}vh` : '100vh'
+
+    return (
+        <GalleryOuter ref={wrapRef} style={{ height: h }}>
+            <GallerySticky>
+                <GalleryCanvasMount ref={mountRef} />
+
+                <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
+                    <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
+                    <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
+                    {slides.length === 0 && heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
+                    {slides.length === 0 && (
+                        <HeroCtas style={{ marginTop: '40px' }}>
+                            <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
+                            <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
+                        </HeroCtas>
+                    )}
+                </GalleryCenterText>
+
+                {cur && (
+                    <GalleryArtistTag key={activeIdx}>
+                        <Link to={`/${cur.slug}`}>{cur.name}</Link>
+                    </GalleryArtistTag>
+                )}
+
+                {slides.length > 1 && activeIdx === slides.length - 1 && (
+                    <GalleryLastHint>
+                        <GalleryLastText>↓ Ver la colección</GalleryLastText>
+                        <GalleryLastLine />
+                    </GalleryLastHint>
+                )}
+
+                {slides.length > 1 && (
+                    <GalleryCounter>
+                        {String(activeIdx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
+                    </GalleryCounter>
+                )}
+
+                {slides.length > 1 && (
+                    <GalleryProgressBar>
+                        <GalleryProgressFill style={{ width: `${((activeIdx + 1) / slides.length) * 100}%` }} />
+                    </GalleryProgressBar>
+                )}
+
+                {slides.length === 0 && (
+                    <HeroScrollHint>
+                        <span>Scroll</span>
+                        <ArtScrollLine />
+                    </HeroScrollHint>
+                )}
+            </GallerySticky>
+        </GalleryOuter>
+    )
+}
+
+/* ═══════════════════════════════════════════════════════════════
    GALLERY HERO
 ═══════════════════════════════════════════════════════════════ */
 const GalleryOuter = styled.section`
@@ -352,7 +495,15 @@ const GallerySticky = styled.div`
     top: 0;
     height: 100vh;
     overflow: hidden;
-    background: #0a0a0a;
+    background: #080808;
+`
+
+const GalleryCanvasMount = styled.div`
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    canvas { display: block; }
 `
 
 const GallerySlide = styled.div`
@@ -392,6 +543,8 @@ const GalleryCenterText = styled.div`
     justify-content: center;
     text-align: center;
     padding: 0 24px;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
 `
 
 const GalleryEyebrow = styled.p`
