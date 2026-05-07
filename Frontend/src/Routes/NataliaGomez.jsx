@@ -264,6 +264,9 @@ export default function ArtistPage() {
         </section>
       )}
 
+      {/* ── Mini productos: primeros 2 ──────────────────────────────────── */}
+      <MiniProducts slice={[0, 2]} />
+
       {/* ── 3. STATEMENT EDITORIAL ──────────────────────────────────────── */}
       {(g('editorialQuote') || g('editorialDescription')) && (
         <section className="py-24 px-8 text-center max-w-3xl mx-auto">
@@ -284,9 +287,6 @@ export default function ArtistPage() {
           )}
         </section>
       )}
-
-      {/* ── Mini productos: primeros 2 ──────────────────────────────────── */}
-      <MiniProducts slice={[0, 2]} />
 
       {/* ── 3. TEXTO + IMAGEN LADO A LADO ───────────────────────────────── */}
       {(g('blockTitle') || g('blockBody') || img(1)) && (
@@ -315,9 +315,6 @@ export default function ArtistPage() {
         </section>
       )}
 
-      {/* ── Mini productos: siguientes 2 ────────────────────────────────── */}
-      <MiniProducts slice={[2, 4]} />
-
       {/* ── 4. DOS IMÁGENES LADO A LADO ─────────────────────────────────── */}
       {(img(2) || img(3)) && (
         <section className="grid grid-cols-2 gap-px bg-mist">
@@ -338,27 +335,42 @@ export default function ArtistPage() {
         </section>
       )}
 
-      {/* ── 5. TODOS LOS PRODUCTOS ──────────────────────────────────────── */}
+      {/* ── 5. CARRUSEL DE TODOS LOS PRODUCTOS ──────────────────────────── */}
       {products.length > 0 && (
-        <section className="py-20 px-6 md:px-12">
-          <div className="max-w-7xl mx-auto">
-            {/* Encabezado */}
-            <div className="mb-12 border-b border-mist pb-6">
-              <p className="font-sans text-[8px] tracking-widest3 uppercase text-ash mb-3">
-                {g('shopTitle') || 'La Colección'}
+        <section className="py-20">
+          {/* Encabezado */}
+          <div className="px-6 md:px-12 mb-10 border-b border-mist pb-6 max-w-7xl mx-auto">
+            <p className="font-sans text-[8px] tracking-widest3 uppercase text-ash mb-3">
+              {g('shopTitle') || 'La Colección'}
+            </p>
+            {g('shopDescription') && (
+              <p className="font-sans text-[11px] text-ash leading-loose max-w-xl">
+                {g('shopDescription')}
               </p>
-              {g('shopDescription') && (
-                <p className="font-sans text-[11px] text-ash leading-loose max-w-xl">
-                  {g('shopDescription')}
-                </p>
-              )}
-            </div>
-
-            {/* Grid de productos */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((p, i) => <ProdCard key={p._id || i} p={p} />)}
-            </div>
+            )}
           </div>
+
+          {/* Carrusel */}
+          <div
+            className="product-carousel"
+            style={{
+              display: 'flex',
+              overflowX: 'auto',
+              scrollSnapType: 'x mandatory',
+              gap: '16px',
+              paddingLeft: '24px',
+              paddingRight: '24px',
+              paddingBottom: '12px',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
+            {products.map((p, i) => (
+              <div key={p._id || i} style={{ flex: '0 0 260px', scrollSnapAlign: 'start' }}>
+                <ProdCard p={p} />
+              </div>
+            ))}
+          </div>
+          <style>{`.product-carousel::-webkit-scrollbar{display:none}.product-carousel{scrollbar-width:none}`}</style>
         </section>
       )}
 
