@@ -1,105 +1,19 @@
-import "swiper/css";
-import "swiper/css/pagination"
 import styled from "styled-components";
-import jeansvideos from '../Resources/videos/jeans.mp4';
-import menvideos from '../Resources/videos/menVid.mp4';
-import kidsVideo from '../Resources/videos/kids.mp4';
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Mousewheel, Pagination } from 'swiper';
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
 import AddCart from "../Components/Product-Page-Component/AddCart";
-SwiperCore.use([Mousewheel, Pagination]);
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
 const Homepage = () => {
-    const Women = [
-        {
-            video: 'https://videos.pexels.com/video-files/6214486/6214486-hd_1920_1080_25fps.mp4'
-        },
-        {
-            path: 'women1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-woman-new/subhome-xmedia-38-3//w/1922/IMAGE-landscape-default-fill-3826ba34-9fad-4264-9ecd-6d2bc9295d9c-default_0.jpg?ts=1663773455159'
-        },
-        {
-            video: jeansvideos
-        },
-        {
-            path: 'women1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-woman-y2k-collection/subhome-xmedia-38//w/1922/IMAGE-landscape-fill-8ffe5012-f7c5-486e-a66a-9c017f1c4ddc-default_0.jpg?ts=1663790133732'
-        },
-        {
-            path: 'women1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-woman-best-sellers/subhome-xmedia-38//w/1922/IMAGE-landscape-fill-c68605f6-1f94-4830-8f4a-0f3bf22017e2-default_0.jpg?ts=1663579002306'
-        },
-        {
-            path: 'women1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-collection/subhome-xmedia-39//w/1922/IMAGE-landscape-fill-8a1ce69a-a1f6-4b5c-b04a-c3ea44664c19-default_0.jpg?ts=1663794685596'
-        },
-        {
-            path: 'women1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-woman-basics/subhome-xmedia-38//w/1922/IMAGE-landscape-fill-f5302ebb-2ddc-4218-81c2-eb0464c2d73f-default_0.jpg?ts=1663576361647'
-        },
-        {
-            path: 'women1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-woman-shoes-bags/subhome-xmedia-38//w/1922/IMAGE-landscape-default-fill-5c2d5cc1-7805-42c8-9238-635ec71551d3-default_0.jpg?ts=1663770211821'
-        }
-    ];
-    const Men = [
-        {
-            path: 'men1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-man-origins/subhome-xmedia-34//w/1294/IMAGE-landscape-1-fill-23c9012f-bdc9-45c1-af3c-8f7c07f86626-default_0.jpg?ts=1664366171420'
-        },
-        {
-            path: 'men1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-man-new/subhome-xmedia-39//w/1922/IMAGE-landscape-fill-fbb20929-1e45-4d24-8139-c6351a17419b-default_0.jpg?ts=1664208804884'
-        },
-        {
-            video: menvideos
-        },
-        {
-            path: 'men1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-man-thezexperience/subhome-xmedia-37//w/1034/IMAGE-landscape-60a9e632-924a-42ab-b7a3-9a87060d9999-default_0.jpg?ts=1663172982729'
-        }
-    ];
-    const Kids = [
-        {
-            video: kidsVideo,
-            cat: 'kids'
-        },
-        {
-            path: 'kids1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-kids-boy/subhome-xmedia-38-2//w/1922/IMAGE-landscape-fill-aa8667a5-4747-421a-8c66-2dba3d7b3afc-default_0.jpg?ts=1663870203073'
-        },
-        {
-            path: 'kids1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-kids-babygirl/subhome-xmedia-38//w/1922/IMAGE-landscape-fill-79e6baba-0718-4cda-bbb5-ff3f6fe0be62-default_0.jpg?ts=1663870712229'
-        },
-        {
-            path: 'kids1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-kids-girl/subhome-xmedia-39//w/1922/IMAGE-landscape-fill-ccf425f8-7d6e-447a-99b0-d5bafce56b94-default_0.jpg?ts=1664521449113'
-        },
-        {
-            path: 'kids1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-kids-join-life/subhome-xmedia-38//w/1922/IMAGE-landscape-fill-4e354fe1-c38f-4d4b-8e9c-d58f5718aefa-default_0.jpg?ts=1663763505030'
-        },
-        {
-            path: 'kids1',
-            img: 'https://static.zara.net/photos///contents/mkt/spots/aw22-north-kids-babyboy/subhome-xmedia-38//w/1922/IMAGE-landscape-fill-f9ab1b72-c48b-47fe-84c3-006e8f6141cb-default_0.jpg?ts=1663871170295'
-        }
-    ];
-    const [activeIndexs, setactiveIndex] = useState(0);
-    const [indexNo, setIndex] = useState(0);
-    const category = ['Women', 'Men', 'Kids'];
-    const [homeVideo, setHomeVideo] = useState('')
-    const [heroVideoText, setHeroVideoText] = useState('')
-    const [editorial, setEditorial] = useState({})
+    const [homeVideo,      setHomeVideo]      = useState('')
+    const [heroVideoText,  setHeroVideoText]  = useState('')
+    const [editorial,      setEditorial]      = useState({})
     const [artistProducts, setArtistProducts] = useState([])
-    const [selectedProd, setSelectedProd] = useState(null)
-    const [artists, setArtists] = useState([])
+    const [selectedProd,   setSelectedProd]   = useState(null)
+    const [artists,        setArtists]        = useState([])
 
     useEffect(() => {
         axios.get(`${API}/artist`)
@@ -125,48 +39,64 @@ const Homepage = () => {
 
     return (
         <HomeWrap>
+            <Navbar />
 
-            {/* ── HERO SWIPER ─────────────────────────────────────────── */}
-            <Container activeIndexs={activeIndexs}>
-                <Navbar style={{ display: "none" }} activeIndexs={activeIndexs} setIndex={setIndex}/>
-                <Swiper
-                    direction={'vertical'}
-                    slidesPerView={1}
-                    mousewheel={true}
-                    pagination={false}
-                    onTouchMove={(e) => setactiveIndex(e.activeIndex===0?1:e.activeIndex===1?2:e.activeIndex)}
-                    className="mySwiper"
-                    onScroll={(e) => setactiveIndex(e.activeIndex)}
-                >
-                    {eval(category[indexNo])?.map((ele, index) => (
-                        <SwiperSlide className="swiper-slide" key={index}>
-                            <Link to={`/products`} state={{ query: ele.path }} style={{ display: 'block', position: 'relative', width: '100%', height: '100vh' }}>
-                                {ele.img
-                                    ? <img src={ele.img} alt={ele.img} className={`main${category[indexNo]}${index}`} loading={index === 0 ? 'eager' : 'lazy'}/>
-                                    : <video autoPlay loop muted>
-                                        <source src={ele.video} type="video/mp4" />
-                                      </video>
-                                }
-                                {!ele.img && index === 0 && indexNo === 0 && heroVideoText && (
-                                    <>
-                                        <ArtGradient style={{ zIndex: 10 }} />
-                                        <ArtTextOverlay style={{ zIndex: 11 }}>
-                                            <ArtHeadline>{heroVideoText}</ArtHeadline>
-                                        </ArtTextOverlay>
-                                    </>
-                                )}
-                            </Link>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </Container>
+            {/* ── HERO ────────────────────────────────────────────────── */}
+            <HeroSection>
+                {homeVideo && (
+                    <HeroVideo src={homeVideo} autoPlay loop muted playsInline />
+                )}
+                <HeroOverlay />
+                <HeroContent>
+                    <HeroEyebrow>— La Casita del Hornero</HeroEyebrow>
+                    <HeroTitle>Arte que<br/>se puede usar.</HeroTitle>
+                    {heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
+                    <HeroCtas>
+                        <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
+                        <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
+                    </HeroCtas>
+                </HeroContent>
+                <HeroScrollHint>
+                    <span>Scroll</span>
+                    <ArtScrollLine />
+                </HeroScrollHint>
+            </HeroSection>
 
-            {/* ── SPACER HERO ────────────────────────────────────────── */}
-            <HeroSpacer />
+            {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
+            {artistProducts.length > 0 && (
+                <FeaturedSection id="coleccion">
+                    <FeaturedSectionHeader>
+                        <ShopEyebrow>— Nueva colección</ShopEyebrow>
+                        <FeaturedTitle>Lo más reciente</FeaturedTitle>
+                        <FeaturedViewAll to="/products">Ver todo →</FeaturedViewAll>
+                    </FeaturedSectionHeader>
+                    <FeaturedGrid>
+                        {artistProducts.slice(0, 8).map((p, i) => (
+                            <FeaturedCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                                <FeaturedCardMedia>
+                                    {p.image
+                                        ? <img src={p.image} alt={p.name} loading="lazy" />
+                                        : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
+                                    }
+                                    <ShopCardOverlay>
+                                        <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
+                                    </ShopCardOverlay>
+                                    {p.artistName && (
+                                        <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>
+                                    )}
+                                </FeaturedCardMedia>
+                                <FeaturedCardBody>
+                                    <FeaturedCardName>{p.name}</FeaturedCardName>
+                                    <FeaturedCardPrice>{p.price}</FeaturedCardPrice>
+                                </FeaturedCardBody>
+                            </FeaturedCard>
+                        ))}
+                    </FeaturedGrid>
+                </FeaturedSection>
+            )}
 
             {/* ── CARRUSELES POR ARTISTA ─────────────────────────────── */}
             {artistProducts.length > 0 && (() => {
-                // Agrupar productos por artista manteniendo el orden de aparición
                 const map = {}
                 const order = []
                 artistProducts.forEach(p => {
@@ -178,7 +108,7 @@ const Homepage = () => {
                     <CarouselsSection>
                         <CarouselsSectionHeader>
                             <ShopEyebrow>— Tienda</ShopEyebrow>
-                            <ShopTitle>La colección</ShopTitle>
+                            <ShopTitle>Por artista</ShopTitle>
                         </CarouselsSectionHeader>
                         {order.map(key => {
                             const { slug, name, products } = map[key]
@@ -216,7 +146,7 @@ const Homepage = () => {
 
             {/* ── ARTISTAS: PERFILES ─────────────────────────────────── */}
             {artists.length > 0 && (
-                <ArtistsShowcase>
+                <ArtistsShowcase id="artistas">
                     <ArtistsShowcaseHeader>
                         <ArtistsShowcaseEyebrow>— Nuestros artistas</ArtistsShowcaseEyebrow>
                         <ArtistsShowcaseTitle>Conocé a quienes<br/>dan vida al arte</ArtistsShowcaseTitle>
@@ -245,11 +175,10 @@ const Homepage = () => {
                 </ArtistsShowcase>
             )}
 
-            {/* ── CARRUSEL DE ARTISTAS (ticker) ──────────────────────── */}
+            {/* ── TICKER DE ARTISTAS ─────────────────────────────────── */}
             {artists.length > 0 && (
                 <ArtistsTicker>
                     <ArtistsTrack>
-                        {/* duplicamos dos veces para el loop continuo */}
                         {[...artists, ...artists, ...artists].map((a, i) => (
                             <ArtistsTickerItem key={i}>
                                 <Link to={`/${a.slug}`}>{a.name.toUpperCase()}</Link>
@@ -290,14 +219,11 @@ const Homepage = () => {
                     </EditorialSectionTag>
 
                     <EditorialLayout>
-                        {/* Imagen izquierda */}
                         {editorial.editorialImage1 && (
                             <EditorialImgWrap side="left">
                                 <img src={editorial.editorialImage1} alt="editorial" loading="lazy" />
                             </EditorialImgWrap>
                         )}
-
-                        {/* Texto central */}
                         <EditorialInner hasImages={editorial.editorialImage1 || editorial.editorialImage2}>
                             {editorial.editorialLabel && (
                                 <EditorialLabel>{editorial.editorialLabel}</EditorialLabel>
@@ -312,8 +238,6 @@ const Homepage = () => {
                                 <EditorialCta>{editorial.editorialCta} →</EditorialCta>
                             )}
                         </EditorialInner>
-
-                        {/* Imagen derecha */}
                         {editorial.editorialImage2 && (
                             <EditorialImgWrap side="right">
                                 <img src={editorial.editorialImage2} alt="editorial" loading="lazy" />
@@ -339,64 +263,253 @@ const Homepage = () => {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO SWIPER
+   LAYOUT
 ═══════════════════════════════════════════════════════════════ */
-const Container = styled.div`
-    width: 100%;
-    height: 100vh;
-    position: absolute;
-    cursor: pointer;
-    z-index: -5;
-
-    .mySwiper { width: 100%; height: 100%; }
-
-    .swiper-slide { width: 100%; height: 100vh; }
-
-    .swiper-slide img {
-        width: 100%; height: 100vh;
-        object-fit: fill;
-    }
-
-    .swiper-slide video {
-        width: 100%; height: 100vh;
-        object-fit: cover;
-    }
-
-    .swiper-pagination { display: none; }
-
-    @media (min-width: 769px) and (max-width: 1110px) { .swiper-slide img { object-fit: cover; } }
-    @media (min-width: 481px) and (max-width: 768px)  { .swiper-slide img { object-fit: cover; } }
-
-    @media (min-width: 320px) and (max-width: 480px) {
-        .swiper-slide img { object-fit: cover; }
-        .swiper-slide .mainWomen4 {
-            transform: rotate(90deg); object-fit: contain;
-            width: 100vh; object-position: 0px 100%;
-            background-color: #e3edea;
-        }
-        .swiper-slide .mainWomen6 {
-            transform: rotate(-90deg); object-fit: contain;
-            width: 100vh; object-position: 0px 15%;
-            background-color: #c2d5e4;
-        }
-        .swiper-slide .mainMen1  { object-position: 60% 0%; }
-        .swiper-slide .mainKids2 { object-position: 71% 0%; }
-    }
-
-    @media (max-width: 320px) { .swiper-slide img { object-fit: cover; } }
-`
-
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO SPACER
+   HERO
 ═══════════════════════════════════════════════════════════════ */
-const HeroSpacer = styled.div`
+const HeroSection = styled.section`
+    position: relative;
+    width: 100%;
     height: 100vh;
-    pointer-events: none;
+    background: #0a0a0a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+
+const HeroVideo = styled.video`
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+`
+
+const HeroOverlay = styled.div`
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        160deg,
+        rgba(10,10,10,0.55) 0%,
+        rgba(10,10,10,0.15) 50%,
+        rgba(10,10,10,0.65) 100%
+    );
+    z-index: 1;
+`
+
+const HeroContent = styled.div`
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
+const HeroEyebrow = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin: 0 0 28px;
+`
+
+const HeroTitle = styled.h1`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(3rem, 9vw, 8rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    line-height: 1.05;
+    margin: 0 0 28px;
+    letter-spacing: -0.02em;
+`
+
+const HeroSub = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: rgba(255,255,255,0.5);
+    margin: 0 0 48px;
+    max-width: 420px;
+    text-align: center;
+    line-height: 2;
+`
+
+const HeroCtas = styled.div`
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+`
+
+const HeroCtaPrimary = styled(Link)`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: #fff;
+    padding: 16px 40px;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s;
+    &:hover { background: #e8e8e4; }
+`
+
+const HeroCtaSecondary = styled(Link)`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 16px 40px;
+    text-decoration: none;
+    transition: border-color 0.25s, color 0.25s;
+    &:hover { border-color: #fff; color: #fff; }
+`
+
+const HeroScrollHint = styled.div`
+    position: absolute;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    span {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 8px;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.35);
+    }
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   FEATURED PRODUCTS GRID
+═══════════════════════════════════════════════════════════════ */
+const FeaturedSection = styled.section`
+    background: #fafaf8;
+    padding: 100px 40px 120px;
+
+    @media (max-width: 640px) { padding: 72px 20px 96px; }
+`
+
+const FeaturedSectionHeader = styled.div`
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid #e8e8e4;
+    padding-bottom: 24px;
+`
+
+const FeaturedTitle = styled.h2`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #0a0a0a;
+    margin: 0;
+    letter-spacing: -0.02em;
+    flex: 1;
+`
+
+const FeaturedViewAll = styled(Link)`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #aaa;
+    text-decoration: none;
+    align-self: flex-end;
+    flex-shrink: 0;
+    transition: color 0.2s;
+    &:hover { color: #0a0a0a; }
+`
+
+const FeaturedGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+
+    @media (max-width: 900px)  { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 640px)  { grid-template-columns: repeat(2, 1fr); }
+`
+
+const FeaturedCard = styled.div`
+    cursor: pointer;
+    background: #fff;
+
+    &:hover img { transform: scale(1.05); }
+`
+
+const FeaturedCardMedia = styled.div`
+    position: relative;
+    overflow: hidden;
+    background: #ededeb;
+    padding-bottom: 130%;
+
+    img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+`
+
+const FeaturedArtistBadge = styled.span`
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 7px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(10,10,10,0.55);
+    padding: 4px 8px;
+    backdrop-filter: blur(4px);
+`
+
+const FeaturedCardBody = styled.div`
+    padding: 14px 12px 20px;
+    border-bottom: 1px solid #f0f0ee;
+`
+
+const FeaturedCardName = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #1a1a1a;
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`
+
+const FeaturedCardPrice = styled.p`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #555;
+    margin: 0;
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -450,11 +563,7 @@ const ArtistProfileCard = styled.div`
     overflow: hidden;
     background: #111;
 
-    a {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-    }
+    a { display: block; text-decoration: none; color: inherit; }
 
     &:hover img { transform: scale(1.06); }
     &:hover div[data-cta] { letter-spacing: 0.5em; }
@@ -490,11 +599,7 @@ const ArtistCardPlaceholder = styled.div`
 
 const ArtistCardGradient = styled.div`
     position: absolute; inset: 0;
-    background: linear-gradient(
-        to bottom,
-        transparent 30%,
-        rgba(0,0,0,0.75) 100%
-    );
+    background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);
 `
 
 const ArtistCardInfo = styled.div`
@@ -523,9 +628,7 @@ const ArtistCardCta = styled.p`
     margin: 0;
     transition: letter-spacing 0.35s ease, color 0.3s;
 
-    ${ArtistProfileCard}:hover & {
-        color: #fff;
-    }
+    ${ArtistProfileCard}:hover & { color: #fff; }
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -592,10 +695,8 @@ const ArtVideoWrap = styled.div`
     overflow: hidden;
 
     video {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
         object-fit: cover;
         opacity: 0.65;
     }
@@ -614,8 +715,7 @@ const ArtGradient = styled.div`
 `
 
 const ArtTextOverlay = styled.div`
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -678,14 +778,14 @@ const ArtScrollLine = styled.div`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   SHARED SECTION TAG
+   SHARED SECTION TAGS
 ═══════════════════════════════════════════════════════════════ */
 const EditorialSectionTag = styled.div`
     display: flex;
     align-items: center;
     gap: 16px;
     margin-bottom: 72px;
-    padding: 0 ${p => p.dark ? '40px' : '40px'};
+    padding: 0 40px;
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
@@ -693,22 +793,18 @@ const EditorialSectionTag = styled.div`
     box-sizing: border-box;
 `
 
-const ArtistsSectionTag = styled(EditorialSectionTag)`
-    margin-bottom: 0;
-`
-
 const EditorialSectionNum = styled.span`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px;
     letter-spacing: 0.3em;
-    color: ${p => p.dark ? 'rgba(10,10,10,0.25)' : 'rgba(10,10,10,0.2)'};
+    color: rgba(10,10,10,0.2);
     flex-shrink: 0;
 `
 
 const EditorialSectionLine = styled.div`
     flex: 1;
     height: 1px;
-    background: ${p => p.dark ? 'rgba(10,10,10,0.12)' : 'rgba(10,10,10,0.1)'};
+    background: rgba(10,10,10,0.1);
 `
 
 const EditorialSectionWord = styled.span`
@@ -716,7 +812,7 @@ const EditorialSectionWord = styled.span`
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: ${p => p.dark ? 'rgba(10,10,10,0.35)' : 'rgba(10,10,10,0.3)'};
+    color: rgba(10,10,10,0.3);
     flex-shrink: 0;
 `
 
@@ -738,11 +834,7 @@ const EditorialLayout = styled.div`
     margin: 0 auto;
     padding: 0 40px;
 
-    @media (max-width: 768px) {
-        flex-direction: column;
-        padding: 0 24px;
-        gap: 48px;
-    }
+    @media (max-width: 768px) { flex-direction: column; padding: 0 24px; gap: 48px; }
 `
 
 const EditorialImgWrap = styled.div`
@@ -753,19 +845,12 @@ const EditorialImgWrap = styled.div`
     margin-bottom: ${p => p.side === 'left'  ? '100px' : '0'};
     position: relative;
 
-    img {
-        width: 100%;
-        display: block;
-        object-fit: cover;
-        aspect-ratio: 3/4;
-    }
+    img { width: 100%; display: block; object-fit: cover; aspect-ratio: 3/4; }
 
-    /* Número de imagen discreto */
     &::before {
         content: '${p => p.side === 'left' ? 'I' : 'II'}';
         position: absolute;
-        top: -24px;
-        left: 0;
+        top: -24px; left: 0;
         font-family: 'DM Sans', sans-serif;
         font-size: 8px;
         letter-spacing: 0.3em;
@@ -773,10 +858,7 @@ const EditorialImgWrap = styled.div`
     }
 
     @media (max-width: 768px) {
-        flex: none;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
+        flex: none; width: 100%; max-width: 100%; margin: 0;
         img { aspect-ratio: 4/3; }
         &::before { display: none; }
     }
@@ -789,9 +871,7 @@ const EditorialInner = styled.div`
     max-width: ${p => p.hasImages ? 'none' : '760px'};
     margin: ${p => p.hasImages ? '0' : '0 auto'};
 
-    @media (max-width: 768px) {
-        padding: 0;
-    }
+    @media (max-width: 768px) { padding: 0; }
 `
 
 const EditorialLabel = styled.p`
@@ -841,20 +921,8 @@ const EditorialCta = styled.span`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   TIENDA: PRODUCTOS
+   SHOP SHARED
 ═══════════════════════════════════════════════════════════════ */
-const ShopSection = styled.section`
-    background: #f7f7f5;
-    padding: 100px 40px 120px;
-
-    @media (max-width: 640px) { padding: 72px 20px 96px; }
-`
-
-const ShopHeader = styled.div`
-    text-align: center;
-    margin-bottom: 72px;
-`
-
 const ShopEyebrow = styled.p`
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     font-size: 9px;
@@ -862,6 +930,7 @@ const ShopEyebrow = styled.p`
     text-transform: uppercase;
     color: #bbb;
     margin: 0 0 20px;
+    flex: 0 0 100%;
 `
 
 const ShopTitle = styled.h2`
@@ -875,16 +944,9 @@ const ShopTitle = styled.h2`
     letter-spacing: -0.02em;
 `
 
-const ShopSubtitle = styled.p`
-    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: #aaa;
-    margin: 0;
-    text-transform: uppercase;
-`
-
-/* Carruseles section */
+/* ═══════════════════════════════════════════════════════════════
+   CARRUSELES POR ARTISTA
+═══════════════════════════════════════════════════════════════ */
 const CarouselsSection = styled.section`
     background: #f7f7f5;
     padding: 100px 0 120px;
@@ -898,7 +960,6 @@ const CarouselsSectionHeader = styled.div`
 
 const ArtistCarousel = styled.div`
     margin-bottom: 80px;
-
     &:last-child { margin-bottom: 0; }
 `
 
@@ -932,7 +993,6 @@ const ArtistCarouselLink = styled(Link)`
     text-decoration: none;
     flex-shrink: 0;
     transition: color 0.2s;
-
     &:hover { color: #0a0a0a; }
 `
 
@@ -946,12 +1006,9 @@ const ArtistCarouselTrack = styled.div`
     cursor: grab;
 
     &:active { cursor: grabbing; }
-
-    /* scrollbar invisible */
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
 
-    /* fade lateral */
     -webkit-mask-image: linear-gradient(to right, transparent 0, black 3%, black 97%, transparent 100%);
     mask-image: linear-gradient(to right, transparent 0, black 3%, black 97%, transparent 100%);
 
@@ -1002,6 +1059,7 @@ const ShopCardOverlay = styled.div`
     transition: opacity 0.3s ease;
 
     ${ShopCard}:hover & { opacity: 1; }
+    ${FeaturedCard}:hover & { opacity: 1; }
 `
 
 const ShopCardOverlayBtn = styled.span`
@@ -1017,22 +1075,6 @@ const ShopCardOverlayBtn = styled.span`
 const ShopCardBody = styled.div`
     padding: 16px 14px 20px;
     border-bottom: 1px solid #f0f0ee;
-`
-
-const ShopCardArtist = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 8px;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: #bbb;
-    margin: 0 0 6px;
-
-    a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s;
-        &:hover { color: #0a0a0a; }
-    }
 `
 
 const ShopCardName = styled.p`
@@ -1116,10 +1158,7 @@ function HomeProdModal({ product, onClose }) {
                         fontFamily: 'DM Sans, sans-serif', fontSize: '8px',
                         letterSpacing: '0.4em', textTransform: 'uppercase', color: '#aaa'
                     }}>
-                        <Link to={`/artist/${product.artistSlug}`}
-                            style={{ color: 'inherit', textDecoration: 'none' }}>
-                            {product.artistName}
-                        </Link>
+                        {product.artistName}
                     </span>
                     <button onClick={onClose} style={{
                         background: 'none', border: 'none', cursor: 'pointer',
