@@ -268,19 +268,27 @@ const HomeWrap = styled.div`
 /* ═══════════════════════════════════════════════════════════════
    GALLERY 3D COMPONENT
 ═══════════════════════════════════════════════════════════════ */
+const GALLERY_TEXTS = [
+    { title: 'Arte que\nse puede usar.',           eyebrow: '— La Casita del Hornero' },
+    { title: 'Piezas únicas,\ncreadas a mano.',    eyebrow: '— Artesanía argentina'   },
+    { title: 'Cada obra\ncuenta una historia.',    eyebrow: '— Arte con propósito'    },
+    { title: 'Baja para ver los\nproductos artesanales ↓', eyebrow: '— La colección' },
+]
+
 function Gallery3D({ slides }) {
-    const spacerRef = useRef(null)
-    const mountRef  = useRef(null)
-    const [activeIdx, setActiveIdx] = useState(0)
-    const [show,      setShow]      = useState(true)
+    const spacerRef  = useRef(null)
+    const mountRef   = useRef(null)
+    const [textIdx,  setTextIdx]  = useState(0)
+    const [show,     setShow]     = useState(true)
 
-    const SPACING   = 6
-    const VIEW_DIST = 3.5
-    const screens   = Math.max(slides.length, 1) + 1
-    const height    = `${screens * 100}vh`
-    const maxTravel = slides.length > 0 ? (slides.length - 1) * SPACING : SPACING * 1.5
+    const SPACING    = 7
+    const VIEW_DIST  = 4
+    const FRAME_N    = Math.max(slides.length, 4)   // always at least 4 frames
+    const screens    = FRAME_N + 2
+    const height     = `${screens * 100}vh`
+    const maxTravel  = (FRAME_N - 1) * SPACING
 
-    /* Show/hide fixed canvas via IntersectionObserver on spacer */
+    /* Hide fixed canvas once spacer exits viewport */
     useEffect(() => {
         const el = spacerRef.current
         if (!el) return
@@ -289,17 +297,17 @@ function Gallery3D({ slides }) {
         return () => obs.disconnect()
     }, [])
 
-    /* Three.js scene */
+    /* Three.js corridor */
     useEffect(() => {
         const mount = mountRef.current
         if (!mount) return
         const W = window.innerWidth, H = window.innerHeight
 
         const scene = new THREE.Scene()
-        scene.background = new THREE.Color(0x060606)
-        scene.fog = new THREE.FogExp2(0x060606, 0.03)
+        scene.background = new THREE.Color(0x050505)
+        scene.fog = new THREE.FogExp2(0x050505, 0.028)
 
-        const camera = new THREE.PerspectiveCamera(62, W / H, 0.1, 100)
+        const camera = new THREE.PerspectiveCamera(65, W / H, 0.1, 120)
         camera.position.set(0, 0, VIEW_DIST)
 
         const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -308,58 +316,106 @@ function Gallery3D({ slides }) {
         renderer.outputColorSpace = THREE.SRGBColorSpace
         mount.appendChild(renderer.domElement)
 
-        scene.add(new THREE.AmbientLight(0xffffff, 0.45))
-        const spot = new THREE.SpotLight(0xfff5e0, 5, 24, Math.PI / 5, 0.35)
-        spot.position.set(0, 5, VIEW_DIST + 5)
-        scene.add(spot)
+        /* Ambient + directional lighting */
+        scene.add(new THREE.AmbientLight(0xffffff, 0.3))
+        const dirLight = new THREE.DirectionalLight(0xfff8ee, 1.2)
+        dirLight.position.set(2, 4, 6)
+        scene.add(dirLight)
+        const spotFollow = new THREE.SpotLight(0xffe8c0, 3, 20, Math.PI / 6, 0.4)
+        scene.add(spotFollow)
 
+        /* Corridor walls */
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0x0e0e0e, roughness: 1, metalness: 0 })
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 1 })
+        const totalLen = FRAME_N * SPACING + SPACING * 4
+
+        // left wall
+        const lWall = new THREE.Mesh(new THREE.PlaneGeometry(totalLen, 8), wallMat)
+        lWall.rotation.y = Math.PI / 2; lWall.position.set(-3.5, 0, -(totalLen / 2) + VIEW_DIST)
+        scene.add(lWall)
+        // right wall
+        const rWall = new THREE.Mesh(new THREE.PlaneGeometry(totalLen, 8), wallMat)
+        rWall.rotation.y = -Math.PI / 2; rWall.position.set(3.5, 0, -(totalLen / 2) + VIEW_DIST)
+        scene.add(rWall)
+        // floor
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(7, totalLen), floorMat)
+        floor.rotation.x = -Math.PI / 2; floor.position.set(0, -3, -(totalLen / 2) + VIEW_DIST)
+        scene.add(floor)
+        // ceiling
+        const ceil = new THREE.Mesh(new THREE.PlaneGeometry(7, totalLen), wallMat)
+        ceil.rotation.x = Math.PI / 2; ceil.position.set(0, 3, -(totalLen / 2) + VIEW_DIST)
+        scene.add(ceil)
+
+        /* Frames on walls */
         const loader = new THREE.TextureLoader()
-        const planes = slides.map((slide, i) => {
-            const x   = (i % 2 === 0 ? 1.3 : -1.3)
-            const y   = [0, 0.25, -0.2][i % 3]
-            const z   = -i * SPACING
-            const geo = new THREE.PlaneGeometry(3.2, 4.4)
-            const mat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 })
-            const mesh = new THREE.Mesh(geo, mat)
-            mesh.position.set(x, y, z)
-            mesh.rotation.y = (i % 2 === 0 ? -0.2 : 0.2)
-            scene.add(mesh)
-            loader.load(slide.image, tex => {
-                tex.colorSpace = THREE.SRGBColorSpace
-                mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true
-            }, undefined, () => {})
-            return { z }
-        })
+        const FW = 2.8, FH = 3.8      // frame size
+        const BORDER = 0.1
 
-        const pN = 700, depth = screens * SPACING + SPACING * 2
+        for (let i = 0; i < FRAME_N; i++) {
+            const side  = (i % 2 === 0) ? -1 : 1    // left or right wall
+            const z     = -(i * SPACING) - SPACING
+            const wallX = side * 3.48
+
+            // Frame border (gold strip)
+            const borderMat = new THREE.MeshStandardMaterial({ color: 0xc8a96e, roughness: 0.5, metalness: 0.4 })
+            const borderGeo = new THREE.BoxGeometry(FW + BORDER * 2, FH + BORDER * 2, 0.04)
+            const border = new THREE.Mesh(borderGeo, borderMat)
+            border.position.set(wallX + side * -0.06, 0, z)
+            border.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2
+            scene.add(border)
+
+            // Dark canvas inside frame
+            const canvasMat = new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 0.9 })
+            const canvas3d = new THREE.Mesh(new THREE.PlaneGeometry(FW, FH), canvasMat)
+            canvas3d.position.set(wallX + side * -0.08, 0, z)
+            canvas3d.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2
+            scene.add(canvas3d)
+
+            // Load artist image if available
+            if (slides[i]?.image) {
+                loader.load(slides[i].image, tex => {
+                    tex.colorSpace = THREE.SRGBColorSpace
+                    canvasMat.map = tex
+                    canvasMat.color.set(0xffffff)
+                    canvasMat.needsUpdate = true
+                }, undefined, () => {})
+            }
+
+            // Small spotlight per frame
+            const fSpot = new THREE.SpotLight(0xfff2d0, 1.5, 8, Math.PI / 8, 0.5)
+            fSpot.position.set(side * 2, 2.5, z)
+            fSpot.target.position.set(wallX, 0, z)
+            scene.add(fSpot); scene.add(fSpot.target)
+        }
+
+        /* Particles */
+        const pN = 500
         const pPos = new Float32Array(pN * 3)
         for (let i = 0; i < pN; i++) {
-            pPos[i*3]   = (Math.random() - 0.5) * 28
-            pPos[i*3+1] = (Math.random() - 0.5) * 16
-            pPos[i*3+2] = VIEW_DIST - Math.random() * depth
+            pPos[i*3]   = (Math.random() - 0.5) * 6
+            pPos[i*3+1] = (Math.random() - 0.5) * 5
+            pPos[i*3+2] = VIEW_DIST - Math.random() * (FRAME_N * SPACING + SPACING * 3)
         }
         const pGeo = new THREE.BufferGeometry()
         pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
         scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-            color: 0xffffff, size: 0.02, transparent: true, opacity: 0.32
+            color: 0xfff2d0, size: 0.025, transparent: true, opacity: 0.18
         })))
 
-        let targetCamZ = VIEW_DIST, currentCamZ = VIEW_DIST
+        /* Scroll → camera */
+        let targetZ = VIEW_DIST, currentZ = VIEW_DIST
 
         const getProgress = () => {
             const el = spacerRef.current
             if (!el) return 0
-            const rect     = el.getBoundingClientRect()
-            const scrolled = Math.max(0, -rect.top)
-            const range    = Math.max(1, el.clientHeight - window.innerHeight)
-            return Math.min(1, scrolled / range)
+            const r = el.getBoundingClientRect()
+            return Math.min(1, Math.max(0, -r.top) / Math.max(1, el.clientHeight - window.innerHeight))
         }
 
         const onScroll = () => {
             const p = getProgress()
-            targetCamZ = VIEW_DIST - p * maxTravel
-            if (slides.length > 0)
-                setActiveIdx(Math.min(Math.round(p * (slides.length - 1)), slides.length - 1))
+            targetZ = VIEW_DIST - p * maxTravel
+            setTextIdx(Math.min(Math.floor(p * GALLERY_TEXTS.length), GALLERY_TEXTS.length - 1))
         }
         window.addEventListener('scroll', onScroll, { passive: true })
 
@@ -368,11 +424,12 @@ function Gallery3D({ slides }) {
         const animate = () => {
             rafId = requestAnimationFrame(animate)
             const t = clock.getElapsedTime()
-            currentCamZ += (targetCamZ - currentCamZ) * 0.065
-            camera.position.z = currentCamZ
-            camera.position.x = Math.sin(t * 0.22) * 0.13
-            camera.position.y = Math.cos(t * 0.16) * 0.08
-            spot.position.z   = currentCamZ + 5
+            currentZ += (targetZ - currentZ) * 0.06
+            camera.position.z = currentZ
+            camera.position.x = Math.sin(t * 0.18) * 0.08
+            camera.position.y = Math.cos(t * 0.12) * 0.05
+            spotFollow.position.set(camera.position.x, camera.position.y + 2, currentZ + 3)
+            spotFollow.target.position.set(0, 0, currentZ - 5)
             renderer.render(scene, camera)
         }
         animate()
@@ -392,7 +449,8 @@ function Gallery3D({ slides }) {
         }
     }, [slides.length]) // eslint-disable-line
 
-    const cur = slides[activeIdx]
+    const txt = GALLERY_TEXTS[textIdx]
+    const isLast = textIdx === GALLERY_TEXTS.length - 1
 
     return (
         <>
@@ -400,38 +458,28 @@ function Gallery3D({ slides }) {
             <GalleryFixed $show={show}>
                 <GalleryCanvasMount ref={mountRef} />
 
-                <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
-                    <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
-                    <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                    {slides.length === 0 && (
-                        <HeroCtas style={{ marginTop: '40px', pointerEvents: 'all' }}>
-                            <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
-                            <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
-                        </HeroCtas>
-                    )}
-                </GalleryCenterText>
+                <GalleryTextBlock key={textIdx}>
+                    <GalleryEyebrow>{txt.eyebrow}</GalleryEyebrow>
+                    <GalleryTitle $last={isLast}>{txt.title}</GalleryTitle>
+                </GalleryTextBlock>
 
-                {cur && <GalleryArtistTag key={activeIdx}><Link to={`/${cur.slug}`}>{cur.name}</Link></GalleryArtistTag>}
-
-                {slides.length > 1 && activeIdx === slides.length - 1 && (
-                    <GalleryLastHint>
-                        <GalleryLastText>↓ Ver la colección</GalleryLastText>
-                        <GalleryLastLine />
-                    </GalleryLastHint>
+                {slides[Math.floor((textIdx / GALLERY_TEXTS.length) * slides.length)]?.name && (
+                    <GalleryArtistTag>
+                        <Link to={`/${slides[Math.floor((textIdx / GALLERY_TEXTS.length) * slides.length)]?.slug}`}>
+                            {slides[Math.floor((textIdx / GALLERY_TEXTS.length) * slides.length)]?.name}
+                        </Link>
+                    </GalleryArtistTag>
                 )}
 
-                {slides.length > 1 && (
-                    <>
-                        <GalleryCounter>
-                            {String(activeIdx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
-                        </GalleryCounter>
-                        <GalleryProgressBar>
-                            <GalleryProgressFill style={{ width: `${((activeIdx + 1) / slides.length) * 100}%` }} />
-                        </GalleryProgressBar>
-                    </>
-                )}
+                <GalleryCounter $show={slides.length > 0}>
+                    {String(Math.min(Math.floor((textIdx / GALLERY_TEXTS.length) * FRAME_N) + 1, FRAME_N)).padStart(2,'0')} / {String(FRAME_N).padStart(2,'0')}
+                </GalleryCounter>
 
-                <GalleryScrollHint>
+                <GalleryProgressBar>
+                    <GalleryProgressFill style={{ width: `${((textIdx + 1) / GALLERY_TEXTS.length) * 100}%` }} />
+                </GalleryProgressBar>
+
+                <GalleryScrollHint $hide={isLast}>
                     <span>Scroll</span>
                     <GalleryScrollLine />
                 </GalleryScrollHint>
@@ -477,6 +525,8 @@ const GalleryScrollHint = styled.div`
     align-items: center;
     gap: 10px;
     pointer-events: none;
+    opacity: ${p => p.$hide ? 0 : 1};
+    transition: opacity 0.5s;
 
     span {
         font-family: 'DM Sans', sans-serif;
@@ -513,6 +563,25 @@ const GalleryCenterText = styled.div`
     transition: opacity 0.6s ease;
 `
 
+const GalleryTextBlock = styled.div`
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 32px;
+    pointer-events: none;
+    animation: gtFadeIn 0.7s ease;
+
+    @keyframes gtFadeIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+`
+
 const GalleryEyebrow = styled.p`
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     font-size: 9px;
@@ -524,13 +593,14 @@ const GalleryEyebrow = styled.p`
 
 const GalleryTitle = styled.h1`
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(3rem, 9vw, 8rem);
+    font-size: ${p => p.$last ? 'clamp(2rem, 5vw, 4rem)' : 'clamp(3rem, 9vw, 8rem)'};
     font-weight: 300;
     font-style: italic;
     color: #fff;
-    line-height: 1.05;
+    line-height: 1.1;
     margin: 0;
     letter-spacing: -0.02em;
+    white-space: pre-line;
 `
 
 const GalleryArtistTag = styled.div`
@@ -590,6 +660,7 @@ const GalleryCounter = styled.div`
     top: 40px;
     right: 40px;
     z-index: 2;
+    display: ${p => p.$show === false ? 'none' : 'block'};
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     font-size: 9px;
     letter-spacing: 0.3em;
