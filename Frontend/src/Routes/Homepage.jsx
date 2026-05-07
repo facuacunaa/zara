@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { useState, useEffect } from "react";
+import styled, { keyframes } from "styled-components";
+import { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
@@ -14,12 +14,43 @@ const Homepage = () => {
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd,   setSelectedProd]   = useState(null)
     const [artists,        setArtists]        = useState([])
+    const [activeSlide,    setActiveSlide]    = useState(0)
+    const galleryRef = useRef(null)
 
     useEffect(() => {
         axios.get(`${API}/artist`)
             .then(r => setArtists(r.data || []))
             .catch(() => {})
     }, [])
+
+    // Construir slides de la galería con imágenes de los artistas
+    const gallerySlides = useMemo(() => {
+        const slides = []
+        artists.forEach(a => {
+            if (a.profileImage) slides.push({ image: a.profileImage, name: a.name, slug: a.slug })
+            if (a.images?.[0])  slides.push({ image: a.images[0],    name: a.name, slug: a.slug })
+            if (slides.length >= 8) return
+        })
+        return slides
+    }, [artists])
+
+    // Scroll listener para avanzar slides
+    useEffect(() => {
+        if (gallerySlides.length === 0) return
+        const onScroll = () => {
+            const el = galleryRef.current
+            if (!el) return
+            const rect = el.getBoundingClientRect()
+            const scrolled = -rect.top
+            const idx = Math.max(0, Math.min(
+                Math.floor(scrolled / window.innerHeight),
+                gallerySlides.length - 1
+            ))
+            setActiveSlide(idx)
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [gallerySlides.length])
 
     useEffect(() => {
         axios.get(`${API}/settings`)
@@ -41,26 +72,72 @@ const Homepage = () => {
         <HomeWrap>
             <Navbar />
 
-            {/* ── HERO ────────────────────────────────────────────────── */}
-            <HeroSection>
-                {homeVideo && (
-                    <HeroVideo src={homeVideo} autoPlay loop muted playsInline />
-                )}
-                <HeroOverlay />
-                <HeroContent>
-                    <HeroEyebrow>— La Casita del Hornero</HeroEyebrow>
-                    <HeroTitle>Arte que<br/>se puede usar.</HeroTitle>
-                    {heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
-                    <HeroCtas>
-                        <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
-                        <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
-                    </HeroCtas>
-                </HeroContent>
-                <HeroScrollHint>
-                    <span>Scroll</span>
-                    <ArtScrollLine />
-                </HeroScrollHint>
-            </HeroSection>
+            {/* ── GALERÍA HERO ────────────────────────────────────────── */}
+            {gallerySlides.length > 0 ? (
+                <GalleryOuter
+                    ref={galleryRef}
+                    style={{ height: `${gallerySlides.length * 100}vh` }}
+                >
+                    <GallerySticky>
+                        {gallerySlides.map((slide, i) => (
+                            <GallerySlide key={i} $active={activeSlide === i}>
+                                <GalleryImg src={slide.image} alt={slide.name} loading={i === 0 ? 'eager' : 'lazy'} />
+                                <GalleryOverlay />
+
+                                {/* Primera slide: título de la marca */}
+                                {i === 0 && (
+                                    <GalleryCenterText>
+                                        <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
+                                        <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
+                                    </GalleryCenterText>
+                                )}
+
+                                {/* Nombre del artista abajo a la izquierda */}
+                                <GalleryArtistTag>
+                                    <Link to={`/${slide.slug}`}>{slide.name}</Link>
+                                </GalleryArtistTag>
+
+                                {/* Última slide: hint scroll */}
+                                {i === gallerySlides.length - 1 && (
+                                    <GalleryLastHint>
+                                        <GalleryLastText>↓ Ver la colección</GalleryLastText>
+                                        <GalleryLastLine />
+                                    </GalleryLastHint>
+                                )}
+
+                                {/* Contador */}
+                                <GalleryCounter>
+                                    {String(i + 1).padStart(2,'0')} / {String(gallerySlides.length).padStart(2,'0')}
+                                </GalleryCounter>
+
+                                {/* Barra de progreso */}
+                                <GalleryProgressBar>
+                                    <GalleryProgressFill style={{ width: `${((i + 1) / gallerySlides.length) * 100}%` }} />
+                                </GalleryProgressBar>
+                            </GallerySlide>
+                        ))}
+                    </GallerySticky>
+                </GalleryOuter>
+            ) : (
+                /* Fallback si aún no hay artistas con imágenes */
+                <HeroSection>
+                    {homeVideo && <HeroVideo src={homeVideo} autoPlay loop muted playsInline />}
+                    <HeroOverlay />
+                    <HeroContent>
+                        <HeroEyebrow>— La Casita del Hornero</HeroEyebrow>
+                        <HeroTitle>Arte que<br/>se puede usar.</HeroTitle>
+                        {heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
+                        <HeroCtas>
+                            <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
+                            <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
+                        </HeroCtas>
+                    </HeroContent>
+                    <HeroScrollHint>
+                        <span>Scroll</span>
+                        <ArtScrollLine />
+                    </HeroScrollHint>
+                </HeroSection>
+            )}
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
@@ -268,6 +345,161 @@ const Homepage = () => {
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   GALLERY HERO
+═══════════════════════════════════════════════════════════════ */
+const GalleryOuter = styled.section`
+    position: relative;
+`
+
+const GallerySticky = styled.div`
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #0a0a0a;
+`
+
+const GallerySlide = styled.div`
+    position: absolute;
+    inset: 0;
+    opacity: ${p => p.$active ? 1 : 0};
+    transition: opacity 0.8s ease;
+`
+
+const GalleryImg = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.72;
+    display: block;
+`
+
+const GalleryOverlay = styled.div`
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.3) 0%,
+        transparent 40%,
+        rgba(10,10,10,0.65) 100%
+    );
+    z-index: 1;
+`
+
+const GalleryCenterText = styled.div`
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+`
+
+const GalleryEyebrow = styled.p`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin: 0 0 28px;
+`
+
+const GalleryTitle = styled.h1`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(3rem, 9vw, 8rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.02em;
+`
+
+const GalleryArtistTag = styled.div`
+    position: absolute;
+    bottom: 80px;
+    left: 40px;
+    z-index: 2;
+
+    a {
+        font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+        font-size: 9px;
+        letter-spacing: 0.5em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.6);
+        text-decoration: none;
+        transition: color 0.2s;
+        &:hover { color: #fff; }
+    }
+
+    @media (max-width: 640px) { left: 20px; bottom: 72px; }
+`
+
+const GalleryLastHint = styled.div`
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+`
+
+const GalleryLastText = styled.span`
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    animation: hintPulse 2.2s ease-in-out infinite;
+
+    @keyframes hintPulse {
+        0%, 100% { opacity: 0.5; transform: translateY(0); }
+        50%       { opacity: 1;   transform: translateY(4px); }
+    }
+`
+
+const GalleryLastLine = styled.div`
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.45), rgba(255,255,255,0));
+`
+
+const GalleryCounter = styled.div`
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    z-index: 2;
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.35);
+
+    @media (max-width: 640px) { right: 20px; top: 24px; }
+`
+
+const GalleryProgressBar = styled.div`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    z-index: 2;
+`
+
+const GalleryProgressFill = styled.div`
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+    transition: width 0.6s ease;
 `
 
 /* ═══════════════════════════════════════════════════════════════
