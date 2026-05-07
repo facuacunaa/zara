@@ -145,6 +145,52 @@ export default function ArtistPage() {
 
   const products = artist.shopProducts || []
 
+  /* Tarjeta de producto reutilizable */
+  const ProdCard = ({ p }) => (
+    <div className="group cursor-pointer" onClick={() => setSelectedProd(p)}>
+      <div className="relative overflow-hidden bg-mist mb-4" style={{ paddingBottom: '130%' }}>
+        {p.image ? (
+          <img src={p.image} alt={p.name} loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-mist flex items-center justify-center">
+            <span className="text-ash text-xs tracking-widest2 uppercase">Sin imagen</span>
+          </div>
+        )}
+        <div className="absolute bottom-3 inset-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="bg-white/95 backdrop-blur-sm text-center py-2">
+            <span className="font-sans text-[8px] tracking-widest2 uppercase text-ink">Ver detalle</span>
+          </div>
+        </div>
+      </div>
+      <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate mb-1">{p.name}</p>
+      <p className="font-serif text-sm text-ash mb-2">{p.price}</p>
+      <AddCart data={{
+        producttitle: p.name,
+        image:        p.image,
+        price:        p.price,
+        pricenum:     parseFloat((p.price || '0').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
+        quantity:     1,
+        color:        '',
+        id:           p._id || p.name,
+      }} />
+    </div>
+  )
+
+  const MiniProducts = ({ slice }) => {
+    const items = products.slice(...slice).filter(Boolean)
+    if (!items.length) return null
+    return (
+      <section className="py-14 px-6 md:px-16 max-w-5xl mx-auto">
+        <p className="font-sans text-[8px] tracking-widest3 uppercase text-ash mb-8">— De la colección</p>
+        <div className="grid grid-cols-2 gap-6 md:gap-10">
+          {items.map((p, i) => <ProdCard key={p._id || i} p={p} />)}
+        </div>
+      </section>
+    )
+  }
+
   return (
     <div className="bg-chalk font-sans text-ink antialiased">
 
@@ -266,6 +312,9 @@ export default function ArtistPage() {
         </section>
       )}
 
+      {/* ── Mini productos: primeros 2 ──────────────────────────────────── */}
+      <MiniProducts slice={[0, 2]} />
+
       {/* ── 4. DOS IMÁGENES LADO A LADO ─────────────────────────────────── */}
       {(img(2) || img(3)) && (
         <section className="grid grid-cols-2 gap-px bg-mist">
@@ -286,6 +335,9 @@ export default function ArtistPage() {
         </section>
       )}
 
+      {/* ── Mini productos: siguientes 2 ────────────────────────────────── */}
+      <MiniProducts slice={[2, 4]} />
+
       {/* ── 5. TODOS LOS PRODUCTOS ──────────────────────────────────────── */}
       {products.length > 0 && (
         <section className="py-20 px-6 md:px-12">
@@ -304,42 +356,7 @@ export default function ArtistPage() {
 
             {/* Grid de productos */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((p, i) => (
-                <div key={p._id || i} className="group cursor-pointer" onClick={() => setSelectedProd(p)}>
-                  {/* Imagen */}
-                  <div className="relative overflow-hidden bg-mist mb-4" style={{ paddingBottom: '130%' }}>
-                    {p.image ? (
-                      <img
-                        src={p.image} alt={p.name} loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-mist flex items-center justify-center">
-                        <span className="text-ash text-xs tracking-widest2 uppercase">Sin imagen</span>
-                      </div>
-                    )}
-                    <div className="absolute bottom-3 inset-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="bg-white/95 backdrop-blur-sm text-center py-2">
-                        <span className="font-sans text-[8px] tracking-widest2 uppercase text-ink">Ver detalle</span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Info */}
-                  <p className="font-sans text-[9px] tracking-widest2 uppercase text-ink leading-relaxed truncate mb-1">
-                    {p.name}
-                  </p>
-                  <p className="font-serif text-sm text-ash mb-2">{p.price}</p>
-                  <AddCart data={{
-                    producttitle: p.name,
-                    image:        p.image,
-                    price:        p.price,
-                    pricenum:     parseFloat((p.price || '0').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
-                    quantity:     1,
-                    color:        '',
-                    id:           p._id || p.name,
-                  }} />
-                </div>
-              ))}
+              {products.map((p, i) => <ProdCard key={p._id || i} p={p} />)}
             </div>
           </div>
         </section>
