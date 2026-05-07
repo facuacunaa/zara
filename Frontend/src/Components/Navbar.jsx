@@ -215,6 +215,25 @@ const Navbar = ({ activeIndexs }) => {
                         </ArtistList>
                     )}
 
+                    {/* Acceso portales */}
+                    <PortalSection>
+                        <PortalLabel>— Acceso</PortalLabel>
+                        <PortalLink to="/artist-portal">
+                            <PortalIcon>🎨</PortalIcon>
+                            <div>
+                                <PortalLinkTitle>Portal Artista</PortalLinkTitle>
+                                <PortalLinkSub>Gestioná tu página y productos</PortalLinkSub>
+                            </div>
+                        </PortalLink>
+                        <PortalLink to="/admin">
+                            <PortalIcon>⚙️</PortalIcon>
+                            <div>
+                                <PortalLinkTitle>Administrador</PortalLinkTitle>
+                                <PortalLinkSub>Panel de control de la tienda</PortalLinkSub>
+                            </div>
+                        </PortalLink>
+                    </PortalSection>
+
                     {/* Links secundarios */}
                     <SidebarFooterLinks>
                         <Link to="/products">Tienda</Link>
@@ -426,6 +445,57 @@ const ArtistItem = styled.div`
             padding-left: 8px;
         }
     }
+`
+
+const PortalSection = styled.div`
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+`
+
+const PortalLabel = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin: 0 0 14px;
+`
+
+const PortalLink = styled(Link)`
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #f0f0ee;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+
+    &:hover {
+        border-color: #0a0a0a;
+        background: #fafaf8;
+    }
+`
+
+const PortalIcon = styled.span`
+    font-size: 20px;
+    flex-shrink: 0;
+`
+
+const PortalLinkTitle = styled.p`
+    font-family: 'Schoolbell', cursive;
+    font-size: 15px;
+    color: #0a0a0a;
+    margin: 0 0 2px;
+`
+
+const PortalLinkSub = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: #aaa;
+    margin: 0;
 `
 
 const SidebarFooterLinks = styled.div`
