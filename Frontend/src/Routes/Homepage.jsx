@@ -256,10 +256,21 @@ const HomeWrap = styled.div`
 /* ═══════════════════════════════════════════════════════════════
    PAINT INTRO
 ═══════════════════════════════════════════════════════════════ */
+const PAINT_TEXTS = [
+    { head: 'Arte que\ntransforma',     sub: 'Piezas únicas de artistas locales' },
+    { head: 'Cada trazo\ncuenta',       sub: 'Hecho a mano, pensado para vos' },
+    { head: 'Colección\nlimitada',      sub: 'Obras originales, irrepetibles' },
+    { head: 'Arte\nartesanal',          sub: 'Seguí bajando para ver la tienda' },
+]
+
 function PaintIntro() {
-    const canvasRef = useRef(null)
-    const [fading, setFading] = useState(false)
-    const [gone,   setGone]   = useState(false)
+    const canvasRef  = useRef(null)
+    const spacerRef  = useRef(null)
+    const fadingRef  = useRef(false)
+    const [textIdx,  setTextIdx]  = useState(0)
+    const [darkMode, setDarkMode] = useState(false)
+    const [fading,   setFading]   = useState(false)
+    const [gone,     setGone]     = useState(false)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -283,17 +294,15 @@ function PaintIntro() {
             'rgba(250,246,240,0.96)',
             'rgba(254,252,247,0.97)',
         ]
-        /* t0 = start time in seconds, DUR = duration per stroke */
-        const DUR = 0.26
         const STROKES = [
-            { path:[[0,0.06],[0.30,0.02],[0.70,0.10],[1.02,0.04]], w:0.23, t0:0.00, c:C[0] },
-            { path:[[1.02,0.23],[0.65,0.18],[0.35,0.28],[0,0.21]], w:0.22, t0:0.11, c:C[1] },
-            { path:[[0,0.40],[0.28,0.35],[0.72,0.44],[1.02,0.38]], w:0.23, t0:0.22, c:C[2] },
-            { path:[[1.02,0.57],[0.60,0.52],[0.38,0.61],[0,0.55]], w:0.22, t0:0.33, c:C[3] },
-            { path:[[0,0.74],[0.32,0.70],[0.68,0.78],[1.02,0.72]], w:0.23, t0:0.44, c:C[0] },
-            { path:[[1.02,0.91],[0.60,0.87],[0.38,0.95],[0,0.89]], w:0.24, t0:0.55, c:C[1] },
-            { path:[[0.05,0.14],[0.28,0.09],[0.62,0.18],[0.95,0.13]], w:0.16, t0:0.17, c:C[2] },
-            { path:[[0.95,0.80],[0.65,0.76],[0.32,0.84],[0.05,0.79]], w:0.16, t0:0.62, c:C[3] },
+            { path:[[0,0.06],[0.30,0.02],[0.70,0.10],[1.02,0.04]], w:0.23, p0:0.00, p1:0.14, c:C[0] },
+            { path:[[1.02,0.23],[0.65,0.18],[0.35,0.28],[0,0.21]], w:0.22, p0:0.12, p1:0.26, c:C[1] },
+            { path:[[0,0.40],[0.28,0.35],[0.72,0.44],[1.02,0.38]], w:0.23, p0:0.24, p1:0.40, c:C[2] },
+            { path:[[1.02,0.57],[0.60,0.52],[0.38,0.61],[0,0.55]], w:0.22, p0:0.38, p1:0.54, c:C[3] },
+            { path:[[0,0.74],[0.32,0.70],[0.68,0.78],[1.02,0.72]], w:0.23, p0:0.52, p1:0.68, c:C[0] },
+            { path:[[1.02,0.91],[0.60,0.87],[0.38,0.95],[0,0.89]], w:0.24, p0:0.66, p1:0.82, c:C[1] },
+            { path:[[0.05,0.14],[0.28,0.09],[0.62,0.18],[0.95,0.13]], w:0.16, p0:0.28, p1:0.46, c:C[2] },
+            { path:[[0.95,0.80],[0.65,0.76],[0.32,0.84],[0.05,0.79]], w:0.16, p0:0.76, p1:0.96, c:C[3] },
         ]
         const SAMP = 64
 
@@ -330,54 +339,132 @@ function PaintIntro() {
             ctx.stroke()
         }
 
-        let startTs = null
-        let rafId
-
-        const frame = (ts) => {
-            if (!startTs) startTs = ts
-            const time = (ts - startTs) / 1000
-
+        const draw = (p) => {
             ctx.fillStyle = '#050505'
             ctx.fillRect(0, 0, W, H)
-
-            let allDone = true
             STROKES.forEach(s => {
-                const p = Math.min(1, Math.max(0, (time - s.t0) / DUR))
-                if (p < 1) allDone = false
-                drawStroke(s, p)
+                const span = s.p1 - s.p0
+                const prog = span <= 0 ? 0 : Math.min(1, Math.max(0, (p - s.p0) / span))
+                drawStroke(s, prog)
             })
-
-            if (!allDone) {
-                rafId = requestAnimationFrame(frame)
-            } else {
-                ctx.fillStyle = 'rgba(252,248,242,1)'
+            if (p >= 0.96) {
+                const alpha = Math.min(1, (p - 0.96) / 0.04)
+                ctx.fillStyle = `rgba(252,248,242,${alpha})`
                 ctx.fillRect(0, 0, W, H)
-                setTimeout(() => setFading(true), 80)
+            }
+        }
+
+        draw(0)
+
+        const onScroll = () => {
+            const spacer = spacerRef.current
+            if (!spacer) return
+            const rect  = spacer.getBoundingClientRect()
+            const total = spacer.offsetHeight - window.innerHeight
+            const p     = Math.min(1, Math.max(0, -rect.top / total))
+
+            draw(p)
+            setTextIdx(p < 0.25 ? 0 : p < 0.50 ? 1 : p < 0.75 ? 2 : 3)
+            setDarkMode(p >= 0.52)
+
+            if (p >= 0.99 && !fadingRef.current) {
+                fadingRef.current = true
+                setFading(true)
                 setTimeout(() => setGone(true), 900)
             }
         }
-        rafId = requestAnimationFrame(frame)
-        return () => cancelAnimationFrame(rafId)
+
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
     }, [])
 
     if (gone) return null
+
+    const txt = PAINT_TEXTS[textIdx]
     return (
-        <PaintFixed $fading={fading}>
-            <canvas
-                ref={canvasRef}
-                style={{ position:'absolute', inset:0, width:'100%', height:'100%' }}
-            />
-        </PaintFixed>
+        <PaintWrap>
+            <PaintFixed $fading={fading}>
+                <canvas
+                    ref={canvasRef}
+                    style={{ position:'absolute', inset:0, width:'100%', height:'100%' }}
+                />
+                <PaintTextBlock $dark={darkMode}>
+                    <PaintTextHead>
+                        {txt.head.split('\n').map((l, i) => <span key={i}>{l}<br/></span>)}
+                    </PaintTextHead>
+                    <PaintTextSub>{txt.sub}</PaintTextSub>
+                </PaintTextBlock>
+                <PaintScrollHint $dark={darkMode}>
+                    <PaintScrollHintText>scroll</PaintScrollHintText>
+                    <PaintScrollLine />
+                </PaintScrollHint>
+            </PaintFixed>
+            <PaintSpacer ref={spacerRef} />
+        </PaintWrap>
     )
 }
 
+const PaintWrap = styled.div`
+    position: relative;
+`
+const PaintSpacer = styled.div`
+    height: 120vh;
+`
 const PaintFixed = styled.div`
     position: fixed;
     inset: 0;
     z-index: 100;
     pointer-events: none;
     opacity: ${p => p.$fading ? 0 : 1};
-    transition: opacity 0.8s ease;
+    transition: opacity 0.9s ease;
+`
+const PaintTextBlock = styled.div`
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: ${p => p.$dark ? '#111' : '#f8f4ef'};
+    transition: color 0.5s ease;
+    white-space: nowrap;
+`
+const PaintTextHead = styled.h1`
+    font-family: 'Times New Roman', serif;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    margin: 0 0 0.6rem;
+    text-transform: uppercase;
+`
+const PaintTextSub = styled.p`
+    font-size: clamp(0.7rem, 1.6vw, 0.9rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0;
+    opacity: 0.65;
+`
+const PaintScrollHint = styled.div`
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: ${p => p.$dark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.55)'};
+    transition: color 0.5s ease;
+`
+const PaintScrollHintText = styled.span`
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+`
+const PaintScrollLine = styled.div`
+    width: 1px;
+    height: 2.5rem;
+    background: currentColor;
 `
 
 /* ═══════════════════════════════════════════════════════════════
