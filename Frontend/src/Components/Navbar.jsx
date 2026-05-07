@@ -136,7 +136,7 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    const iconColor = (onHomePage || (onArtistPage && !scrolled)) ? 'white' : 'black'
+    const iconColor = (onArtistPage && !scrolled) ? 'white' : 'black'
     const navBg     = needsTransparency ? 'transparent' : 'white'
 
     return (

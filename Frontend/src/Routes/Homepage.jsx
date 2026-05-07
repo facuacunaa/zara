@@ -408,7 +408,7 @@ const PaintWrap = styled.div`
     position: relative;
 `
 const PaintSpacer = styled.div`
-    height: 120vh;
+    height: 180vh;
 `
 const PaintFixed = styled.div`
     position: fixed;
