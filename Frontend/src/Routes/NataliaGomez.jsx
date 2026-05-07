@@ -285,6 +285,9 @@ export default function ArtistPage() {
         </section>
       )}
 
+      {/* ── Mini productos: primeros 2 ──────────────────────────────────── */}
+      <MiniProducts slice={[0, 2]} />
+
       {/* ── 3. TEXTO + IMAGEN LADO A LADO ───────────────────────────────── */}
       {(g('blockTitle') || g('blockBody') || img(1)) && (
         <section className="grid grid-cols-1 md:grid-cols-2 gap-px bg-mist">
@@ -312,8 +315,8 @@ export default function ArtistPage() {
         </section>
       )}
 
-      {/* ── Mini productos: primeros 2 ──────────────────────────────────── */}
-      <MiniProducts slice={[0, 2]} />
+      {/* ── Mini productos: siguientes 2 ────────────────────────────────── */}
+      <MiniProducts slice={[2, 4]} />
 
       {/* ── 4. DOS IMÁGENES LADO A LADO ─────────────────────────────────── */}
       {(img(2) || img(3)) && (
@@ -334,9 +337,6 @@ export default function ArtistPage() {
           </div>
         </section>
       )}
-
-      {/* ── Mini productos: siguientes 2 ────────────────────────────────── */}
-      <MiniProducts slice={[2, 4]} />
 
       {/* ── 5. TODOS LOS PRODUCTOS ──────────────────────────────────────── */}
       {products.length > 0 && (
