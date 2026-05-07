@@ -269,75 +269,25 @@ const HomeWrap = styled.div`
    GALLERY 3D COMPONENT
 ═══════════════════════════════════════════════════════════════ */
 function Gallery3D({ slides }) {
-    const mountRef    = useRef(null)
-    const targetSlide = useRef(0)
+    const wrapRef  = useRef(null)   // tall outer — scroll anchor
+    const mountRef = useRef(null)   // canvas mount
     const [activeIdx, setActiveIdx] = useState(0)
-    const [exiting,   setExiting]   = useState(false)
-    const [dismissed, setDismissed] = useState(false)
 
-    /* total: always at least 1 (particles + brand text) */
+    const SPACING  = 6
+    const VIEW_DIST = 3.5
+    /* Each slide occupies 1 screen of scroll; no slides → 1 screen only */
     const total = Math.max(slides.length, 1)
 
-    const dismiss = () => {
-        setExiting(true)
-        setTimeout(() => {
-            setDismissed(true)
-            document.body.style.overflow = ''
-        }, 900)
-    }
-
-    /* Lock body scroll */
+    /* Three.js scene — camera driven by scroll position */
     useEffect(() => {
-        if (dismissed) return
-        document.body.style.overflow = 'hidden'
-        return () => { document.body.style.overflow = '' }
-    }, [dismissed])
-
-    /* Wheel + touch navigation */
-    useEffect(() => {
-        if (dismissed) return
-        let lastTime    = 0
-        let touchStartY = 0
-
-        const go = (dir) => {
-            const now = Date.now()
-            if (now - lastTime < 550) return
-            lastTime = now
-            const cur = targetSlide.current
-            if (dir > 0) {
-                if (cur < total - 1) { targetSlide.current = cur + 1; setActiveIdx(cur + 1) }
-                else { dismiss() }
-            } else {
-                if (cur > 0) { targetSlide.current = cur - 1; setActiveIdx(cur - 1) }
-            }
-        }
-
-        const onWheel      = (e) => { e.preventDefault(); go(e.deltaY) }
-        const onTouchStart = (e) => { touchStartY = e.touches[0].clientY }
-        const onTouchEnd   = (e) => { const dy = touchStartY - e.changedTouches[0].clientY; if (Math.abs(dy) > 45) go(dy) }
-
-        window.addEventListener('wheel',      onWheel,      { passive: false })
-        window.addEventListener('touchstart', onTouchStart, { passive: true })
-        window.addEventListener('touchend',   onTouchEnd,   { passive: true })
-        return () => {
-            window.removeEventListener('wheel',      onWheel)
-            window.removeEventListener('touchstart', onTouchStart)
-            window.removeEventListener('touchend',   onTouchEnd)
-        }
-    }, [dismissed, total]) // eslint-disable-line
-
-    /* Three.js scene */
-    useEffect(() => {
-        if (dismissed) return
         const mount = mountRef.current
         if (!mount) return
 
         const W = window.innerWidth, H = window.innerHeight
-        const SPACING = 6, VIEW_DIST = 3.5
 
         const scene = new THREE.Scene()
         scene.background = new THREE.Color(0x060606)
-        scene.fog = new THREE.FogExp2(0x060606, 0.03)
+        scene.fog = new THREE.FogExp2(0x060606, 0.032)
 
         const camera = new THREE.PerspectiveCamera(62, W / H, 0.1, 100)
         camera.position.set(0, 0, VIEW_DIST)
@@ -349,11 +299,11 @@ function Gallery3D({ slides }) {
         mount.appendChild(renderer.domElement)
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.45))
-        const spot = new THREE.SpotLight(0xfff5e0, 5, 22, Math.PI / 5, 0.35)
+        const spot = new THREE.SpotLight(0xfff5e0, 5, 24, Math.PI / 5, 0.35)
         spot.position.set(0, 5, VIEW_DIST + 5)
         scene.add(spot)
 
-        /* Image planes — only if artist images exist */
+        /* Image planes */
         const loader = new THREE.TextureLoader()
         const planes = slides.map((slide, i) => {
             const x    = (i % 2 === 0 ? 1.3 : -1.3)
@@ -372,8 +322,8 @@ function Gallery3D({ slides }) {
             return { z }
         })
 
-        /* Particles */
-        const pN = 600, depth = Math.max(slides.length, 1) * SPACING + SPACING * 3
+        /* Particles spread across full tunnel depth */
+        const pN = 600, depth = total * SPACING + SPACING * 3
         const pPos = new Float32Array(pN * 3)
         for (let i = 0; i < pN; i++) {
             pPos[i*3]   = (Math.random() - 0.5) * 26
@@ -382,21 +332,45 @@ function Gallery3D({ slides }) {
         }
         const pGeo = new THREE.BufferGeometry()
         pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
-        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.02, transparent: true, opacity: 0.3 })))
+        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
+            color: 0xffffff, size: 0.02, transparent: true, opacity: 0.3
+        })))
+
+        /* Scroll → camera Z */
+        let targetCamZ = VIEW_DIST
+        let currentCamZ = VIEW_DIST
+        const maxTravel = slides.length > 1 ? (slides.length - 1) * SPACING : 0
+
+        const getProgress = () => {
+            const el = wrapRef.current
+            if (!el) return 0
+            const rect    = el.getBoundingClientRect()
+            const scrolled = Math.max(0, -rect.top)
+            const total_   = Math.max(1, el.clientHeight - window.innerHeight)
+            return Math.min(1, scrolled / total_)
+        }
+
+        const onScroll = () => {
+            const p = getProgress()
+            targetCamZ = VIEW_DIST - p * maxTravel
+            if (slides.length > 0) {
+                const idx = Math.min(Math.round(p * (slides.length - 1)), slides.length - 1)
+                setActiveIdx(idx)
+            }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
 
         /* RAF */
-        let camZ = VIEW_DIST, rafId
+        let rafId
         const clock = new THREE.Clock()
         const animate = () => {
             rafId = requestAnimationFrame(animate)
-            const t   = clock.getElapsedTime()
-            const idx = targetSlide.current
-            const tgt = idx < planes.length ? planes[idx].z + VIEW_DIST : VIEW_DIST
-            camZ += (tgt - camZ) * 0.055
-            camera.position.z = camZ
+            const t = clock.getElapsedTime()
+            currentCamZ += (targetCamZ - currentCamZ) * 0.065
+            camera.position.z = currentCamZ
             camera.position.x = Math.sin(t * 0.22) * 0.13
             camera.position.y = Math.cos(t * 0.16) * 0.08
-            spot.position.z   = camZ + 5
+            spot.position.z   = currentCamZ + 5
             renderer.render(scene, camera)
         }
         animate()
@@ -409,73 +383,80 @@ function Gallery3D({ slides }) {
 
         return () => {
             cancelAnimationFrame(rafId)
+            window.removeEventListener('scroll', onScroll)
             window.removeEventListener('resize', onResize)
             renderer.dispose()
             try { mount.removeChild(renderer.domElement) } catch {}
         }
-    }, [slides.length, dismissed]) // eslint-disable-line
+    }, [slides.length]) // eslint-disable-line
 
-    if (dismissed) return null
-
-    const cur = slides[activeIdx]
+    const cur     = slides[activeIdx]
+    /* Height: 1 screen if no images, N screens if N images */
+    const height  = slides.length > 1 ? `${slides.length * 100}vh` : '100vh'
 
     return (
-        <GalleryFixed $exiting={exiting}>
-            <GalleryCanvasMount ref={mountRef} />
+        <GalleryOuter ref={wrapRef} style={{ height }}>
+            <GallerySticky>
+                <GalleryCanvasMount ref={mountRef} />
 
-            {/* Brand text — visible on slide 0, fades on others */}
-            <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
-                <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
-                <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                {slides.length === 0 && (
-                    <HeroCtas style={{ marginTop: '40px', pointerEvents: 'all' }}>
-                        <HeroCtaPrimary to="/#coleccion" onClick={dismiss}>Explorar colección</HeroCtaPrimary>
-                        <HeroCtaSecondary to="/#artistas" onClick={dismiss}>Nuestros artistas</HeroCtaSecondary>
-                    </HeroCtas>
+                {/* Brand text — first slide only */}
+                <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
+                    <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
+                    <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
+                    {slides.length === 0 && (
+                        <HeroCtas style={{ marginTop: '40px', pointerEvents: 'all' }}>
+                            <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
+                            <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
+                        </HeroCtas>
+                    )}
+                </GalleryCenterText>
+
+                {cur && (
+                    <GalleryArtistTag key={activeIdx}>
+                        <Link to={`/${cur.slug}`}>{cur.name}</Link>
+                    </GalleryArtistTag>
                 )}
-            </GalleryCenterText>
 
-            {cur && <GalleryArtistTag key={activeIdx}><Link to={`/${cur.slug}`}>{cur.name}</Link></GalleryArtistTag>}
+                {slides.length > 1 && activeIdx === slides.length - 1 && (
+                    <GalleryLastHint>
+                        <GalleryLastText>↓ Ver la colección</GalleryLastText>
+                        <GalleryLastLine />
+                    </GalleryLastHint>
+                )}
 
-            {/* Last slide: clickable dismiss */}
-            {activeIdx === total - 1 && (
-                <GalleryLastHint onClick={dismiss} style={{ cursor: 'pointer' }}>
-                    <GalleryLastText>↓ Ver la colección</GalleryLastText>
-                    <GalleryLastLine />
-                </GalleryLastHint>
-            )}
+                {slides.length > 1 && (
+                    <>
+                        <GalleryCounter>
+                            {String(activeIdx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
+                        </GalleryCounter>
+                        <GalleryProgressBar>
+                            <GalleryProgressFill style={{ width: `${((activeIdx + 1) / slides.length) * 100}%` }} />
+                        </GalleryProgressBar>
+                    </>
+                )}
 
-            {slides.length > 1 && (
-                <>
-                    <GalleryCounter>
-                        {String(activeIdx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
-                    </GalleryCounter>
-                    <GalleryProgressBar>
-                        <GalleryProgressFill style={{ width: `${((activeIdx + 1) / slides.length) * 100}%` }} />
-                    </GalleryProgressBar>
-                </>
-            )}
-
-            {activeIdx < total - 1 && (
                 <GalleryScrollHint>
                     <span>Scroll</span>
                     <GalleryScrollLine />
                 </GalleryScrollHint>
-            )}
-        </GalleryFixed>
+            </GallerySticky>
+        </GalleryOuter>
     )
 }
 
 /* ═══════════════════════════════════════════════════════════════
    GALLERY HERO
 ═══════════════════════════════════════════════════════════════ */
-const GalleryFixed = styled.div`
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    opacity: ${p => p.$exiting ? 0 : 1};
-    transition: opacity 0.9s ease;
-    pointer-events: ${p => p.$exiting ? 'none' : 'all'};
+const GalleryOuter = styled.section`
+    position: relative;
+    background: #060606;
+`
+
+const GallerySticky = styled.div`
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
     background: #060606;
 `
 
