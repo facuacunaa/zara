@@ -132,29 +132,46 @@ export default function ArtistPortal() {
     setLoading(true); setVideoProgress(0)
     try {
       // 1. Pedir firma al backend
-      const { data: sig } = await axios.get(`${API}/artist/video-signature`, { headers })
+      let sig
+      try {
+        const r = await axios.get(`${API}/artist/video-signature`, { headers })
+        sig = r.data
+      } catch (e) {
+        return flash(`❌ Error obteniendo firma: ${e.response?.data?.msg || e.message}`)
+      }
 
       // 2. Subir directo a Cloudinary
       const form = new FormData()
       form.append('file', file)
       form.append('api_key',   sig.api_key)
-      form.append('timestamp', sig.timestamp)
+      form.append('timestamp', String(sig.timestamp))
       form.append('signature', sig.signature)
       form.append('folder',    sig.folder)
 
-      const cdnRes = await axios.post(
-        `https://api.cloudinary.com/v1_1/${sig.cloud_name}/video/upload`,
-        form,
-        { onUploadProgress: e => setVideoProgress(Math.round((e.loaded * 100) / e.total)) }
-      )
-      const url = cdnRes.data.secure_url
+      let url
+      try {
+        const cdnRes = await axios.post(
+          `https://api.cloudinary.com/v1_1/${sig.cloud_name}/video/upload`,
+          form,
+          { onUploadProgress: e => setVideoProgress(Math.round((e.loaded * 100) / e.total)) }
+        )
+        url = cdnRes.data.secure_url
+      } catch (e) {
+        const msg = e.response?.data?.error?.message || e.message
+        return flash(`❌ Error en Cloudinary: ${msg}`)
+      }
 
       // 3. Guardar URL en el backend
-      const save = await axios.post(`${API}/artist/video/save-url`, { url }, { headers })
-      if (save.data?.artist) applyArtist(save.data.artist)
+      try {
+        const save = await axios.post(`${API}/artist/video/save-url`, { url }, { headers })
+        if (save.data?.artist) applyArtist(save.data.artist)
+      } catch (e) {
+        return flash(`❌ Error guardando URL: ${e.response?.data?.msg || e.message}`)
+      }
+
       flash('✅ Video subido correctamente')
-    } catch {
-      flash('❌ Error al subir el video')
+    } catch (e) {
+      flash(`❌ Error inesperado: ${e.message}`)
     }
     setLoading(false); setVideoProgress(0)
   }
