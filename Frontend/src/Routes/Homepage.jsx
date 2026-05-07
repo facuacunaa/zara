@@ -1,6 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import { useState, useEffect, useRef, useMemo } from "react";
-import * as THREE from "three";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
@@ -21,15 +20,7 @@ const Homepage = () => {
             .catch(() => {})
     }, [])
 
-    const gallerySlides = useMemo(() => {
-        const slides = []
-        artists.forEach(a => {
-            if (a.profileImage) slides.push({ image: a.profileImage, name: a.name, slug: a.slug })
-            if (a.images?.[0])  slides.push({ image: a.images[0],    name: a.name, slug: a.slug })
-            if (slides.length >= 8) return
-        })
-        return slides
-    }, [artists])
+
 
     useEffect(() => {
         axios.get(`${API}/settings`)
@@ -51,11 +42,8 @@ const Homepage = () => {
         <HomeWrap>
             <Navbar />
 
-            {/* ── GALERÍA 3D HERO ─────────────────────────────────────── */}
-            <Gallery3D
-                key={gallerySlides.length}
-                slides={gallerySlides}
-            />
+            {/* ── PAINT INTRO ─────────────────────────────────────────── */}
+            <PaintIntro />
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
@@ -266,423 +254,142 @@ const HomeWrap = styled.div`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   GALLERY 3D COMPONENT
+   PAINT INTRO
 ═══════════════════════════════════════════════════════════════ */
-const GALLERY_TEXTS = [
-    { title: 'Arte que\nse puede usar.',           eyebrow: '— La Casita del Hornero' },
-    { title: 'Piezas únicas,\ncreadas a mano.',    eyebrow: '— Artesanía argentina'   },
-    { title: 'Cada obra\ncuenta una historia.',    eyebrow: '— Arte con propósito'    },
-    { title: 'Baja para ver los\nproductos artesanales ↓', eyebrow: '— La colección' },
-]
+function PaintIntro() {
+    const canvasRef = useRef(null)
+    const [fading, setFading] = useState(false)
+    const [gone,   setGone]   = useState(false)
 
-function Gallery3D({ slides }) {
-    const spacerRef  = useRef(null)
-    const mountRef   = useRef(null)
-    const [textIdx,  setTextIdx]  = useState(0)
-    const [show,     setShow]     = useState(true)
-
-    const SPACING    = 7
-    const VIEW_DIST  = 4
-    const FRAME_N    = Math.max(slides.length, 4)   // always at least 4 frames
-    const screens    = FRAME_N + 2
-    const height     = `${screens * 100}vh`
-    const maxTravel  = (FRAME_N - 1) * SPACING
-
-    /* Hide fixed canvas once spacer exits viewport */
     useEffect(() => {
-        const el = spacerRef.current
-        if (!el) return
-        const obs = new IntersectionObserver(([e]) => setShow(e.isIntersecting), { threshold: 0 })
-        obs.observe(el)
-        return () => obs.disconnect()
+        const canvas = canvasRef.current
+        if (!canvas) return
+
+        const resize = () => {
+            canvas.width  = window.innerWidth
+            canvas.height = window.innerHeight
+        }
+        resize()
+
+        const W = canvas.width, H = canvas.height
+        const ctx = canvas.getContext('2d')
+
+        /* Cubic bezier helper */
+        const bz = ([p0,p1,p2,p3], t) => {
+            const m = 1 - t
+            return [
+                m*m*m*p0[0] + 3*m*m*t*p1[0] + 3*m*t*t*p2[0] + t*t*t*p3[0],
+                m*m*m*p0[1] + 3*m*m*t*p1[1] + 3*m*t*t*p2[1] + t*t*t*p3[1],
+            ]
+        }
+
+        /* Paint strokes — 8 wide sweeps covering the full screen
+           Each: path (4 bezier points as fractions of W/H), width (frac of H),
+                 startT (seconds), color                                         */
+        const C = [
+            'rgba(252,248,242,0.97)',
+            'rgba(255,253,250,0.98)',
+            'rgba(250,246,240,0.96)',
+            'rgba(254,252,247,0.97)',
+        ]
+        const STROKES = [
+            { path:[[0,0.06],[0.30,0.02],[0.70,0.10],[1.02,0.04]], w:0.23, t0:0.00, c:C[0] },
+            { path:[[1.02,0.23],[0.65,0.18],[0.35,0.28],[0,0.21]], w:0.22, t0:0.28, c:C[1] },
+            { path:[[0,0.40],[0.28,0.35],[0.72,0.44],[1.02,0.38]], w:0.23, t0:0.56, c:C[2] },
+            { path:[[1.02,0.57],[0.60,0.52],[0.38,0.61],[0,0.55]], w:0.22, t0:0.84, c:C[3] },
+            { path:[[0,0.74],[0.32,0.70],[0.68,0.78],[1.02,0.72]], w:0.23, t0:1.12, c:C[0] },
+            { path:[[1.02,0.91],[0.60,0.87],[0.38,0.95],[0,0.89]], w:0.24, t0:1.40, c:C[1] },
+            /* Extra overlap strokes for full coverage */
+            { path:[[0.05,0.14],[0.28,0.09],[0.62,0.18],[0.95,0.13]], w:0.16, t0:0.42, c:C[2] },
+            { path:[[0.95,0.80],[0.65,0.76],[0.32,0.84],[0.05,0.79]], w:0.16, t0:1.26, c:C[3] },
+        ]
+        const DUR  = 0.48   /* seconds per stroke */
+        const SAMP = 64     /* bezier sample count */
+
+        const drawStroke = (s, progress) => {
+            if (progress <= 0) return
+            const pts = s.path.map(([fx,fy]) => [fx*W, fy*H])
+            const steps = Math.max(2, Math.floor(SAMP * progress))
+            const lw = s.w * H * (0.82 + 0.18 * Math.sin(progress * Math.PI))
+
+            /* Main broad stroke */
+            ctx.beginPath()
+            for (let i = 0; i <= steps; i++) {
+                const [x,y] = bz(pts, i/SAMP)
+                i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)
+            }
+            ctx.lineWidth  = lw
+            ctx.strokeStyle = s.c
+            ctx.lineCap    = 'round'
+            ctx.lineJoin   = 'round'
+            ctx.stroke()
+
+            /* Bristle texture — lighter, slightly offset */
+            ctx.beginPath()
+            for (let i = 0; i <= steps; i++) {
+                const [x,y] = bz(pts, i/SAMP)
+                i === 0 ? ctx.moveTo(x+4, y+3) : ctx.lineTo(x+4, y+3)
+            }
+            ctx.lineWidth   = lw * 0.55
+            ctx.strokeStyle = s.c.replace(/[\d.]+\)$/, '0.28)')
+            ctx.stroke()
+
+            /* Edge highlight */
+            ctx.beginPath()
+            for (let i = 0; i <= steps; i++) {
+                const [x,y] = bz(pts, i/SAMP)
+                i === 0 ? ctx.moveTo(x-2, y-3) : ctx.lineTo(x-2, y-3)
+            }
+            ctx.lineWidth   = lw * 0.18
+            ctx.strokeStyle = 'rgba(255,255,255,0.55)'
+            ctx.stroke()
+        }
+
+        let startTs = null
+        let rafId
+
+        const frame = (ts) => {
+            if (!startTs) startTs = ts
+            const time = (ts - startTs) / 1000
+
+            ctx.fillStyle = '#050505'
+            ctx.fillRect(0, 0, W, H)
+
+            let allDone = true
+            STROKES.forEach(s => {
+                const p = Math.min(1, Math.max(0, (time - s.t0) / DUR))
+                if (p < 1) allDone = false
+                drawStroke(s, p)
+            })
+
+            if (!allDone) {
+                rafId = requestAnimationFrame(frame)
+            } else {
+                /* Final white fill + fade out */
+                ctx.fillStyle = 'rgba(252,248,242,1)'
+                ctx.fillRect(0, 0, W, H)
+                setTimeout(() => setFading(true), 150)
+                setTimeout(() => setGone(true), 1050)
+            }
+        }
+        rafId = requestAnimationFrame(frame)
+
+        return () => cancelAnimationFrame(rafId)
     }, [])
 
-    /* Three.js corridor */
-    useEffect(() => {
-        const mount = mountRef.current
-        if (!mount) return
-        const W = window.innerWidth, H = window.innerHeight
-
-        const scene = new THREE.Scene()
-        scene.background = new THREE.Color(0x050505)
-        scene.fog = new THREE.FogExp2(0x050505, 0.028)
-
-        const camera = new THREE.PerspectiveCamera(65, W / H, 0.1, 120)
-        camera.position.set(0, 0, VIEW_DIST)
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true })
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-        renderer.setSize(W, H)
-        renderer.outputColorSpace = THREE.SRGBColorSpace
-        mount.appendChild(renderer.domElement)
-
-        /* Ambient + directional lighting */
-        scene.add(new THREE.AmbientLight(0xffffff, 0.3))
-        const dirLight = new THREE.DirectionalLight(0xfff8ee, 1.2)
-        dirLight.position.set(2, 4, 6)
-        scene.add(dirLight)
-        const spotFollow = new THREE.SpotLight(0xffe8c0, 3, 20, Math.PI / 6, 0.4)
-        scene.add(spotFollow)
-
-        /* Corridor walls */
-        const wallMat = new THREE.MeshStandardMaterial({ color: 0x0e0e0e, roughness: 1, metalness: 0 })
-        const floorMat = new THREE.MeshStandardMaterial({ color: 0x080808, roughness: 1 })
-        const totalLen = FRAME_N * SPACING + SPACING * 4
-
-        // left wall
-        const lWall = new THREE.Mesh(new THREE.PlaneGeometry(totalLen, 8), wallMat)
-        lWall.rotation.y = Math.PI / 2; lWall.position.set(-3.5, 0, -(totalLen / 2) + VIEW_DIST)
-        scene.add(lWall)
-        // right wall
-        const rWall = new THREE.Mesh(new THREE.PlaneGeometry(totalLen, 8), wallMat)
-        rWall.rotation.y = -Math.PI / 2; rWall.position.set(3.5, 0, -(totalLen / 2) + VIEW_DIST)
-        scene.add(rWall)
-        // floor
-        const floor = new THREE.Mesh(new THREE.PlaneGeometry(7, totalLen), floorMat)
-        floor.rotation.x = -Math.PI / 2; floor.position.set(0, -3, -(totalLen / 2) + VIEW_DIST)
-        scene.add(floor)
-        // ceiling
-        const ceil = new THREE.Mesh(new THREE.PlaneGeometry(7, totalLen), wallMat)
-        ceil.rotation.x = Math.PI / 2; ceil.position.set(0, 3, -(totalLen / 2) + VIEW_DIST)
-        scene.add(ceil)
-
-        /* Frames on walls */
-        const loader = new THREE.TextureLoader()
-        const FW = 2.8, FH = 3.8      // frame size
-        const BORDER = 0.1
-
-        for (let i = 0; i < FRAME_N; i++) {
-            const side  = (i % 2 === 0) ? -1 : 1    // left or right wall
-            const z     = -(i * SPACING) - SPACING
-            const wallX = side * 3.48
-
-            // Frame border (gold strip)
-            const borderMat = new THREE.MeshStandardMaterial({ color: 0xc8a96e, roughness: 0.5, metalness: 0.4 })
-            const borderGeo = new THREE.BoxGeometry(FW + BORDER * 2, FH + BORDER * 2, 0.04)
-            const border = new THREE.Mesh(borderGeo, borderMat)
-            border.position.set(wallX + side * -0.06, 0, z)
-            border.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2
-            scene.add(border)
-
-            // Dark canvas inside frame
-            const canvasMat = new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 0.9 })
-            const canvas3d = new THREE.Mesh(new THREE.PlaneGeometry(FW, FH), canvasMat)
-            canvas3d.position.set(wallX + side * -0.08, 0, z)
-            canvas3d.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2
-            scene.add(canvas3d)
-
-            // Load artist image if available
-            if (slides[i]?.image) {
-                loader.load(slides[i].image, tex => {
-                    tex.colorSpace = THREE.SRGBColorSpace
-                    canvasMat.map = tex
-                    canvasMat.color.set(0xffffff)
-                    canvasMat.needsUpdate = true
-                }, undefined, () => {})
-            }
-
-            // Small spotlight per frame
-            const fSpot = new THREE.SpotLight(0xfff2d0, 1.5, 8, Math.PI / 8, 0.5)
-            fSpot.position.set(side * 2, 2.5, z)
-            fSpot.target.position.set(wallX, 0, z)
-            scene.add(fSpot); scene.add(fSpot.target)
-        }
-
-        /* Particles */
-        const pN = 500
-        const pPos = new Float32Array(pN * 3)
-        for (let i = 0; i < pN; i++) {
-            pPos[i*3]   = (Math.random() - 0.5) * 6
-            pPos[i*3+1] = (Math.random() - 0.5) * 5
-            pPos[i*3+2] = VIEW_DIST - Math.random() * (FRAME_N * SPACING + SPACING * 3)
-        }
-        const pGeo = new THREE.BufferGeometry()
-        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
-        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-            color: 0xfff2d0, size: 0.025, transparent: true, opacity: 0.18
-        })))
-
-        /* Scroll → camera */
-        let targetZ = VIEW_DIST, currentZ = VIEW_DIST
-
-        const getProgress = () => {
-            const el = spacerRef.current
-            if (!el) return 0
-            const r = el.getBoundingClientRect()
-            return Math.min(1, Math.max(0, -r.top) / Math.max(1, el.clientHeight - window.innerHeight))
-        }
-
-        const onScroll = () => {
-            const p = getProgress()
-            targetZ = VIEW_DIST - p * maxTravel
-            setTextIdx(Math.min(Math.floor(p * GALLERY_TEXTS.length), GALLERY_TEXTS.length - 1))
-        }
-        window.addEventListener('scroll', onScroll, { passive: true })
-
-        let rafId
-        const clock = new THREE.Clock()
-        const animate = () => {
-            rafId = requestAnimationFrame(animate)
-            const t = clock.getElapsedTime()
-            currentZ += (targetZ - currentZ) * 0.06
-            camera.position.z = currentZ
-            camera.position.x = Math.sin(t * 0.18) * 0.08
-            camera.position.y = Math.cos(t * 0.12) * 0.05
-            spotFollow.position.set(camera.position.x, camera.position.y + 2, currentZ + 3)
-            spotFollow.target.position.set(0, 0, currentZ - 5)
-            renderer.render(scene, camera)
-        }
-        animate()
-
-        const onResize = () => {
-            const W2 = window.innerWidth, H2 = window.innerHeight
-            camera.aspect = W2 / H2; camera.updateProjectionMatrix(); renderer.setSize(W2, H2)
-        }
-        window.addEventListener('resize', onResize)
-
-        return () => {
-            cancelAnimationFrame(rafId)
-            window.removeEventListener('scroll', onScroll)
-            window.removeEventListener('resize', onResize)
-            renderer.dispose()
-            try { mount.removeChild(renderer.domElement) } catch {}
-        }
-    }, [slides.length]) // eslint-disable-line
-
-    const txt = GALLERY_TEXTS[textIdx]
-    const isLast = textIdx === GALLERY_TEXTS.length - 1
-
-    return (
-        <>
-            <GallerySpacer ref={spacerRef} style={{ height }} />
-            <GalleryFixed $show={show}>
-                <GalleryCanvasMount ref={mountRef} />
-
-                <GalleryTextBlock key={textIdx}>
-                    <GalleryEyebrow>{txt.eyebrow}</GalleryEyebrow>
-                    <GalleryTitle $last={isLast}>{txt.title}</GalleryTitle>
-                </GalleryTextBlock>
-
-                {slides[Math.floor((textIdx / GALLERY_TEXTS.length) * slides.length)]?.name && (
-                    <GalleryArtistTag>
-                        <Link to={`/${slides[Math.floor((textIdx / GALLERY_TEXTS.length) * slides.length)]?.slug}`}>
-                            {slides[Math.floor((textIdx / GALLERY_TEXTS.length) * slides.length)]?.name}
-                        </Link>
-                    </GalleryArtistTag>
-                )}
-
-                <GalleryCounter $show={slides.length > 0}>
-                    {String(Math.min(Math.floor((textIdx / GALLERY_TEXTS.length) * FRAME_N) + 1, FRAME_N)).padStart(2,'0')} / {String(FRAME_N).padStart(2,'0')}
-                </GalleryCounter>
-
-                <GalleryProgressBar>
-                    <GalleryProgressFill style={{ width: `${((textIdx + 1) / GALLERY_TEXTS.length) * 100}%` }} />
-                </GalleryProgressBar>
-
-                <GalleryScrollHint $hide={isLast}>
-                    <span>Scroll</span>
-                    <GalleryScrollLine />
-                </GalleryScrollHint>
-            </GalleryFixed>
-        </>
-    )
+    if (gone) return null
+    return <PaintCanvas ref={canvasRef} $fading={fading} />
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   GALLERY HERO
-═══════════════════════════════════════════════════════════════ */
-const GallerySpacer = styled.div`
-    width: 100%;
-    background: #060606;
-`
-
-const GalleryFixed = styled.div`
+const PaintCanvas = styled.canvas`
     position: fixed;
     inset: 0;
-    z-index: 10;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    opacity: ${p => p.$fading ? 0 : 1};
+    transition: opacity 0.9s ease;
     pointer-events: none;
-    opacity: ${p => p.$show ? 1 : 0};
-    transition: opacity 0.5s ease;
-    background: #060606;
-`
-
-const GalleryCanvasMount = styled.div`
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-
-    canvas { display: block; }
-`
-
-const GalleryScrollHint = styled.div`
-    position: absolute;
-    bottom: 44px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    pointer-events: none;
-    opacity: ${p => p.$hide ? 0 : 1};
-    transition: opacity 0.5s;
-
-    span {
-        font-family: 'DM Sans', sans-serif;
-        font-size: 8px;
-        letter-spacing: 0.45em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.3);
-    }
-`
-
-const GalleryScrollLine = styled.div`
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.35), transparent);
-    animation: glPulse 2s ease-in-out infinite;
-
-    @keyframes glPulse {
-        0%, 100% { opacity: 0.4; }
-        50%       { opacity: 1; }
-    }
-`
-
-const GalleryCenterText = styled.div`
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 24px;
-    pointer-events: auto;
-    transition: opacity 0.6s ease;
-`
-
-const GalleryTextBlock = styled.div`
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 32px;
-    pointer-events: none;
-    animation: gtFadeIn 0.7s ease;
-
-    @keyframes gtFadeIn {
-        from { opacity: 0; transform: translateY(12px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-`
-
-const GalleryEyebrow = styled.p`
-    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.55em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
-    margin: 0 0 28px;
-`
-
-const GalleryTitle = styled.h1`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: ${p => p.$last ? 'clamp(2rem, 5vw, 4rem)' : 'clamp(3rem, 9vw, 8rem)'};
-    font-weight: 300;
-    font-style: italic;
-    color: #fff;
-    line-height: 1.1;
-    margin: 0;
-    letter-spacing: -0.02em;
-    white-space: pre-line;
-`
-
-const GalleryArtistTag = styled.div`
-    position: absolute;
-    bottom: 80px;
-    left: 40px;
-    z-index: 2;
-
-    a {
-        font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-        font-size: 9px;
-        letter-spacing: 0.5em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.6);
-        text-decoration: none;
-        transition: color 0.2s;
-        &:hover { color: #fff; }
-    }
-
-    @media (max-width: 640px) { left: 20px; bottom: 72px; }
-`
-
-const GalleryLastHint = styled.div`
-    position: absolute;
-    bottom: 48px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-`
-
-const GalleryLastText = styled.span`
-    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    animation: hintPulse 2.2s ease-in-out infinite;
-
-    @keyframes hintPulse {
-        0%, 100% { opacity: 0.5; transform: translateY(0); }
-        50%       { opacity: 1;   transform: translateY(4px); }
-    }
-`
-
-const GalleryLastLine = styled.div`
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.45), rgba(255,255,255,0));
-`
-
-const GalleryCounter = styled.div`
-    position: absolute;
-    top: 40px;
-    right: 40px;
-    z-index: 2;
-    display: ${p => p.$show === false ? 'none' : 'block'};
-    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    color: rgba(255,255,255,0.35);
-
-    @media (max-width: 640px) { right: 20px; top: 24px; }
-`
-
-const GalleryProgressBar = styled.div`
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: rgba(255,255,255,0.1);
-    z-index: 2;
-`
-
-const GalleryProgressFill = styled.div`
-    height: 100%;
-    background: rgba(255,255,255,0.5);
-    transition: width 0.6s ease;
 `
 
 /* ═══════════════════════════════════════════════════════════════
