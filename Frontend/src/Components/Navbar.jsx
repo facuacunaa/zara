@@ -8,7 +8,6 @@ import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
-// Rutas conocidas que NO son páginas de artista
 const KNOWN_ROUTES = new Set([
     '/help', '/company', '/login', '/signin', '/cart',
     '/checkout', '/products', '/search', '/otp', '/admin',
@@ -20,35 +19,98 @@ const isArtistRoute = (pathname) => {
     return segments.length === 1 && !KNOWN_ROUTES.has(pathname)
 }
 
+/* ── SVG árbol con hornero (estilo mano alzada) ─────────────────────────── */
+const HorneroTree = () => (
+    <svg
+        viewBox="0 0 200 270"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        stroke="#1a1a1a"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+    >
+        {/* Raíces */}
+        <path strokeWidth="2" d="M 100,258 C 90,254 78,256 68,260"/>
+        <path strokeWidth="2" d="M 100,258 C 110,254 122,256 132,260"/>
+
+        {/* Tronco principal */}
+        <path strokeWidth="4" d="M 100,258 C 98,238 102,220 100,200 C 98,182 96,166 99,148 C 102,134 100,118 100,105"/>
+
+        {/* Rama izquierda baja */}
+        <path strokeWidth="3" d="M 100,210 C 84,203 68,196 52,189 C 40,184 28,178 16,172"/>
+
+        {/* Rama derecha baja */}
+        <path strokeWidth="3" d="M 100,196 C 115,189 130,182 143,175 C 153,170 162,163 170,156"/>
+
+        {/* Rama izquierda alta */}
+        <path strokeWidth="2.5" d="M 100,165 C 87,158 73,151 58,143"/>
+
+        {/* Rama derecha alta (donde va el nido) */}
+        <path strokeWidth="2.5" d="M 100,152 C 114,144 128,137 141,129"/>
+
+        {/* Ramitas extremo izquierda baja */}
+        <path strokeWidth="1.5" d="M 16,172 C 12,165 10,157 10,149"/>
+        <path strokeWidth="1.5" d="M 16,172 C 10,166 8,160 7,153"/>
+        <path strokeWidth="1.5" d="M 52,189 C 48,181 46,173 45,165"/>
+
+        {/* Ramitas extremo derecha baja */}
+        <path strokeWidth="1.5" d="M 170,156 C 172,148 172,140 170,132"/>
+        <path strokeWidth="1.5" d="M 170,156 C 174,149 175,142 174,134"/>
+
+        {/* Ramitas extremo izquierda alta */}
+        <path strokeWidth="1.5" d="M 58,143 C 54,136 52,128 51,120"/>
+        <path strokeWidth="1.5" d="M 58,143 C 53,137 51,130 50,123"/>
+
+        {/* Hojitas (simples óvalos inclinados) */}
+        <ellipse cx="10" cy="146" rx="7" ry="4" transform="rotate(-35 10 146)" strokeWidth="1.5"/>
+        <ellipse cx="7" cy="150" rx="5" ry="3" transform="rotate(-20 7 150)" strokeWidth="1.2"/>
+        <ellipse cx="45" cy="161" rx="6" ry="3.5" transform="rotate(-30 45 161)" strokeWidth="1.5"/>
+        <ellipse cx="50" cy="118" rx="6" ry="4" transform="rotate(-25 50 118)" strokeWidth="1.5"/>
+        <ellipse cx="170" cy="129" rx="6" ry="3.5" transform="rotate(25 170 129)" strokeWidth="1.5"/>
+        <ellipse cx="174" cy="131" rx="5" ry="3" transform="rotate(15 174 131)" strokeWidth="1.2"/>
+
+        {/* ── Nido del hornero (forma de bola de barro con entrada) ── */}
+        {/* Cuerpo del nido: oval */}
+        <ellipse cx="150" cy="116" rx="20" ry="15" strokeWidth="2.5"/>
+        {/* Agujero de entrada (círculo en el lado izquierdo) */}
+        <ellipse cx="142" cy="118" rx="7" ry="6" strokeWidth="2"/>
+        {/* Líneas de textura (capas de barro) */}
+        <path strokeWidth="1" d="M 137,106 C 141,104 147,104 152,106"/>
+        <path strokeWidth="1" d="M 133,125 C 137,127 143,127 149,125"/>
+        <path strokeWidth="0.8" d="M 134,115 C 136,113 140,113 143,115"/>
+
+        {/* ── Hornero (pájaro) posado junto al nido ── */}
+        {/* Cuerpo */}
+        <ellipse cx="163" cy="131" rx="9" ry="6" strokeWidth="2"/>
+        {/* Cabeza */}
+        <circle cx="172" cy="127" r="5.5" strokeWidth="2"/>
+        {/* Pico */}
+        <path strokeWidth="1.8" d="M 177,126 L 183,124"/>
+        {/* Ojo */}
+        <circle cx="174" cy="126" r="1.3" fill="#1a1a1a" stroke="none"/>
+        {/* Cola */}
+        <path strokeWidth="1.5" d="M 154,133 C 151,137 148,140 147,144"/>
+        {/* Línea de ala */}
+        <path strokeWidth="1.5" d="M 156,129 C 159,127 163,127 167,130"/>
+        {/* Pata */}
+        <path strokeWidth="1.2" d="M 163,137 L 163,143 M 160,143 L 163,143 L 166,143"/>
+    </svg>
+)
+
 const Navbar = ({ activeIndexs }) => {
     const dispatch = useDispatch();
-    const [colorB, setColor] = useState('');
-    const [theme, setTheme] = useState("black");
-    const [val, setVal] = useState(true)
+    const [open,    setOpen]    = useState(false)
+    const [theme,   setTheme]   = useState("black");
     const [artists, setArtists] = useState([])
     const [scrolled, setScrolled] = useState(false)
     const location = useLocation();
-    const { cart } = useSelector((store) => (store.AppReducer));
-    const { isAuth } = useSelector((store) => (store.AuthReducer));
+    const { cart }   = useSelector((store) => store.AppReducer);
+    const { isAuth } = useSelector((store) => store.AuthReducer);
 
-    const onArtistPage = isArtistRoute(location.pathname)
-    const onHomePage   = location.pathname === '/'
-    const needsTransparency = onArtistPage || onHomePage
+    const onArtistPage       = isArtistRoute(location.pathname)
+    const onHomePage         = location.pathname === '/'
+    const needsTransparency  = onArtistPage || onHomePage
 
-    const handleChange = (e) => {
-        changeVal()
-        if (e.target.checked) {
-            setColor('white');
-        } else {
-            setColor('');
-        }
-    }
-
-    const changeVal = () => {
-        setVal(!val)
-    }
-
-    // Scroll listener para homepage y páginas de artista
     useEffect(() => {
         if (!needsTransparency) { setScrolled(false); return }
         const handleScroll = () => setScrolled(window.scrollY > 60)
@@ -58,518 +120,338 @@ const Navbar = ({ activeIndexs }) => {
     }, [needsTransparency])
 
     useEffect(() => {
-        if (location.pathname !== '/') {
-            setTheme("black")
-        } else {
-            setTheme("white")
-        }
+        setTheme(location.pathname !== '/' ? "black" : "white")
     }, [location]);
 
     useEffect(() => {
-        if (cart.length === 0) {
-            dispatch(getCart())
-        }
+        if (cart.length === 0) dispatch(getCart())
     }, [])
 
     useEffect(() => {
         axios.get(`${API}/artist`)
-            .then(r => setArtists(r.data))
+            .then(r => setArtists(r.data || []))
             .catch(() => {})
     }, [])
 
-    // Homepage y artista: siempre transparente (sin barra visible)
-    // Otras rutas: fondo blanco normal
-    const navBg = needsTransparency ? 'transparent' : 'white'
+    // Cerrar sidebar al navegar
+    useEffect(() => { setOpen(false) }, [location.pathname])
 
-    // Íconos blancos cuando fondo es transparente (homepage siempre, artista arriba)
-    // Íconos negros cuando se hace scroll en artista (contenido claro debajo)
     const iconColor = (onHomePage || (onArtistPage && !scrolled)) ? 'white' : 'black'
+    const navBg     = needsTransparency ? 'transparent' : 'white'
 
     return (
         <>
-            <Container
-                theme={iconColor}
-                scrolled={scrolled}
-                onArtistPage={needsTransparency}
-                style={{ backgroundColor: navBg }}
-            >
-                <div className='menuContainer' style={{ backgroundColor: colorB }}>
-                    <header className="header" style={{ backgroundColor: colorB }}>
-                        <input className="menu-btn" type="checkbox" id="menu-btn" onClick={(e) => handleChange(e)} />
-                        <label className="menu-icon" htmlFor="menu-btn"><span className="navicon"></span></label>
-                        <div className='menuLogo'>
-                            <svg viewBox="0 0 132 55" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M105.673.035l19.557 53.338 6.77.002v.383h-21.548v-.383h6.344l-6.431-17.54H97.311v.007l.07.204c.521 1.548.78 3.17.764 4.803v6.575c0 3.382 1.494 6.81 4.347 6.81 1.675 0 3.012-.59 4.604-2.046l.227.211C105.594 54.224 103.5 55 100.36 55c-2.37 0-4.398-.57-6.03-1.693l-.309-.222c-2.148-1.624-3.542-4.278-4.142-7.89l-.096-.583-.1-.882-.01-.152-3.599 9.792h5.107v.384H80.496v-.384h5.162l3.951-10.753v-.023a34.924 34.924 0 0 1-.075-1.906v-4.693c0-5.77-4.29-9.08-11.771-9.08H70.41v26.458h6.371v.383h-24.9v-.383h6.345l-6.431-17.54H33.948l-6.371 17.346.266-.044c8.366-1.442 12.213-7.827 12.265-14.55h.388v15.171H0L30.06 2.185H17.972C7.954 2.185 3.42 9.922 3.35 17.635h-.387V1.8h36.488l-.222.385L9.396 53.373h15.695c.39 0 .778-.019 1.169-.05.26-.018.522-.044.788-.077l.095-.01L46.703 0h.387l.013.035 15.369 41.916V2.185h-6.328v-.39h21.778c10.467 0 17.774 5.372 17.774 13.068 0 5.612-5.005 10.27-12.45 11.595l-1.367.174 1.377.14c4.515.517 8.1 1.906 10.641 4.127l.017.016L105.273 0h.386l.014.035zm-8.552 35.32l.038.094h13.061l-8.773-23.928-7.221 19.67.039.037.367.364a11.876 11.876 0 0 1 2.489 3.762zM70.415 26.53V2.185h5.611c7.496 0 11.454 4.414 11.454 12.76 0 8.877-2.272 11.585-9.717 11.585h-7.348zM42.882 11.521L34.09 35.45h17.565L42.882 11.52z"></path></svg>
-                        </div>
-                        <div className='menuTop'>
-                            <Link to={`/products`} state={{ query: 'women1' }}>
-                                <span>WOMAN</span>
-                            </Link>
-                            <Link to={`/products`} state={{ query: 'men1' }}>
-                                <span>MENS</span>
-                            </Link>
-                            <Link to={`/products`} state={{ query: 'products' }}>
-                                <span>KIDS</span>
-                            </Link>
-                            <Link to={`/products`} state={{ query: 'products' }}>
-                                <span>ZARA ORIGINS</span>
-                            </Link>
-                        </div>
-                        <ul className="menu" style={{overflow:"auto"}}>
-                            {artists.map((artist) => (
-                                <li key={artist.slug}>
-                                    <Link
-                                        to={`/${artist.slug}`}
-                                        style={{ color: 'rgb(180, 120, 60)', fontWeight: 'bold' }}
-                                    >
-                                        {artist.name.toUpperCase()}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </header>
-                    <div className='logo'>
-                        <svg viewBox="0 0 132 55" xmlns="http://www.w3.org/2000/svg">
-                            <Link to='/'>
-                                <path fill={`${iconColor}`} fillRule="evenodd" d="M105.673.035l19.557 53.338 6.77.002v.383h-21.548v-.383h6.344l-6.431-17.54H97.311v.007l.07.204c.521 1.548.78 3.17.764 4.803v6.575c0 3.382 1.494 6.81 4.347 6.81 1.675 0 3.012-.59 4.604-2.046l.227.211C105.594 54.224 103.5 55 100.36 55c-2.37 0-4.398-.57-6.03-1.693l-.309-.222c-2.148-1.624-3.542-4.278-4.142-7.89l-.096-.583-.1-.882-.01-.152-3.599 9.792h5.107v.384H80.496v-.384h5.162l3.951-10.753v-.023a34.924 34.924 0 0 1-.075-1.906v-4.693c0-5.77-4.29-9.08-11.771-9.08H70.41v26.458h6.371v.383h-24.9v-.383h6.345l-6.431-17.54H33.948l-6.371 17.346.266-.044c8.366-1.442 12.213-7.827 12.265-14.55h.388v15.171H0L30.06 2.185H17.972C7.954 2.185 3.42 9.922 3.35 17.635h-.387V1.8h36.488l-.222.385L9.396 53.373h15.695c.39 0 .778-.019 1.169-.05.26-.018.522-.044.788-.077l.095-.01L46.703 0h.387l.013.035 15.369 41.916V2.185h-6.328v-.39h21.778c10.467 0 17.774 5.372 17.774 13.068 0 5.612-5.005 10.27-12.45 11.595l-1.367.174 1.377.14c4.515.517 8.1 1.906 10.641 4.127l.017.016L105.273 0h.386l.014.035zm-8.552 35.32l.038.094h13.061l-8.773-23.928-7.221 19.67.039.037.367.364a11.876 11.876 0 0 1 2.489 3.762zM70.415 26.53V2.185h5.611c7.496 0 11.454 4.414 11.454 12.76 0 8.877-2.272 11.585-9.717 11.585h-7.348zM42.882 11.521L34.09 35.45h17.565L42.882 11.52z"></path>
-                            </Link>
-                        </svg>
+            {/* ── Overlay oscuro cuando el sidebar está abierto ─────── */}
+            {open && <Overlay onClick={() => setOpen(false)} />}
 
-                    </div>
-                </div>
-                <div className='navRightSection' style={{zIndex:!val?'0':'10'}}>
+            <NavBar iconColor={iconColor} style={{ backgroundColor: navBg }}>
+                {/* Hamburger */}
+                <HamburgerBtn onClick={() => setOpen(true)} iconColor={iconColor} aria-label="Abrir menú">
+                    <span /><span /><span />
+                </HamburgerBtn>
+
+                {/* Logo central */}
+                <BrandLink to="/" iconColor={iconColor}>
+                    La Casita del Hornero
+                </BrandLink>
+
+                {/* Acciones derecha */}
+                <NavRight>
                     <Link to="/search" style={{ visibility: location.pathname === '/search' ? 'hidden' : 'visible' }}>
-                        <div>
-                            <input type="text" placeholder='SEARCH' />
-                        </div>
+                        <NavAction iconColor={iconColor}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                        </NavAction>
                     </Link>
-                    <div >
-                        {!isAuth ? <Link to='/login' state={{path:'/'}}> <span>LOGIN</span></Link> : <Signout/>}
-                        <Link to="/help">
-                            <span className='help'>HELP</span>
-                        </Link>
-                        <Link to="/cart">
-                            <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="inherit" stroke="inherit"><path fillRule="evenodd" clipRule="evenodd" d="M8.5 4.9V3.3a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.6h4.8V12h-1V5.9H4.7v14H15v1H3.7v-16h4.8zm1-1.6a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1.6h-5V3.3z"></path><path fillRule="evenodd" clipRule="evenodd" d="M17.4 23.4v-9h5.4v9l-2.705-2.673L17.4 23.4zm2.694-3.798L22 21.485V15.2h-3.8v6.28l1.894-1.878z"></path></svg>
-                            <span style={{ position: 'relative', right: cart && cart.length > 9 ? '21px' : '18px', top: "-10px", fontSize: '12px' }}>{cart?cart.length:'0'}</span>
-                        </Link>
-                    </div>
-                </div>
-            </Container>
+
+                    {!isAuth
+                        ? <Link to="/login" state={{ path: '/' }}>
+                            <NavAction iconColor={iconColor}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </NavAction>
+                          </Link>
+                        : <Signout />
+                    }
+
+                    <Link to="/cart">
+                        <NavAction iconColor={iconColor} style={{ position: 'relative' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                            {cart && cart.length > 0 && (
+                                <CartBadge>{cart.length}</CartBadge>
+                            )}
+                        </NavAction>
+                    </Link>
+                </NavRight>
+            </NavBar>
+
+            {/* ── Sidebar ──────────────────────────────────────────────── */}
+            <Sidebar open={open}>
+                <SidebarInner>
+                    {/* Cerrar */}
+                    <CloseBtn onClick={() => setOpen(false)} aria-label="Cerrar menú">✕</CloseBtn>
+
+                    {/* Ilustración árbol + hornero */}
+                    <TreeWrap>
+                        <HorneroTree />
+                    </TreeWrap>
+
+                    {/* Nombre de la tienda */}
+                    <SidebarBrand>La Casita<br/>del Hornero</SidebarBrand>
+
+                    {/* Artistas */}
+                    {artists.length > 0 && (
+                        <ArtistList>
+                            <ArtistListLabel>— Artistas</ArtistListLabel>
+                            {artists.map(a => (
+                                <ArtistItem key={a.slug}>
+                                    <Link to={`/${a.slug}`}>{a.name}</Link>
+                                </ArtistItem>
+                            ))}
+                        </ArtistList>
+                    )}
+
+                    {/* Links secundarios */}
+                    <SidebarFooterLinks>
+                        <Link to="/products">Tienda</Link>
+                        <Link to="/cart">Carrito {cart && cart.length > 0 ? `(${cart.length})` : ''}</Link>
+                        {!isAuth
+                            ? <Link to="/login" state={{ path: '/' }}>Iniciar sesión</Link>
+                            : <Signout />
+                        }
+                    </SidebarFooterLinks>
+                </SidebarInner>
+            </Sidebar>
         </>
     )
 }
 
-const Container = styled.div`
-    width:100%;
-    height:150px;
-    display:flex;
-    align-content:center;
-    justify-content:space-between;
-    position:fixed;
-    z-index:5;
-    transition: color 0.3s ease;
-    .menuContainer{
-        height:70px;
-    }
+/* ═══════════════════════════════════════════════════════════════
+   ESTILOS
+═══════════════════════════════════════════════════════════════ */
 
-    .navRightSection{
-        width:30%;
-        height:70px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:0px 10px;
-    }
+const Overlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 98;
+    backdrop-filter: blur(2px);
+`
 
-    .navRightSection>a>div:first-child{
-        width:100px;
-        overflow:hidden;
-    }
+const NavBar = styled.nav`
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 99;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    transition: background-color 0.3s ease;
+`
 
-    .navRightSection>a>div:first-child>input{
-        border:0px;
-        border-bottom:1px solid black;
-        outline:none;
-        background-color:transparent;
-    }
+const HamburgerBtn = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 
-    .navRightSection>a>div:first-child>input::placeholder{
-        color:black;
-    }
-
-    .navRightSection>div:last-child{
-        width:200px;
-        display:flex;
-        gap: 20px;
-        align-items:center;
-        justify-content:space-evenly;
-        font-size:13px;
-    }
-
-    .menuLogo{
-        display:none;
-    }
-
-    .menuContainer a {
-        color: #000;
-    }
-
-    /* header */
-
-    .header {
-        position:fixed;
-        width:27%;
-    }
-
-    .header ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        overflow: hidden;
-        height:50vh;
-    }
-
-    .header li a {
+    span {
         display: block;
-        text-decoration: none;
+        width: 22px;
+        height: 1.5px;
+        background: ${p => p.iconColor};
+        transition: background 0.3s;
     }
+`
 
-    .header{
-        float: left;
-        font-size: 2em;
-        text-decoration: none;
-        text-align:left;
-        padding-left:15px;
-        z-index:5;
+const BrandLink = styled(Link)`
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(14px, 2vw, 18px);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    color: ${p => p.iconColor};
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.3s;
+
+    @media (max-width: 480px) {
+        font-size: 13px;
+        letter-spacing: 0;
     }
+`
 
-    /* menu */
+const NavRight = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 20px;
 
-    .header .menu {
-        clear: both;
-        max-height: 0;
-        text-transform:uppercase;
-        font-size:12px;
-        color:#343a40;
-        padding-left:25px;
-    }
+    a { text-decoration: none; }
 
-    ul::-webkit-scrollbar {
-        width: 7px;
-      }
+    @media (max-width: 480px) { gap: 14px; }
+`
 
-    ul::-webkit-scrollbar-track {
-        background-color: rgb(209, 209, 209);
-      }
+const NavAction = styled.div`
+    color: ${p => p.iconColor};
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    position: relative;
 
-   ul::-webkit-scrollbar-thumb {
-        background-color: rgb(40, 39, 39);
-      }
+    &:hover { opacity: 0.6; }
+`
 
-    li a{
-        color:#343a40;
-        padding-top:2px;
-        cursor:pointer;
-    }
+const CartBadge = styled.span`
+    position: absolute;
+    top: -7px;
+    right: -9px;
+    background: #fff;
+    color: #000;
+    font-size: 9px;
+    font-family: 'DM Sans', sans-serif;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    font-weight: 600;
+`
 
-    .menuTop{
-        display:none;
-    }
+/* ── Sidebar ──────────────────────────────────────────────────── */
+const Sidebar = styled.aside`
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 320px;
+    max-width: 85vw;
+    background: #fff;
+    z-index: 100;
+    transform: ${p => p.open ? 'translateX(0)' : 'translateX(-100%)'};
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    box-shadow: 4px 0 40px rgba(0,0,0,0.12);
+`
 
-    /* menu icon */
+const SidebarInner = styled.div`
+    padding: 24px 32px 48px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+`
 
-    .header .menu-icon {
-        cursor: pointer;
-        display: inline-block;
-        float: left;
-        padding: 28px 20px;
-        user-select: none;
-    }
+const CloseBtn = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #888;
+    align-self: flex-end;
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    transition: color 0.2s;
 
-    .header .menu-icon .navicon {
-        background:${(props) => props.theme};
-        display: block;
-        height: 2px;
-        position: relative;
-        transition: background .2s ease-out;
-        width: 18px;
-    }
+    &:hover { color: #000; }
+`
 
-    .header .menu-icon .navicon:before,
-    .header .menu-icon .navicon:after {
-        background:${(props) => props.theme};
-        content: '';
-        display: block;
-        height: 100%;
-        position: absolute;
-        transition: all .2s ease-out;
+const TreeWrap = styled.div`
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto 4px;
+
+    svg {
         width: 100%;
+        height: auto;
     }
+`
 
-    .header .menu-icon .navicon:before {
-        top: 5px;
-    }
+const SidebarBrand = styled.h2`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #0a0a0a;
+    text-align: center;
+    line-height: 1.2;
+    margin: 0 0 40px;
+    letter-spacing: -0.01em;
+`
 
-    .header .menu-icon .navicon:after {
-        top: -5px;
-    }
+const ArtistList = styled.nav`
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 40px;
+`
 
-    /* menu btn */
+const ArtistListLabel = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin: 0 0 20px;
+`
 
-    .header .menu-btn {
-        display: none;
-    }
+const ArtistItem = styled.div`
+    border-top: 1px solid #f0f0ee;
+    padding: 14px 0;
 
-    .header .menu-btn:checked ~ .menu {
-        margin-top:40px;
-        max-height:100vh;
-        padding-bottom:100vh;
-        overflow:auto;
-        background-color:white;
-        animation: fadeIn 2s;
-        -webkit-animation: fadeIn 2s;
-        -moz-animation: fadeIn 2s;
-        -o-animation: fadeIn 2s;
-        -ms-animation: fadeIn 2s;
-    }
+    &:last-child { border-bottom: 1px solid #f0f0ee; }
 
-    .header .menu-btn:checked ~ .menuTop {
-        display:flex;
-        gap:10px;
-        font-size:12px;
-        margin-top:0px;
-        padding-left:25px;
-        animation: fadeIn 2s;
-        -webkit-animation: fadeIn 2s;
-        -moz-animation: fadeIn 2s;
-        -o-animation: fadeIn 2s;
-        -ms-animation: fadeIn 2s;
-    }
-    .header .menu-btn:checked ~ .menuTop a{
-        text-decoration:none;
-    }
+    a {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        font-style: italic;
+        font-weight: 300;
+        color: #0a0a0a;
+        text-decoration: none;
+        display: block;
+        transition: color 0.2s, padding-left 0.2s;
 
-    .header .menu-btn:checked ~ .menuLogo {
-        display:block;
-        width:250px;
-        height:250px;
-        padding-left:70px;
-        padding-top:20px;
-        margin-bottom:-120px;
-        cursor:pointer;
-    }
-
-    .header .menu-btn:checked ~ .menu-icon .navicon {
-        background: transparent;
-    }
-
-    .header .menu-btn:checked ~ .menu-icon .navicon:before {
-        transform: rotate(-45deg);
-        background:#333;
-    }
-
-    .header .menu-btn:checked ~ .menu-icon .navicon:after {
-        transform: rotate(45deg);
-        background:#333;
-    }
-
-    .header .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:before,
-    .header .menu-btn:checked ~ .menu-icon:not(.steps) .navicon:after {
-        top: 0;
-    }
-
-    @keyframes fadeIn {
-        0% {opacity: 0;}
-        100% {opacity: 1;}
-    }
-
-    .logo{
-        display: none;
-    }
-
-    /* 48em = 768px */
-
-    @media (min-width: 1000em) {
-        .header li {
-            float: left;
-        }
-
-        .header li a {
-            padding: 20px 30px;
-        }
-
-        .header .menu {
-            clear: none;
-            float: left;
-            max-height: none;
-        }
-
-        .header .menu-icon {
-            display: none;
+        &:hover {
+            color: #666;
+            padding-left: 8px;
         }
     }
+`
 
-    .navRightSection>a>div:first-child>input{
-        border-color:${(props) => (props.theme)};
+const SidebarFooterLinks = styled.div`
+    margin-top: auto;
+    padding-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-top: 1px solid #f0f0ee;
+
+    a, button {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 9px;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: #aaa;
+        text-decoration: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        text-align: left;
+        transition: color 0.2s;
+
+        &:hover { color: #0a0a0a; }
     }
-
-   .navRightSection>a>div:first-child>input::placeholder{
-        color:${(props) => (props.theme)};
-    }
-
-    .menuContainer .header .menu-btn{
-        color:${(props) => (props.theme)};
-    }
-
-    .navRightSection a{
-        text-decoration:none;
-
-        color:${(props) => (props.theme)};
-    }
-
-    .navRightSection span{
-        text-decortaion:none;
-        color:${(props) => (props.theme)};
-    }
-
-    .navRightSection p{
-        text-decortaion:none;
-        cursor:pointer;
-        color:${(props) => (props.theme)};
-    }
-
-
-    .navRightSection svg{
-        fill:${(props) => (props.theme)};
-    }
-
-    @media only screen and (min-width: 769px) and (max-width:1200px){
-
-        .header {
-            width:50%;
-            padding:0px;
-        }
-    }
-
-    @media only screen and (min-width: 769px) and (max-width:845px){
-        .navRightSection{
-            flex-direction:column-reverse;
-            align-items:flex-end;
-            margin-top:20px;
-        }
-
-        .header {
-            width:50%;
-            padding:0px;
-
-        }
-
-        .logo{
-            width:250px;
-            padding-left:90px;
-            padding-top:20px;
-        }
-
-        .navRightSection>div:last-child{
-            display:flex;
-            gap:30px;
-            justify-content:right;
-
-        }
-    }
-
-    @media only screen and (min-width: 481px) and (max-width:768px){
-        .navRightSection{
-            flex-direction:column-reverse;
-            align-items:flex-end;
-            margin-top:20px;
-
-        }
-
-        .header {
-            width:65%;
-            padding:0px;
-        }
-
-        .logo{
-            width:200px;
-        }
-
-        .navRightSection>div:last-child{
-            display:flex;
-            gap:30px;
-            justify-content:right;
-
-        }
-    }
-
-    @media only screen and (min-width:320px) and (max-width:480px){
-
-        .navRightSection{
-            flex-direction:column-reverse;
-            align-items:flex-end;
-            margin-top:20px;
-
-        }
-
-        .header {
-            width:100%;
-            padding:0px;
-        }
-
-        .logo{
-            width:150px;
-            padding-left:50px;
-        }
-
-        .help{
-            display:none;
-        }
-
-        .navRightSection>div:last-child{
-            width:150px;
-            display:flex;
-            gap:10px;
-            justify-content:right;
-
-        }
-        .menuLogo>svg{
-            padding-left:30px;
-        }
-
-    }
-
-    @media only screen and (max-width: 320px){
-        .navRightSection{
-            flex-direction:column-reverse;
-            align-items:flex-end;
-            margin-top:20px;
-        }
-
-        .header {
-            width:100%;
-            padding:0px;
-        }
-
-        .logo{
-            width:100px;
-            padding-left:50px;
-        }
-
-        .help{
-            display:none;
-        }
-
-        .navRightSection>div:last-child{
-            width:100px;
-            display:flex;
-            gap: 0px;
-        }
-
-        .menuLogo>svg{
-            width:150px;
-        }
-    }
-
 `
 
 export default Navbar
