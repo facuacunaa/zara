@@ -276,11 +276,11 @@ const BrandLink = styled(Link)`
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(14px, 2vw, 18px);
-    font-style: italic;
+    font-family: 'Schoolbell', cursive;
+    font-size: clamp(16px, 2.2vw, 22px);
+    font-style: normal;
     font-weight: 400;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
     color: ${p => p.iconColor};
     text-decoration: none;
     white-space: nowrap;
@@ -378,15 +378,15 @@ const TreeWrap = styled.div`
 `
 
 const SidebarBrand = styled.h2`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(1.4rem, 4vw, 1.8rem);
-    font-weight: 300;
-    font-style: italic;
+    font-family: 'Schoolbell', cursive;
+    font-size: clamp(1.6rem, 5vw, 2rem);
+    font-weight: 400;
+    font-style: normal;
     color: #0a0a0a;
     text-align: center;
-    line-height: 1.2;
+    line-height: 1.3;
     margin: 0 0 40px;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.01em;
 `
 
 const ArtistList = styled.nav`
