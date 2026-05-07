@@ -6,8 +6,6 @@ import menvideos from '../Resources/videos/menVid.mp4';
 import kidsVideo from '../Resources/videos/kids.mp4';
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Mousewheel, Pagination } from 'swiper';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
@@ -135,7 +133,7 @@ const Homepage = () => {
                     direction={'vertical'}
                     slidesPerView={1}
                     mousewheel={true}
-                    pagination={{ clickable: true }}
+                    pagination={false}
                     onTouchMove={(e) => setactiveIndex(e.activeIndex===0?1:e.activeIndex===1?2:e.activeIndex)}
                     className="mySwiper"
                     onScroll={(e) => setactiveIndex(e.activeIndex)}
@@ -159,22 +157,7 @@ const Homepage = () => {
                                 )}
                             </Link>
                         </SwiperSlide>
-                    ))};
-                    <div className="nextPrevButtons">
-                        {indexNo > 0
-                            ? <button onClick={() => setIndex(prev => prev - 1)}>
-                                <ArrowBackIosIcon fontSize='small' />
-                                <span>{category[indexNo - 1]}</span>
-                              </button>
-                            : <span></span>
-                        }
-                        {indexNo !== category.length - 1 &&
-                            <button onClick={() => setIndex(prev => prev + 1)}>
-                                <span>{category[indexNo + 1]}</span>
-                                <ArrowForwardIosIcon fontSize='small' />
-                            </button>
-                        }
-                    </div>
+                    ))}
                 </Swiper>
             </Container>
 
@@ -379,32 +362,7 @@ const Container = styled.div`
         object-fit: cover;
     }
 
-    .swiper-pagination-bullet-active { background-color: #fff !important; }
-    .swiper-pagination { margin-top: 250px !important; }
-
-    .nextPrevButtons {
-        width: 100%;
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        z-index: 5;
-        top: 45vh;
-    }
-
-    .nextPrevButtons > button {
-        background-color: transparent;
-        border: none;
-        display: flex;
-        align-items: center;
-        font-weight: 200;
-        color: ${p => p.activeIndexs % 2 === 0 ? 'white' : 'black'};
-    }
-
-    .nextPrevButtons > button svg {
-        font-size: 30px;
-        fill: ${p => p.activeIndexs % 2 === 0 ? 'white' : 'black'};
-    }
+    .swiper-pagination { display: none; }
 
     @media (min-width: 769px) and (max-width: 1110px) { .swiper-slide img { object-fit: cover; } }
     @media (min-width: 481px) and (max-width: 768px)  { .swiper-slide img { object-fit: cover; } }
