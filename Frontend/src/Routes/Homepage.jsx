@@ -55,8 +55,6 @@ const Homepage = () => {
             <Gallery3D
                 key={gallerySlides.length}
                 slides={gallerySlides}
-                homeVideo={homeVideo}
-                heroVideoText={heroVideoText}
             />
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
@@ -270,14 +268,15 @@ const HomeWrap = styled.div`
 /* ═══════════════════════════════════════════════════════════════
    GALLERY 3D COMPONENT
 ═══════════════════════════════════════════════════════════════ */
-function Gallery3D({ slides, homeVideo, heroVideoText }) {
-    const mountRef      = useRef(null)
-    const targetSlide   = useRef(0)
-    const [activeIdx,  setActiveIdx]  = useState(0)
-    const [exiting,    setExiting]    = useState(false)
-    const [dismissed,  setDismissed]  = useState(false)
+function Gallery3D({ slides }) {
+    const mountRef    = useRef(null)
+    const targetSlide = useRef(0)
+    const [activeIdx, setActiveIdx] = useState(0)
+    const [exiting,   setExiting]   = useState(false)
+    const [dismissed, setDismissed] = useState(false)
 
-    const total = slides.length > 0 ? slides.length : (homeVideo ? 1 : 0)
+    /* total: always at least 1 (particles + brand text) */
+    const total = Math.max(slides.length, 1)
 
     const dismiss = () => {
         setExiting(true)
@@ -287,17 +286,16 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
         }, 900)
     }
 
-    /* Block body scroll while gallery is active */
+    /* Lock body scroll */
     useEffect(() => {
         if (dismissed) return
-        if (total === 0) return
         document.body.style.overflow = 'hidden'
         return () => { document.body.style.overflow = '' }
-    }, [dismissed, total])
+    }, [dismissed])
 
     /* Wheel + touch navigation */
     useEffect(() => {
-        if (dismissed || total === 0) return
+        if (dismissed) return
         let lastTime    = 0
         let touchStartY = 0
 
@@ -307,26 +305,16 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
             lastTime = now
             const cur = targetSlide.current
             if (dir > 0) {
-                if (cur < total - 1) {
-                    targetSlide.current = cur + 1
-                    setActiveIdx(cur + 1)
-                } else {
-                    dismiss()
-                }
+                if (cur < total - 1) { targetSlide.current = cur + 1; setActiveIdx(cur + 1) }
+                else { dismiss() }
             } else {
-                if (cur > 0) {
-                    targetSlide.current = cur - 1
-                    setActiveIdx(cur - 1)
-                }
+                if (cur > 0) { targetSlide.current = cur - 1; setActiveIdx(cur - 1) }
             }
         }
 
         const onWheel      = (e) => { e.preventDefault(); go(e.deltaY) }
         const onTouchStart = (e) => { touchStartY = e.touches[0].clientY }
-        const onTouchEnd   = (e) => {
-            const dy = touchStartY - e.changedTouches[0].clientY
-            if (Math.abs(dy) > 45) go(dy)
-        }
+        const onTouchEnd   = (e) => { const dy = touchStartY - e.changedTouches[0].clientY; if (Math.abs(dy) > 45) go(dy) }
 
         window.addEventListener('wheel',      onWheel,      { passive: false })
         window.addEventListener('touchstart', onTouchStart, { passive: true })
@@ -340,7 +328,7 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
 
     /* Three.js scene */
     useEffect(() => {
-        if (dismissed || total === 0) return
+        if (dismissed) return
         const mount = mountRef.current
         if (!mount) return
 
@@ -365,56 +353,39 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
         spot.position.set(0, 5, VIEW_DIST + 5)
         scene.add(spot)
 
-        const loader  = new THREE.TextureLoader()
-        const planes  = []
-
-        if (slides.length > 0) {
-            slides.forEach((slide, i) => {
-                const x    = (i % 2 === 0 ? 1.3 : -1.3)
-                const y    = [0, 0.25, -0.2][i % 3]
-                const z    = -i * SPACING
-                const rotY = (i % 2 === 0 ? -0.2 : 0.2)
-                const geo  = new THREE.PlaneGeometry(3.2, 4.4)
-                const mat  = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 })
-                const mesh = new THREE.Mesh(geo, mat)
-                mesh.position.set(x, y, z)
-                mesh.rotation.y = rotY
-                scene.add(mesh)
-                planes.push({ z })
-                loader.load(slide.image, tex => {
-                    tex.colorSpace = THREE.SRGBColorSpace
-                    mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true
-                }, undefined, () => {})
-            })
-        } else if (homeVideo) {
-            const vid = document.createElement('video')
-            vid.src = homeVideo; vid.autoplay = true; vid.loop = true
-            vid.muted = true; vid.playsInline = true; vid.play().catch(() => {})
-            const vTex = new THREE.VideoTexture(vid)
-            vTex.colorSpace = THREE.SRGBColorSpace
-            const geo = new THREE.PlaneGeometry(5, 7.5)
-            const mat = new THREE.MeshBasicMaterial({ map: vTex })
+        /* Image planes — only if artist images exist */
+        const loader = new THREE.TextureLoader()
+        const planes = slides.map((slide, i) => {
+            const x    = (i % 2 === 0 ? 1.3 : -1.3)
+            const y    = [0, 0.25, -0.2][i % 3]
+            const z    = -i * SPACING
+            const geo  = new THREE.PlaneGeometry(3.2, 4.4)
+            const mat  = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 })
             const mesh = new THREE.Mesh(geo, mat)
-            mesh.position.set(0, 0, 0)
+            mesh.position.set(x, y, z)
+            mesh.rotation.y = (i % 2 === 0 ? -0.2 : 0.2)
             scene.add(mesh)
-            planes.push({ z: 0 })
-        }
+            loader.load(slide.image, tex => {
+                tex.colorSpace = THREE.SRGBColorSpace
+                mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true
+            }, undefined, () => {})
+            return { z }
+        })
 
         /* Particles */
-        const pN = 500, depth = total * SPACING + SPACING * 2
+        const pN = 600, depth = Math.max(slides.length, 1) * SPACING + SPACING * 3
         const pPos = new Float32Array(pN * 3)
         for (let i = 0; i < pN; i++) {
-            pPos[i*3]   = (Math.random() - 0.5) * 24
-            pPos[i*3+1] = (Math.random() - 0.5) * 14
+            pPos[i*3]   = (Math.random() - 0.5) * 26
+            pPos[i*3+1] = (Math.random() - 0.5) * 16
             pPos[i*3+2] = VIEW_DIST - Math.random() * depth
         }
         const pGeo = new THREE.BufferGeometry()
         pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3))
-        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.022, transparent: true, opacity: 0.28 })))
+        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.02, transparent: true, opacity: 0.3 })))
 
-        /* RAF — camera lerps to active plane */
-        let camZ = VIEW_DIST
-        let rafId
+        /* RAF */
+        let camZ = VIEW_DIST, rafId
         const clock = new THREE.Clock()
         const animate = () => {
             rafId = requestAnimationFrame(animate)
@@ -432,9 +403,7 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
 
         const onResize = () => {
             const W2 = window.innerWidth, H2 = window.innerHeight
-            camera.aspect = W2 / H2
-            camera.updateProjectionMatrix()
-            renderer.setSize(W2, H2)
+            camera.aspect = W2 / H2; camera.updateProjectionMatrix(); renderer.setSize(W2, H2)
         }
         window.addEventListener('resize', onResize)
 
@@ -444,9 +413,9 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
             renderer.dispose()
             try { mount.removeChild(renderer.domElement) } catch {}
         }
-    }, [slides.length, homeVideo, dismissed, total]) // eslint-disable-line
+    }, [slides.length, dismissed]) // eslint-disable-line
 
-    if (dismissed || total === 0) return null
+    if (dismissed) return null
 
     const cur = slides[activeIdx]
 
@@ -454,10 +423,10 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
         <GalleryFixed $exiting={exiting}>
             <GalleryCanvasMount ref={mountRef} />
 
+            {/* Brand text — visible on slide 0, fades on others */}
             <GalleryCenterText style={{ opacity: activeIdx === 0 ? 1 : 0 }}>
                 <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
                 <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                {slides.length === 0 && heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
                 {slides.length === 0 && (
                     <HeroCtas style={{ marginTop: '40px', pointerEvents: 'all' }}>
                         <HeroCtaPrimary to="/#coleccion" onClick={dismiss}>Explorar colección</HeroCtaPrimary>
@@ -468,6 +437,7 @@ function Gallery3D({ slides, homeVideo, heroVideoText }) {
 
             {cur && <GalleryArtistTag key={activeIdx}><Link to={`/${cur.slug}`}>{cur.name}</Link></GalleryArtistTag>}
 
+            {/* Last slide: clickable dismiss */}
             {activeIdx === total - 1 && (
                 <GalleryLastHint onClick={dismiss} style={{ cursor: 'pointer' }}>
                     <GalleryLastText>↓ Ver la colección</GalleryLastText>
