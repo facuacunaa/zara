@@ -889,22 +889,33 @@ const LoginCard    = styled.div`background:white;padding:50px 40px;width:360px;b
   button:disabled{opacity:.5;cursor:not-allowed;}`
 const Logo         = styled.div`font-size:22px;color:#111;`
 const Err          = styled.p`color:red;font-size:12px;margin:0;`
-const DashWrap     = styled.div`display:flex;min-height:100vh;background:#f5f5f5;`
-const Side         = styled.aside`width:220px;min-width:220px;background:#111;color:white;display:flex;flex-direction:column;padding:30px 0;position:sticky;top:0;height:100vh;`
-const SideName     = styled.div`font-size:13px;font-weight:500;padding:0 24px 4px;color:white;`
-const SideSlug     = styled.div`font-size:10px;padding:0 24px 20px;color:#666;border-bottom:1px solid #222;`
-const SideNav      = styled.nav`display:flex;flex-direction:column;padding:20px 0;flex:1;`
+const DashWrap     = styled.div`display:flex;min-height:100vh;background:#f5f5f5;
+  @media(max-width:640px){flex-direction:column;}`
+const Side         = styled.aside`width:220px;min-width:220px;background:#111;color:white;display:flex;flex-direction:column;padding:30px 0;position:sticky;top:0;height:100vh;
+  @media(max-width:640px){width:100%;min-width:unset;height:auto;position:sticky;top:0;z-index:100;flex-direction:row;flex-wrap:wrap;padding:0;}`
+const SideName     = styled.div`font-size:13px;font-weight:500;padding:0 24px 4px;color:white;
+  @media(max-width:640px){flex:1;padding:11px 14px;align-self:center;order:1;font-size:12px;}`
+const SideSlug     = styled.div`font-size:10px;padding:0 24px 20px;color:#666;border-bottom:1px solid #222;
+  @media(max-width:640px){display:none;}`
+const SideNav      = styled.nav`display:flex;flex-direction:column;padding:20px 0;flex:1;
+  @media(max-width:640px){flex-direction:row;flex:0 0 100%;overflow-x:auto;padding:0;order:3;border-top:1px solid #222;scrollbar-width:none;&::-webkit-scrollbar{display:none;}}`
 const SideItem     = styled.div`padding:13px 24px;font-size:12px;letter-spacing:.08em;cursor:pointer;
   color:${p=>p.active?'white':'#888'};background:${p=>p.active?'#222':'transparent'};
   border-left:3px solid ${p=>p.active?'white':'transparent'};transition:all .2s;
-  &:hover{background:#222;color:white;}`
+  &:hover{background:#222;color:white;}
+  @media(max-width:640px){flex-shrink:0;padding:12px 14px;font-size:11px;border-left:none;
+    border-bottom:3px solid ${p=>p.active?'white':'transparent'};white-space:nowrap;}`
 const LogoutBtn    = styled.button`margin:8px 16px 20px;background:transparent;border:1px solid #444;color:#888;padding:10px;font-size:11px;cursor:pointer;letter-spacing:.1em;
-  &:hover{border-color:white;color:white;}`
-const PreviewLink  = styled.a`display:block;text-align:center;font-size:11px;color:#888;letter-spacing:.05em;padding:8px 16px;text-decoration:none;&:hover{color:white;}`
-const Main         = styled.main`flex:1;padding:40px;overflow-y:auto;`
+  &:hover{border-color:white;color:white;}
+  @media(max-width:640px){order:2;margin:6px 10px 6px auto;padding:6px 10px;font-size:10px;align-self:center;flex-shrink:0;}`
+const PreviewLink  = styled.a`display:block;text-align:center;font-size:11px;color:#888;letter-spacing:.05em;padding:8px 16px;text-decoration:none;&:hover{color:white;}
+  @media(max-width:640px){display:none;}`
+const Main         = styled.main`flex:1;padding:40px;overflow-y:auto;
+  @media(max-width:640px){padding:16px 12px 32px;}`
 const PageTitle    = styled.h1`font-size:14px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:24px;color:#111;`
 const Toast        = styled.div`position:fixed;top:20px;right:20px;z-index:9999;background:#111;color:white;padding:14px 24px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.2);border-radius:2px;`
-const Section      = styled.div`background:white;padding:28px 32px;margin-bottom:20px;box-shadow:0 1px 8px rgba(0,0,0,.05);`
+const Section      = styled.div`background:white;padding:28px 32px;margin-bottom:20px;box-shadow:0 1px 8px rgba(0,0,0,.05);
+  @media(max-width:640px){padding:18px 14px;}`
 const SectionTitle = styled.h3`font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:#111;font-weight:500;margin:0 0 6px;`
 const SectionSub   = styled.p`font-size:11px;color:#999;margin:0 0 18px;`
 
@@ -950,7 +961,7 @@ const DropText        = styled.p`font-size:12px;color:#555;margin:0 0 4px;`
 const DropHint        = styled.p`font-size:10px;color:#bbb;margin:0;letter-spacing:.05em;text-transform:uppercase;`
 
 /* Image slots */
-const SlotsGrid = styled.div`display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;`
+const SlotsGrid = styled.div`display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;`
 const SlotCard  = styled.div`background:white;border:1px solid #eee;cursor:pointer;overflow:hidden;
   box-shadow:0 1px 6px rgba(0,0,0,.04);transition:box-shadow .2s;
   &:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}`
@@ -973,7 +984,8 @@ const SlotUploading = styled.div`width:100%;padding-bottom:150%;position:relativ
 
 /* Texts */
 const InfoGrid     = styled.div`display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;@media(max-width:700px){grid-template-columns:1fr;}`
-const InfoGroup    = styled.div`display:flex;flex-direction:column;gap:6px;grid-column:${p=>p.full?'span 2':'span 1'};`
+const InfoGroup    = styled.div`display:flex;flex-direction:column;gap:6px;grid-column:${p=>p.full?'span 2':'span 1'};
+  @media(max-width:700px){grid-column:span 1;}`
 const InfoLabel    = styled.label`font-size:10px;letter-spacing:.2em;color:#888;text-transform:uppercase;`
 const InfoInput    = styled.input`border:none;border-bottom:1px solid #ddd;padding:8px 4px;font-size:13px;outline:none;width:100%;
   &:focus{border-bottom-color:#000;}`
@@ -1028,4 +1040,5 @@ const ProductImgPicker = styled.div`width:140px;aspect-ratio:2/3;background:#f0f
 const ProductImgUploading = styled.div`position:absolute;inset:0;background:rgba(0,0,0,.5);
   display:flex;align-items:center;justify-content:center;
   span{color:white;font-size:13px;font-weight:500;}`
-const ProductFormFields= styled.div`display:grid;grid-template-columns:1fr 1fr;gap:14px;`
+const ProductFormFields= styled.div`display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  @media(max-width:480px){grid-template-columns:1fr;}`

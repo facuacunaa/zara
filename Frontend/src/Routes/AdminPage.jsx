@@ -239,6 +239,12 @@ const AdminPage = () => {
     // ── DASHBOARD ───────────────────────────────────────────────────────────
     return (
         <DashWrapper>
+            {/* MOBILE HEADER */}
+            <MobileHeader>
+                <MobileTitle>⚙️ Admin</MobileTitle>
+                <MobileLogout onClick={handleLogout}>Salir</MobileLogout>
+            </MobileHeader>
+
             {/* SIDEBAR */}
             <Sidebar>
                 <SidebarLogo>
@@ -477,7 +483,7 @@ const AdminPage = () => {
                                 Aparece debajo del video, con tipografía editorial estilo Zara. Dejá vacío lo que no quieras mostrar.
                             </p>
                             {/* Imágenes editoriales */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
+                            <EditorialImagesGrid>
                                 {[{n:1, state: editorialImg1, ref: editorialImgRef1, set: setEditorialImg1},
                                   {n:2, state: editorialImg2, ref: editorialImgRef2, set: setEditorialImg2}].map(({n, state, ref, set}) => (
                                     <div key={n}>
@@ -513,7 +519,7 @@ const AdminPage = () => {
                                         }} />
                                     </div>
                                 ))}
-                            </div>
+                            </EditorialImagesGrid>
 
                             <FormGrid>
                                 <FormGroup span={2}>
@@ -649,6 +655,22 @@ const AdminPage = () => {
                     </>
                 )}
             </Main>
+
+            {/* MOBILE BOTTOM NAV */}
+            <MobileBottomNav>
+                <MobileNavItem active={tab === 'products'} onClick={() => setTab('products')}>
+                    <span>📦</span><span>Productos</span>
+                </MobileNavItem>
+                <MobileNavItem active={tab === 'add'} onClick={() => { setForm(emptyForm); setEditingId(null); setTab('add') }}>
+                    <span>➕</span><span>Nuevo</span>
+                </MobileNavItem>
+                <MobileNavItem active={tab === 'artists'} onClick={() => setTab('artists')}>
+                    <span>🎨</span><span>Artistas</span>
+                </MobileNavItem>
+                <MobileNavItem active={tab === 'home'} onClick={() => setTab('home')}>
+                    <span>🎬</span><span>Inicio</span>
+                </MobileNavItem>
+            </MobileBottomNav>
         </DashWrapper>
     )
 }
@@ -697,7 +719,7 @@ const Sidebar = styled.aside`
     width: 240px; min-width: 240px; background: #111; color: white;
     display: flex; flex-direction: column; padding: 30px 0;
     position: sticky; top: 0; height: 100vh;
-    @media (max-width: 768px) { width: 60px; min-width: 60px; }
+    @media (max-width: 768px) { display: none; }
 `
 
 const SidebarLogo = styled.div`
@@ -731,7 +753,7 @@ const LogoutBtn = styled.button`
 
 const Main = styled.main`
     flex: 1; padding: 40px; overflow-y: auto;
-    @media (max-width: 768px) { padding: 20px; }
+    @media (max-width: 768px) { padding: 72px 16px 88px; }
 `
 
 const PageTitle = styled.h1`
@@ -744,6 +766,7 @@ const SearchBar = styled.input`
     font-size: 13px; outline: none; margin-bottom: 30px;
     width: 300px; background: transparent;
     &:focus { border-bottom-color: #000; }
+    @media (max-width: 768px) { width: 100%; }
 `
 
 const Toast = styled.div`
@@ -828,6 +851,7 @@ const FormGroup = styled.div`
         font-size: 13px; outline: none; font-family: inherit; resize: vertical;
     }
     input:focus, textarea:focus { border-bottom-color: #000; }
+    @media (max-width: 600px) { grid-column: span 1; }
 `
 
 const PreviewSection = styled.div`
@@ -862,6 +886,45 @@ const SectionLabel = styled.p`
     color: #888; margin: 0 0 16px;
 `
 
+const MobileHeader = styled.div`
+    display: none;
+    @media (max-width: 768px) {
+        display: flex; align-items: center; justify-content: space-between;
+        position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+        background: #111; color: white; padding: 14px 18px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.4);
+    }
+`
+
+const MobileTitle = styled.span`
+    font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: #aaa;
+`
+
+const MobileLogout = styled.button`
+    background: transparent; border: 1px solid #444; color: #aaa;
+    padding: 6px 12px; font-size: 10px; letter-spacing: .1em; cursor: pointer;
+    &:hover { border-color: white; color: white; }
+`
+
+const MobileBottomNav = styled.div`
+    display: none;
+    @media (max-width: 768px) {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+        background: #111; border-top: 1px solid #222;
+    }
+`
+
+const MobileNavItem = styled.div`
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 10px 4px; cursor: pointer; gap: 3px;
+    background: ${p => p.active ? '#1e1e1e' : 'transparent'};
+    border-top: 2px solid ${p => p.active ? 'white' : 'transparent'};
+    transition: all .2s;
+    span:first-child { font-size: 16px; line-height: 1; }
+    span:last-child { font-size: 9px; letter-spacing: .04em; text-transform: uppercase; color: ${p => p.active ? 'white' : '#666'}; }
+    &:hover { background: #1a1a1a; }
+`
+
 const ArtistList = styled.div`
     background: white; box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     margin-bottom: 12px; overflow: hidden;
@@ -883,16 +946,22 @@ const ArtistName = styled.p`
     font-size: 13px; font-weight: 500; margin: 0 0 4px; color: #111;
 `
 
+const EditorialImagesGrid = styled.div`
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;
+    @media (max-width: 600px) { grid-template-columns: 1fr; }
+`
+
 const ArtistMeta = styled.p`
     font-size: 11px; color: #999; margin: 0;
     a { color: #999; text-decoration: none; &:hover { color: #000; } }
 `
 
 const ArtistPwdForm = styled.div`
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     input {
         border: none; border-bottom: 1px solid #ddd; padding: 8px 4px;
         font-size: 12px; outline: none; width: 180px;
         &:focus { border-bottom-color: #000; }
     }
+    @media (max-width: 768px) { width: 100%; input { width: 100%; } }
 `
