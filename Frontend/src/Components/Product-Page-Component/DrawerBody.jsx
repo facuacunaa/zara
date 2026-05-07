@@ -4,121 +4,235 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { getCart } from '../../Redux/App/action'
 
-
-const Addcartbody = styled.div`
-width: 316px;
-margin: auto;
-text-align: left;
-padding: 0px 32px 32px;
-
-.addcartname{
-    margin: auto;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.addcartflex{
-    margin: auto;
-    display: flex;
-    font-size: 12px;
-    color: grey;
-}
-.addcartimage{
-    width: 60%;
-}
-.addcartrightflex{
-    width: 40%;
-    padding-left: 16px;
-}
-.addcartrightflex div{
-    padding: 0px 0px 8px
-}
-
-`
-const Addcart = styled.div`
-    font-size: 16px;
-    font-weight: bold;
-    text-align: left;
-    padding: 16px 20px 40px;
-`
-
-const Addcartscroll = styled.div`
-    max-height: 480px;
-    margin: auto;
-    overflow: auto;
-    border-bottom: 0px solid black;
-::-webkit-scrollbar {
-    width: 3px;
-  }
-
-::-webkit-scrollbar-track {
-    background-color: rgb(209, 209, 209);
-  }
-
-::-webkit-scrollbar-thumb {
-    background-color: rgb(40, 39, 39);
-  }
-
-`
-
 const DrawerBody = () => {
-    const dispatch = useDispatch();
-    const cartdata = useSelector((store) => store.AppReducer.cart);
-    useEffect(() => {
-        dispatch(getCart())
-    }, [dispatch]);
+    const dispatch = useDispatch()
+    const cartdata = useSelector((store) => store.AppReducer.cart)
+
+    useEffect(() => { dispatch(getCart()) }, [dispatch])
+
+    const total = cartdata
+        ? cartdata.reduce((acc, el) => acc + (el.pricenum || 0) * (el.quantity || 1), 0)
+        : 0
+
     return (
+        <Wrap>
+            <DrawerTitle>
+                Carrito
+                {cartdata?.length > 0 && <DrawerCount>{cartdata.length}</DrawerCount>}
+            </DrawerTitle>
 
-        <div>
-            <Addcart>CART</Addcart>
-            <Addcartscroll>
-                {cartdata?.map((cart) => {
-                    return (
-                        <Addcartbody key={cart.id}>
-                            <div className='addcartname'>{cart.producttitle}</div>
-                            <div className='addcartflex'>
-                                <div className='addcartimage'>
-                                    <img style={{ width: "100%", height: "305px" }} src={cart.image} alt={cart.producttitle} />
-                                </div>
-                                <div className='addcartrightflex'>
-                                    <div style={{ paddingTop: "30px", textTransform:"uppercase" }}>{cart.color ? cart.color.split("|")[0] : "black / blue"}</div>
-                                    <div>M (UK M)</div>
-                                    <div>{cart.quantity}</div>
-                                    <div style={{ paddingTop: "100px" }}>{cart.price}</div>
-                                </div>
-                            </div>
-                        </Addcartbody>
-                    )
-                })}
-            </Addcartscroll>
-            <GotoBasket>
+            {(!cartdata || cartdata.length === 0) ? (
+                <Empty>
+                    <EmptyIcon>✦</EmptyIcon>
+                    <p>Tu carrito está vacío</p>
+                </Empty>
+            ) : (
+                <ScrollArea>
+                    {cartdata.map((cart) => (
+                        <CartItem key={cart.id}>
+                            <ItemImg>
+                                {cart.image
+                                    ? <img src={cart.image} alt={cart.producttitle} />
+                                    : <ImgPlaceholder>{cart.producttitle?.charAt(0)}</ImgPlaceholder>
+                                }
+                            </ItemImg>
+                            <ItemInfo>
+                                <ItemName>{cart.producttitle}</ItemName>
+                                {cart.color && (
+                                    <ItemMeta>{cart.color.split('|')[0]}</ItemMeta>
+                                )}
+                                <ItemQty>Cant. {cart.quantity}</ItemQty>
+                                <ItemPrice>{cart.price}</ItemPrice>
+                            </ItemInfo>
+                        </CartItem>
+                    ))}
+                </ScrollArea>
+            )}
 
-            <div className="gotostyle">
-            <Link to="/cart">GO TO BASKET</Link>
-            </div>
-
-
-            </GotoBasket>
-        </div>
+            <DrawerFooter>
+                {cartdata?.length > 0 && (
+                    <TotalRow>
+                        <span>Total</span>
+                        <span>${total.toLocaleString('es-AR')}</span>
+                    </TotalRow>
+                )}
+                <GoToCart to="/cart">Ver carrito completo →</GoToCart>
+            </DrawerFooter>
+        </Wrap>
     )
 }
 
-const GotoBasket = styled.div`
-padding-top: 20px;
-border-top: 1px solid black;
-.gotostyle {
-padding: 8px 12px;
-font-size: 12px;
-background-color: black;
-color: white ;
-width: 318px ;
-text-align: center;
-margin: auto;
-}
-.gotostyle a{
-    color: white;
-    text-decoration: none;
-}
+const Wrap = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
 `
 
-export default DrawerBody;
+const DrawerTitle = styled.div`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    font-weight: 300;
+    color: #0a0a0a;
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid #f0f0ee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+`
+
+const DrawerCount = styled.span`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-style: normal;
+    color: #aaa;
+`
+
+const Empty = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #bbb;
+
+    p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        margin: 0;
+    }
+`
+
+const EmptyIcon = styled.div`
+    font-size: 22px;
+    color: #ddd;
+`
+
+const ScrollArea = styled.div`
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+
+    &::-webkit-scrollbar { width: 3px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+`
+
+const CartItem = styled.div`
+    display: flex;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f7f7f5;
+`
+
+const ItemImg = styled.div`
+    width: 72px;
+    flex-shrink: 0;
+    aspect-ratio: 3/4;
+    background: #f5f5f0;
+    overflow: hidden;
+
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+`
+
+const ImgPlaceholder = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: rgba(0,0,0,0.12);
+`
+
+const ItemInfo = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 2px 0;
+`
+
+const ItemName = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0a0a0a;
+    margin: 0;
+    line-height: 1.4;
+`
+
+const ItemMeta = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin: 0;
+`
+
+const ItemQty = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    color: #999;
+    margin: 0;
+`
+
+const ItemPrice = styled.p`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 13px;
+    font-style: italic;
+    color: #0a0a0a;
+    margin: auto 0 0;
+`
+
+const DrawerFooter = styled.div`
+    border-top: 1px solid #e8e8e4;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+`
+
+const TotalRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span:first-child {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 9px;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: #aaa;
+    }
+    span:last-child {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #0a0a0a;
+    }
+`
+
+const GoToCart = styled(Link)`
+    display: block;
+    text-align: center;
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px;
+    transition: background 0.2s;
+
+    &:hover { background: #333; }
+`
+
+export default DrawerBody
