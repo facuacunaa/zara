@@ -100,6 +100,25 @@ artistRouter.get("/all-products", async (req, res) => {
 })
 
 // ── OBTENER ARTISTA (público) ──────────────────────────────────────────────
+// ── FIRMA PARA UPLOAD DIRECTO A CLOUDINARY (evita límite 4.5MB de Vercel) ─
+artistRouter.get("/video-signature", artistAuth, (req, res) => {
+    try {
+        const timestamp = Math.round(Date.now() / 1000)
+        const folder    = "zara-artists/videos"
+        const paramsToSign = { folder, timestamp }
+        const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET)
+        res.json({
+            signature,
+            timestamp,
+            folder,
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key:    process.env.CLOUDINARY_API_KEY,
+        })
+    } catch (err) {
+        res.status(500).json({ msg: "Error generando firma", error: err.message })
+    }
+})
+
 artistRouter.get("/:slug", async (req, res) => {
     try {
         const artist = await ArtistModel.findOne({ slug: req.params.slug }).select("-password").lean()
@@ -158,25 +177,6 @@ artistRouter.post("/video/upload", artistAuth, uploadVideo.single("video"), asyn
         res.json({ msg: "Video subido", url, artist })
     } catch (err) {
         res.status(500).json({ msg: "Error subiendo video", error: err.message })
-    }
-})
-
-// ── FIRMA PARA UPLOAD DIRECTO A CLOUDINARY (evita límite 4.5MB de Vercel) ─
-artistRouter.get("/video-signature", artistAuth, (req, res) => {
-    try {
-        const timestamp = Math.round(Date.now() / 1000)
-        const folder    = "zara-artists/videos"
-        const paramsToSign = { folder, timestamp }
-        const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET)
-        res.json({
-            signature,
-            timestamp,
-            folder,
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key:    process.env.CLOUDINARY_API_KEY,
-        })
-    } catch (err) {
-        res.status(500).json({ msg: "Error generando firma", error: err.message })
     }
 })
 
