@@ -73,71 +73,64 @@ const Homepage = () => {
             <Navbar />
 
             {/* ── GALERÍA HERO ────────────────────────────────────────── */}
-            {gallerySlides.length > 0 ? (
-                <GalleryOuter
-                    ref={galleryRef}
-                    style={{ height: `${gallerySlides.length * 100}vh` }}
-                >
-                    <GallerySticky>
-                        {gallerySlides.map((slide, i) => (
-                            <GallerySlide key={i} $active={activeSlide === i}>
-                                <GalleryImg src={slide.image} alt={slide.name} loading={i === 0 ? 'eager' : 'lazy'} />
-                                <GalleryOverlay />
+            <GalleryOuter
+                ref={galleryRef}
+                style={{ height: gallerySlides.length > 1 ? `${gallerySlides.length * 100}vh` : '100vh' }}
+            >
+                <GallerySticky>
+                    {gallerySlides.length > 0 ? gallerySlides.map((slide, i) => (
+                        <GallerySlide key={i} $active={activeSlide === i}>
+                            <GalleryImg src={slide.image} alt={slide.name} loading={i === 0 ? 'eager' : 'lazy'} />
+                            <GalleryOverlay />
 
-                                {/* Primera slide: título de la marca */}
-                                {i === 0 && (
-                                    <GalleryCenterText>
-                                        <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
-                                        <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
-                                    </GalleryCenterText>
-                                )}
+                            {i === 0 && (
+                                <GalleryCenterText>
+                                    <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
+                                    <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
+                                </GalleryCenterText>
+                            )}
 
-                                {/* Nombre del artista abajo a la izquierda */}
-                                <GalleryArtistTag>
-                                    <Link to={`/${slide.slug}`}>{slide.name}</Link>
-                                </GalleryArtistTag>
+                            <GalleryArtistTag>
+                                <Link to={`/${slide.slug}`}>{slide.name}</Link>
+                            </GalleryArtistTag>
 
-                                {/* Última slide: hint scroll */}
-                                {i === gallerySlides.length - 1 && (
-                                    <GalleryLastHint>
-                                        <GalleryLastText>↓ Ver la colección</GalleryLastText>
-                                        <GalleryLastLine />
-                                    </GalleryLastHint>
-                                )}
+                            {i === gallerySlides.length - 1 && (
+                                <GalleryLastHint>
+                                    <GalleryLastText>↓ Ver la colección</GalleryLastText>
+                                    <GalleryLastLine />
+                                </GalleryLastHint>
+                            )}
 
-                                {/* Contador */}
-                                <GalleryCounter>
-                                    {String(i + 1).padStart(2,'0')} / {String(gallerySlides.length).padStart(2,'0')}
-                                </GalleryCounter>
+                            <GalleryCounter>
+                                {String(i + 1).padStart(2,'0')} / {String(gallerySlides.length).padStart(2,'0')}
+                            </GalleryCounter>
 
-                                {/* Barra de progreso */}
-                                <GalleryProgressBar>
-                                    <GalleryProgressFill style={{ width: `${((i + 1) / gallerySlides.length) * 100}%` }} />
-                                </GalleryProgressBar>
-                            </GallerySlide>
-                        ))}
-                    </GallerySticky>
-                </GalleryOuter>
-            ) : (
-                /* Fallback si aún no hay artistas con imágenes */
-                <HeroSection>
-                    {homeVideo && <HeroVideo src={homeVideo} autoPlay loop muted playsInline />}
-                    <HeroOverlay />
-                    <HeroContent>
-                        <HeroEyebrow>— La Casita del Hornero</HeroEyebrow>
-                        <HeroTitle>Arte que<br/>se puede usar.</HeroTitle>
-                        {heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
-                        <HeroCtas>
-                            <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
-                            <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
-                        </HeroCtas>
-                    </HeroContent>
-                    <HeroScrollHint>
-                        <span>Scroll</span>
-                        <ArtScrollLine />
-                    </HeroScrollHint>
-                </HeroSection>
-            )}
+                            <GalleryProgressBar>
+                                <GalleryProgressFill style={{ width: `${((i + 1) / gallerySlides.length) * 100}%` }} />
+                            </GalleryProgressBar>
+                        </GallerySlide>
+                    )) : (
+                        /* Sin imágenes de artistas: slide con el video de fondo */
+                        <GallerySlide $active={true}>
+                            {homeVideo && <HeroVideo src={homeVideo} autoPlay loop muted playsInline />}
+                            <GalleryOverlay />
+                            <GalleryCenterText>
+                                <GalleryEyebrow>— La Casita del Hornero</GalleryEyebrow>
+                                <GalleryTitle>Arte que<br/>se puede usar.</GalleryTitle>
+                                {heroVideoText && <HeroSub>{heroVideoText}</HeroSub>}
+                                <HeroCtas>
+                                    <HeroCtaPrimary to="/#coleccion">Explorar colección</HeroCtaPrimary>
+                                    <HeroCtaSecondary to="/#artistas">Nuestros artistas</HeroCtaSecondary>
+                                </HeroCtas>
+                            </GalleryCenterText>
+                            <HeroScrollHint>
+                                <span>Scroll</span>
+                                <ArtScrollLine />
+                            </HeroScrollHint>
+                        </GallerySlide>
+                    )}
+                </GallerySticky>
+            </GalleryOuter>
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
