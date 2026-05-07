@@ -59,9 +59,11 @@ export default function ArtistPortal() {
   const [newHotspot, setNewHotspot] = useState({ ...EMPTY_HOTSPOT })
 
   const videoRef      = useRef(null)
+  const profileRef    = useRef(null)
   const slotRefs      = useRef({})
   const shopRef       = useRef(null)
   const productImgRef = useRef(null)
+  const [profileProgress, setProfileProgress] = useState(0)
 
   const headers = { Authorization: `Bearer ${token}` }
 
@@ -174,6 +176,26 @@ export default function ArtistPortal() {
       flash(`❌ Error inesperado: ${e.message}`)
     }
     setLoading(false); setVideoProgress(0)
+  }
+
+  /* ── Subir foto de perfil ───────────────────────────────────────────── */
+  const uploadProfileImage = async (file) => {
+    if (!file) return
+    if (file.size > 10 * 1024 * 1024) return flash('❌ La imagen supera 10MB')
+    setProfileProgress(0)
+    const form = new FormData()
+    form.append('image', file)
+    try {
+      const res = await axios.post(`${API}/artist/profile-image`, form, {
+        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: e => setProfileProgress(Math.round((e.loaded * 100) / e.total))
+      })
+      if (res.data?.artist) applyArtist(res.data.artist)
+      flash('✅ Foto de perfil actualizada')
+    } catch {
+      flash('❌ Error al subir la foto')
+    }
+    setProfileProgress(0)
   }
 
   /* ── Subir imagen a slot específico ─────────────────────────────────── */
@@ -330,6 +352,39 @@ export default function ArtistPortal() {
         {tab === 'hero' && (
           <>
             <PageTitle>Hero de la página</PageTitle>
+
+            {/* Foto de perfil */}
+            <Section>
+              <SectionTitle>Foto de perfil</SectionTitle>
+              <SectionSub>Aparece en la página principal para que los clientes te encuentren. Usá una foto tuya o de tus obras.</SectionSub>
+              <ProfilePhotoWrap>
+                <ProfilePhotoBox onClick={() => !loading && profileRef.current?.click()}>
+                  {profileProgress > 0 ? (
+                    <>
+                      <ProfilePhotoProgress>{profileProgress}%</ProfilePhotoProgress>
+                      <ProgressBar style={{ position: 'absolute', bottom: 0, left: 0, right: 0, maxWidth: '100%', margin: 0, borderRadius: 0 }}>
+                        <ProgressFill style={{ width: `${profileProgress}%` }} />
+                      </ProgressBar>
+                    </>
+                  ) : artist.profileImage ? (
+                    <>
+                      <img src={artist.profileImage} alt="perfil" />
+                      <ProfilePhotoOverlay>Cambiar foto</ProfilePhotoOverlay>
+                    </>
+                  ) : (
+                    <ProfilePhotoEmpty>
+                      <span>+</span>
+                      <p>Subir foto</p>
+                    </ProfilePhotoEmpty>
+                  )}
+                  <input ref={profileRef} type="file" accept="image/*" hidden
+                    onChange={e => uploadProfileImage(e.target.files[0])} />
+                </ProfilePhotoBox>
+                <ProfilePhotoHint>
+                  <strong>Recomendado:</strong> foto cuadrada o vertical · mínimo 600×600px · JPG o PNG · Máx. 10MB
+                </ProfilePhotoHint>
+              </ProfilePhotoWrap>
+            </Section>
 
             {/* Video */}
             <Section>
@@ -852,6 +907,35 @@ const Toast        = styled.div`position:fixed;top:20px;right:20px;z-index:9999;
 const Section      = styled.div`background:white;padding:28px 32px;margin-bottom:20px;box-shadow:0 1px 8px rgba(0,0,0,.05);`
 const SectionTitle = styled.h3`font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:#111;font-weight:500;margin:0 0 6px;`
 const SectionSub   = styled.p`font-size:11px;color:#999;margin:0 0 18px;`
+
+/* Profile photo */
+const ProfilePhotoWrap    = styled.div`display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;`
+const ProfilePhotoBox     = styled.div`
+  position:relative;width:160px;height:160px;border-radius:50%;overflow:hidden;
+  background:#f0f0f0;border:2px dashed #ddd;cursor:pointer;flex-shrink:0;
+  img{width:100%;height:100%;object-fit:cover;display:block;}
+  &:hover > div[data-overlay]{opacity:1;}
+  &:hover{border-color:#999;}
+`
+const ProfilePhotoOverlay = styled.div.attrs({['data-overlay']:true})`
+  position:absolute;inset:0;background:rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:.2s;
+  font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:white;
+`
+const ProfilePhotoEmpty   = styled.div`
+  width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  span{font-size:28px;color:#ccc;}
+  p{font-size:9px;color:#bbb;margin:0;letter-spacing:.1em;text-transform:uppercase;}
+`
+const ProfilePhotoProgress= styled.div`
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:500;color:#555;
+`
+const ProfilePhotoHint    = styled.p`
+  font-size:11px;color:#999;line-height:1.7;margin:auto 0;
+  strong{color:#666;font-weight:500;}
+`
 
 /* Hero */
 const HeroPreviewBox  = styled.div`position:relative;width:100%;height:280px;background:#111;overflow:hidden;margin-bottom:14px;`

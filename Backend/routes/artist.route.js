@@ -196,6 +196,23 @@ artistRouter.post("/video/save-url", artistAuth, async (req, res) => {
     }
 })
 
+// ── SUBIR FOTO DE PERFIL ───────────────────────────────────────────────────
+artistRouter.post("/profile-image", artistAuth, upload.single("image"), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
+        const url    = req.file.path
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { profileImage: url },
+            { new: true }
+        ).select("-password")
+        if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
+        res.json({ msg: "Foto de perfil actualizada", url, artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── SUBIR IMAGEN A SLOT ESPECÍFICO (0-5) ──────────────────────────────────
 artistRouter.post("/images/slot/:slot", artistAuth, upload.single("image"), async (req, res) => {
     try {

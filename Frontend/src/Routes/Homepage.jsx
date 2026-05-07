@@ -231,8 +231,8 @@ const Homepage = () => {
                             <ArtistProfileCard key={a._id || a.slug}>
                                 <Link to={`/${a.slug}`}>
                                     <ArtistCardMedia>
-                                        {a.heroImage
-                                            ? <img src={a.heroImage} alt={a.name} loading="lazy" />
+                                        {(a.profileImage || a.images?.[0])
+                                            ? <img src={a.profileImage || a.images[0]} alt={a.name} loading="lazy" />
                                             : <ArtistCardPlaceholder>
                                                 <span>{a.name.charAt(0).toUpperCase()}</span>
                                               </ArtistCardPlaceholder>
