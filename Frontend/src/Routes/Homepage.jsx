@@ -142,23 +142,21 @@ const Homepage = () => {
                 >
                     {eval(category[indexNo])?.map((ele, index) => (
                         <SwiperSlide className="swiper-slide" key={index}>
-                            <Link to={`/products`} state={{ query: ele.path }} style={{ display: 'block', position: 'relative', width: '100%', height: '100%' }}>
+                            <Link to={`/products`} state={{ query: ele.path }} style={{ display: 'block', position: 'relative', width: '100%', height: '100vh' }}>
                                 {ele.img
                                     ? <img src={ele.img} alt={ele.img} className={`main${category[indexNo]}${index}`}/>
-                                    : <>
-                                        <video autoPlay loop muted controls={ele.cat === 'kids' ? false : true} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}>
-                                            <source src={ele.video} type="video/mp4" />
-                                        </video>
-                                        {index === 0 && indexNo === 0 && heroVideoText && (
-                                            <>
-                                                <ArtGradient />
-                                                <ArtTextOverlay>
-                                                    <ArtHeadline>{heroVideoText}</ArtHeadline>
-                                                </ArtTextOverlay>
-                                            </>
-                                        )}
-                                      </>
+                                    : <video autoPlay loop muted>
+                                        <source src={ele.video} type="video/mp4" />
+                                      </video>
                                 }
+                                {!ele.img && index === 0 && indexNo === 0 && heroVideoText && (
+                                    <>
+                                        <ArtGradient style={{ zIndex: 10 }} />
+                                        <ArtTextOverlay style={{ zIndex: 11 }}>
+                                            <ArtHeadline>{heroVideoText}</ArtHeadline>
+                                        </ArtTextOverlay>
+                                    </>
+                                )}
                             </Link>
                         </SwiperSlide>
                     ))};
