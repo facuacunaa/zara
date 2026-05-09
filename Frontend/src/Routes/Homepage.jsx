@@ -279,16 +279,21 @@ const PAINT_TEXTS = [
     { head: 'Arte\nartesanal',          sub: 'Seguí bajando para ver la tienda' },
 ]
 
+function safeStorage(action, key, val) {
+    try { return action === 'get' ? localStorage.getItem(key) : localStorage.setItem(key, val) }
+    catch(e) { return null }
+}
+
 function PaintIntro() {
     const canvasRef = useRef(null)
-    const alreadySeen = localStorage.getItem('paintSeen')
-    const [phase,   setPhase]   = useState(alreadySeen ? 2 : 0)  // 0=animating 1=fading 2=gone
+    const alreadySeen = safeStorage('get', 'paintSeen')
+    const [phase,   setPhase]   = useState(alreadySeen ? 2 : 0)
     const [textIdx, setTextIdx] = useState(0)
 
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
-        localStorage.setItem('paintSeen', '1')
+        safeStorage('set', 'paintSeen', '1')
         canvas.width  = window.innerWidth
         canvas.height = window.innerHeight
         const W = canvas.width, H = canvas.height
@@ -385,7 +390,9 @@ function PaintIntro() {
             }
         }
         rafId = requestAnimationFrame(frame)
-        return () => cancelAnimationFrame(rafId)
+        // Safety fallback: force-hide overlay after 8s no matter what
+        const safetyId = setTimeout(() => { setPhase(1); setTimeout(() => setPhase(2), 900) }, 8000)
+        return () => { cancelAnimationFrame(rafId); clearTimeout(safetyId) }
     }, [])
 
     if (phase === 2) return null
@@ -909,7 +916,7 @@ const CarouselWrap = styled.div`
     min-height: 380px;
     overflow: hidden;
     background: #111;
-    @media (max-width: 600px) { height: 60vw; min-height: 260px; }
+    @media (max-width: 600px) { height: 55vh; min-height: 220px; }
 `
 const CarouselSlide = styled.div`
     position: absolute;
