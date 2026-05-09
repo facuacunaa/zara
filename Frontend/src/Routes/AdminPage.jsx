@@ -29,6 +29,9 @@ const AdminPage = () => {
     const [carouselFiles, setCarouselFiles] = useState([null,null,null,null])
     const [carouselProgress, setCarouselProgress] = useState([0,0,0,0])
     const carouselRefs = [React.useRef(), React.useRef(), React.useRef(), React.useRef()]
+    const [carouselTexts, setCarouselTexts] = useState([
+        { title:'', sub:'' }, { title:'', sub:'' }, { title:'', sub:'' }, { title:'', sub:'' }
+    ])
     const [editorial, setEditorial] = useState({ editorialLabel: '', editorialQuote: '', editorialBody: '', editorialCta: '' })
     const [editorialImg1, setEditorialImg1] = useState('')
     const [editorialImg2, setEditorialImg2] = useState('')
@@ -67,6 +70,10 @@ const AdminPage = () => {
                 res.data.carouselImage3 || '',
                 res.data.carouselImage4 || '',
             ])
+            setCarouselTexts([1,2,3,4].map(n => ({
+                title: res.data[`carouselTitle${n}`] || '',
+                sub:   res.data[`carouselSub${n}`]   || '',
+            })))
             setEditorial({
                 editorialLabel: res.data.editorialLabel || '',
                 editorialQuote: res.data.editorialQuote || '',
@@ -467,9 +474,52 @@ const AdminPage = () => {
                                         >
                                             {loading ? 'Subiendo…' : 'SUBIR'}
                                         </button>
+
+                                        {/* Texto encima del banner */}
+                                        <div style={{ marginTop:'14px', borderTop:'1px solid #f0f0f0', paddingTop:'12px' }}>
+                                            <p style={{ fontSize:'9px', color:'#bbb', letterSpacing:'0.18em', textTransform:'uppercase', marginBottom:'8px' }}>Texto sobre la imagen</p>
+                                            <input
+                                                placeholder="Título"
+                                                value={carouselTexts[idx].title}
+                                                onChange={e => {
+                                                    const t = [...carouselTexts]
+                                                    t[idx] = { ...t[idx], title: e.target.value }
+                                                    setCarouselTexts(t)
+                                                }}
+                                                style={{ width:'100%', border:'none', borderBottom:'1px solid #eee', padding:'5px 0', fontSize:'12px', marginBottom:'6px', outline:'none', background:'transparent' }}
+                                            />
+                                            <input
+                                                placeholder="Subtítulo (opcional)"
+                                                value={carouselTexts[idx].sub}
+                                                onChange={e => {
+                                                    const t = [...carouselTexts]
+                                                    t[idx] = { ...t[idx], sub: e.target.value }
+                                                    setCarouselTexts(t)
+                                                }}
+                                                style={{ width:'100%', border:'none', borderBottom:'1px solid #eee', padding:'5px 0', fontSize:'11px', outline:'none', background:'transparent' }}
+                                            />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
+                            <FormActions style={{ marginTop:'20px' }}>
+                                <SubmitBtn type="button" disabled={loading} onClick={async () => {
+                                    setLoading(true); setMsg('')
+                                    const body = {}
+                                    carouselTexts.forEach((t, i) => {
+                                        body[`carouselTitle${i+1}`] = t.title
+                                        body[`carouselSub${i+1}`]   = t.sub
+                                    })
+                                    try {
+                                        await axios.put(`${API}/settings/carousel-texts`, body, { headers })
+                                        setMsg('✅ Textos del carrusel guardados')
+                                    } catch { setMsg('❌ Error al guardar') }
+                                    setLoading(false)
+                                    setTimeout(() => setMsg(''), 3000)
+                                }}>
+                                    {loading ? 'Guardando…' : 'GUARDAR TEXTOS'}
+                                </SubmitBtn>
+                            </FormActions>
                         </Form>
 
                         {/* ── Editorial ── */}

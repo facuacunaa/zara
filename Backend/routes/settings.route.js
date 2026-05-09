@@ -145,6 +145,25 @@ settingsRouter.delete("/carousel-image/:slot", adminAuth, async (req, res) => {
     }
 })
 
+// ── GUARDAR TEXTOS DEL CARRUSEL (solo admin) ─────────────────────────────
+settingsRouter.put("/carousel-texts", adminAuth, async (req, res) => {
+    const fields = {}
+    ;[1,2,3,4].forEach(n => {
+        fields[`carouselTitle${n}`] = req.body[`carouselTitle${n}`] || ''
+        fields[`carouselSub${n}`]   = req.body[`carouselSub${n}`]   || ''
+    })
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { $set: fields },
+            { new: true, upsert: true, strict: false }
+        )
+        res.json({ msg: "Textos del carrusel guardados", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── GUARDAR BANNER (solo admin) ───────────────────────────────────────────
 settingsRouter.put("/banner", adminAuth, async (req, res) => {
     const { bannerText, bannerLink, bannerBg, bannerColor, bannerActive } = req.body

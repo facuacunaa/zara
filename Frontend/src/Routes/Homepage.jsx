@@ -27,12 +27,13 @@ const Homepage = () => {
             .then(r => {
                 setEditorial(r.data)
                 if (r.data.bannerActive && r.data.bannerText) setBanner(r.data)
-                setCarouselImgs([
-                    r.data.carouselImage1,
-                    r.data.carouselImage2,
-                    r.data.carouselImage3,
-                    r.data.carouselImage4,
-                ].filter(Boolean))
+                setCarouselImgs(
+                    [1,2,3,4].map(n => ({
+                        img:   r.data[`carouselImage${n}`] || '',
+                        title: r.data[`carouselTitle${n}`] || '',
+                        sub:   r.data[`carouselSub${n}`]   || '',
+                    })).filter(s => s.img)
+                )
             })
             .catch(() => {})
     }, [])
@@ -874,9 +875,16 @@ function HomeCarousel({ images }) {
 
     return (
         <CarouselWrap>
-            {images.map((src, i) => (
+            {images.map((slide, i) => (
                 <CarouselSlide key={i} $active={i === active}>
-                    <img src={src} alt={`Banner ${i + 1}`} />
+                    <img src={slide.img} alt={slide.title || `Banner ${i + 1}`} />
+                    <CarouselOverlay />
+                    {(slide.title || slide.sub) && (
+                        <CarouselText>
+                            {slide.title && <CarouselTitle>{slide.title}</CarouselTitle>}
+                            {slide.sub   && <CarouselSub>{slide.sub}</CarouselSub>}
+                        </CarouselText>
+                    )}
                 </CarouselSlide>
             ))}
             {images.length > 1 && (
@@ -897,52 +905,89 @@ function HomeCarousel({ images }) {
 const CarouselWrap = styled.div`
     position: relative;
     width: 100%;
-    aspect-ratio: 16/7;
+    height: 75vh;
+    min-height: 380px;
     overflow: hidden;
     background: #111;
-    @media (max-width: 600px) { aspect-ratio: 4/3; }
+    @media (max-width: 600px) { height: 60vw; min-height: 260px; }
 `
 const CarouselSlide = styled.div`
     position: absolute;
     inset: 0;
     opacity: ${p => p.$active ? 1 : 0};
-    transition: opacity 0.8s ease;
+    transition: opacity 0.9s ease;
     img {
         width: 100%; height: 100%;
         object-fit: cover;
         display: block;
     }
 `
+const CarouselOverlay = styled.div`
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.06) 0%,
+        rgba(0,0,0,0.22) 50%,
+        rgba(0,0,0,0.60) 100%
+    );
+`
+const CarouselText = styled.div`
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    padding: clamp(24px, 5vw, 60px) clamp(24px, 6vw, 80px);
+    z-index: 2;
+`
+const CarouselTitle = styled.h2`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+    font-weight: 300;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+`
+const CarouselSub = styled.p`
+    font-size: clamp(0.65rem, 1.4vw, 0.88rem);
+    color: rgba(255,255,255,0.80);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+`
 const CarouselBtn = styled.button`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    ${p => p.$side === 'left' ? 'left: 16px;' : 'right: 16px;'}
-    background: rgba(255,255,255,0.85);
-    border: none;
-    width: 40px; height: 40px;
+    ${p => p.$side === 'left' ? 'left: 20px;' : 'right: 20px;'}
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.28);
+    color: #fff;
+    width: 44px; height: 44px;
     border-radius: 50%;
     font-size: 18px;
     cursor: pointer;
-    z-index: 2;
+    z-index: 3;
     display: flex; align-items: center; justify-content: center;
     transition: background 0.2s;
-    &:hover { background: #fff; }
+    &:hover { background: rgba(255,255,255,0.30); }
 `
 const CarouselDots = styled.div`
     position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 22px;
+    right: clamp(24px, 6vw, 80px);
     display: flex;
     gap: 8px;
-    z-index: 2;
+    z-index: 3;
 `
 const CarouselDot = styled.button`
-    width: ${p => p.$active ? '22px' : '8px'};
+    width: ${p => p.$active ? '24px' : '8px'};
     height: 8px;
     border-radius: 4px;
-    background: ${p => p.$active ? '#fff' : 'rgba(255,255,255,0.45)'};
+    background: ${p => p.$active ? '#fff' : 'rgba(255,255,255,0.38)'};
     border: none;
     cursor: pointer;
     padding: 0;
