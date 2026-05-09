@@ -69,24 +69,44 @@ const Homepage = () => {
 
             {/* ── MISIÓN ──────────────────────────────────────────────── */}
             <MissionSection>
-                <MissionInner>
+                <MissionLeft>
                     <MissionEyebrow>
-                        {mission?.missionEyebrow || '— Nuestra misión'}
+                        {mission?.missionEyebrow || '— Quiénes somos'}
                     </MissionEyebrow>
                     <MissionTitle>
-                        {mission?.missionTitle || 'Arte local,\nalcance global'}
+                        {mission?.missionTitle || 'El arte local\nmerece un lugar\nen el mundo digital'}
                     </MissionTitle>
-                    <MissionDivider />
+                    <MissionActions>
+                        <MissionBtnPrimary as={Link} to="/products">
+                            Ver tienda
+                        </MissionBtnPrimary>
+                        <MissionBtnSecondary as={Link} to="/#artistas">
+                            Conocer artistas
+                        </MissionBtnSecondary>
+                    </MissionActions>
+                </MissionLeft>
+                <MissionRight>
                     <MissionBody>
                         {mission?.missionBody ||
-                            'Somos una plataforma dedicada a visibilizar y potenciar a los emprendedores locales que viven del arte. Nacimos en el corazón del circuito de la Bienal de Esculturas, donde el arte ocupa cada rincón del espacio público, y quisimos llevar esa misma energía al mundo digital.\n\nCreemos que cada obra merece ser vista, cada artista merece ser conocido y cada comprador merece conectar directamente con quien crea. Aquí, el arte no es decoración: es identidad, es comunidad, es sustento.'}
+                            'Somos una plataforma dedicada a emprendedores locales que viven del arte. Nacimos en el corazón de la Bienal de Esculturas, donde el arte ocupa cada rincón del espacio público, y quisimos llevar esa misma energía al mundo digital.'}
                     </MissionBody>
-                    {(mission?.missionCta) && (
-                        <MissionCta href={mission.missionCtaLink || '/products'}>
-                            {mission.missionCta}
-                        </MissionCta>
-                    )}
-                </MissionInner>
+                    <MissionStats>
+                        <MissionStat>
+                            <MissionStatNum>100%</MissionStatNum>
+                            <MissionStatLabel>Artistas locales</MissionStatLabel>
+                        </MissionStat>
+                        <MissionStatDivider />
+                        <MissionStat>
+                            <MissionStatNum>Bienal</MissionStatNum>
+                            <MissionStatLabel>De Esculturas</MissionStatLabel>
+                        </MissionStat>
+                        <MissionStatDivider />
+                        <MissionStat>
+                            <MissionStatNum>Arte</MissionStatNum>
+                            <MissionStatLabel>Con propósito</MissionStatLabel>
+                        </MissionStat>
+                    </MissionStats>
+                </MissionRight>
             </MissionSection>
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
@@ -278,56 +298,124 @@ const HomeWrap = styled.div`
     flex-direction: column;
 `
 const MissionSection = styled.section`
-    background: #faf8f5;
+    background: #111;
     width: 100%;
-    padding: clamp(64px, 10vw, 120px) clamp(24px, 8vw, 160px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 420px;
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 `
-const MissionInner = styled.div`
-    max-width: 760px;
-    margin: 0 auto;
+const MissionLeft = styled.div`
+    padding: clamp(48px, 8vw, 100px) clamp(24px, 6vw, 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    @media (max-width: 768px) {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding-bottom: 40px;
+    }
+`
+const MissionRight = styled.div`
+    padding: clamp(48px, 8vw, 100px) clamp(24px, 6vw, 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
 `
 const MissionEyebrow = styled.p`
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     letter-spacing: 0.30em;
     text-transform: uppercase;
-    color: #aaa;
-    margin: 0 0 2rem;
+    color: rgba(255,255,255,0.35);
+    margin: 0 0 1.5rem;
 `
 const MissionTitle = styled.h2`
     font-family: 'Times New Roman', Georgia, serif;
-    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    font-size: clamp(1.9rem, 4vw, 3.4rem);
     font-weight: 300;
     font-style: italic;
-    line-height: 1.1;
-    color: #111;
+    line-height: 1.12;
+    color: #fff;
     margin: 0 0 2.5rem;
     white-space: pre-line;
 `
-const MissionDivider = styled.div`
-    width: 40px;
-    height: 1px;
-    background: #bbb;
-    margin-bottom: 2.5rem;
+const MissionActions = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+`
+const MissionBtnPrimary = styled.a`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 28px;
+    background: #fff;
+    color: #111;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+    &:hover { background: #e8e8e8; }
+`
+const MissionBtnSecondary = styled.a`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 28px;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: border-color 0.2s, color 0.2s;
+    &:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
 `
 const MissionBody = styled.p`
-    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
-    line-height: 1.85;
-    color: #555;
-    margin: 0 0 2.5rem;
+    font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+    line-height: 1.9;
+    color: rgba(255,255,255,0.55);
+    margin: 0;
     white-space: pre-line;
     font-weight: 300;
 `
-const MissionCta = styled.a`
-    display: inline-block;
-    font-size: 0.72rem;
+const MissionStats = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    gap: 16px;
+`
+const MissionStat = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+`
+const MissionStatNum = styled.span`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    font-weight: 300;
+    color: #fff;
+    letter-spacing: 0.02em;
+`
+const MissionStatLabel = styled.span`
+    font-size: 0.6rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #111;
-    text-decoration: none;
-    border-bottom: 1px solid #111;
-    padding-bottom: 2px;
-    transition: opacity 0.2s;
-    &:hover { opacity: 0.5; }
+    color: rgba(255,255,255,0.35);
+`
+const MissionStatDivider = styled.div`
+    width: 1px;
+    height: 32px;
+    background: rgba(255,255,255,0.12);
+    align-self: center;
 `
 
 const BannerWrap = styled.div`
