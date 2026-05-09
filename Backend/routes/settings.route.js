@@ -106,4 +106,19 @@ settingsRouter.put("/editorial", adminAuth, async (req, res) => {
     }
 })
 
+// ── GUARDAR BANNER (solo admin) ───────────────────────────────────────────
+settingsRouter.put("/banner", adminAuth, async (req, res) => {
+    const { bannerText, bannerLink, bannerBg, bannerColor, bannerActive } = req.body
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { $set: { bannerText, bannerLink, bannerBg, bannerColor, bannerActive } },
+            { new: true, upsert: true, strict: false }
+        )
+        res.json({ msg: "Banner actualizado", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 module.exports = { settingsRouter }

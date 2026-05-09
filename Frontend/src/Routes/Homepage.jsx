@@ -14,6 +14,7 @@ const Homepage = () => {
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd,   setSelectedProd]   = useState(null)
     const [artists,        setArtists]        = useState([])
+    const [banner,         setBanner]         = useState(null)
     useEffect(() => {
         axios.get(`${API}/artist`)
             .then(r => setArtists(r.data || []))
@@ -28,6 +29,7 @@ const Homepage = () => {
                 setHomeVideo(r.data.heroVideo || '')
                 setHeroVideoText(r.data.heroVideoText || '')
                 setEditorial(r.data)
+                if (r.data.bannerActive && r.data.bannerText) setBanner(r.data)
             })
             .catch(() => {})
     }, [])
@@ -44,6 +46,17 @@ const Homepage = () => {
 
             {/* ── PAINT INTRO ─────────────────────────────────────────── */}
             <PaintIntro />
+
+            {/* ── BANNER ──────────────────────────────────────────────── */}
+            {banner && (
+                banner.bannerLink
+                    ? <BannerWrap as="a" href={banner.bannerLink} $bg={banner.bannerBg} $color={banner.bannerColor}>
+                        {banner.bannerText}
+                      </BannerWrap>
+                    : <BannerWrap $bg={banner.bannerBg} $color={banner.bannerColor}>
+                        {banner.bannerText}
+                      </BannerWrap>
+            )}
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
@@ -251,6 +264,21 @@ const Homepage = () => {
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
+`
+const BannerWrap = styled.div`
+    display: block;
+    width: 100%;
+    background: ${p => p.$bg || '#111'};
+    color: ${p => p.$color || '#fff'};
+    text-align: center;
+    padding: 11px 20px;
+    font-size: clamp(0.65rem, 1.5vw, 0.78rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: ${p => p.as === 'a' ? 'pointer' : 'default'};
+    &:hover { opacity: ${p => p.as === 'a' ? 0.85 : 1}; }
+    transition: opacity 0.2s;
 `
 
 /* ═══════════════════════════════════════════════════════════════

@@ -33,6 +33,7 @@ const AdminPage = () => {
     const [editorial, setEditorial] = useState({ editorialLabel: '', editorialQuote: '', editorialBody: '', editorialCta: '' })
     const [editorialImg1, setEditorialImg1] = useState('')
     const [editorialImg2, setEditorialImg2] = useState('')
+    const [banner, setBanner] = useState({ bannerText: '', bannerLink: '', bannerBg: '#111111', bannerColor: '#ffffff', bannerActive: false })
     const [imgProgress, setImgProgress] = useState({ 1: 0, 2: 0 })
     const editorialImgRef1 = React.useRef()
     const editorialImgRef2 = React.useRef()
@@ -71,6 +72,13 @@ const AdminPage = () => {
             })
             setEditorialImg1(res.data.editorialImage1 || '')
             setEditorialImg2(res.data.editorialImage2 || '')
+            setBanner({
+                bannerText:   res.data.bannerText   || '',
+                bannerLink:   res.data.bannerLink   || '',
+                bannerBg:     res.data.bannerBg     || '#111111',
+                bannerColor:  res.data.bannerColor  || '#ffffff',
+                bannerActive: res.data.bannerActive || false,
+            })
         } catch {}
     }
 
@@ -572,6 +580,100 @@ const AdminPage = () => {
                                     }}
                                 >
                                     {loading ? 'Guardando…' : 'GUARDAR EDITORIAL'}
+                                </SubmitBtn>
+                            </FormActions>
+                        </Form>
+
+                        {/* ── Banner ── */}
+                        <Form as="div" style={{ marginTop: '32px' }}>
+                            <SectionLabel>Banner sobre los productos</SectionLabel>
+                            <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '24px' }}>
+                                Aparece encima de "Lo más reciente". Útil para promociones, novedades o avisos.
+                            </p>
+
+                            {/* Preview */}
+                            {banner.bannerText && (
+                                <div style={{
+                                    background: banner.bannerBg,
+                                    color: banner.bannerColor,
+                                    textAlign: 'center',
+                                    padding: '10px 20px',
+                                    fontSize: '12px',
+                                    letterSpacing: '0.18em',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '24px',
+                                    opacity: banner.bannerActive ? 1 : 0.4,
+                                }}>
+                                    {banner.bannerText} {!banner.bannerActive && '(desactivado)'}
+                                </div>
+                            )}
+
+                            <FormGrid>
+                                <FormGroup style={{ gridColumn: '1/-1' }}>
+                                    <label>Texto del banner</label>
+                                    <input
+                                        value={banner.bannerText}
+                                        onChange={e => setBanner(b => ({ ...b, bannerText: e.target.value }))}
+                                        placeholder="Ej: Envío gratis en compras mayores a $5000"
+                                    />
+                                </FormGroup>
+                                <FormGroup style={{ gridColumn: '1/-1' }}>
+                                    <label>Link (opcional — dejá vacío si no lleva a ningún lado)</label>
+                                    <input
+                                        value={banner.bannerLink}
+                                        onChange={e => setBanner(b => ({ ...b, bannerLink: e.target.value }))}
+                                        placeholder="Ej: /products"
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Color de fondo</label>
+                                    <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                                        <input type="color" value={banner.bannerBg}
+                                            onChange={e => setBanner(b => ({ ...b, bannerBg: e.target.value }))}
+                                            style={{ width:'40px', height:'32px', border:'none', cursor:'pointer', padding:0 }}
+                                        />
+                                        <span style={{ fontSize:'12px', color:'#999' }}>{banner.bannerBg}</span>
+                                    </div>
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Color de texto</label>
+                                    <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                                        <input type="color" value={banner.bannerColor}
+                                            onChange={e => setBanner(b => ({ ...b, bannerColor: e.target.value }))}
+                                            style={{ width:'40px', height:'32px', border:'none', cursor:'pointer', padding:0 }}
+                                        />
+                                        <span style={{ fontSize:'12px', color:'#999' }}>{banner.bannerColor}</span>
+                                    </div>
+                                </FormGroup>
+                                <FormGroup style={{ gridColumn: '1/-1', display:'flex', alignItems:'center', gap:'12px' }}>
+                                    <input
+                                        type="checkbox"
+                                        id="bannerActive"
+                                        checked={banner.bannerActive}
+                                        onChange={e => setBanner(b => ({ ...b, bannerActive: e.target.checked }))}
+                                        style={{ width:'16px', height:'16px', cursor:'pointer' }}
+                                    />
+                                    <label htmlFor="bannerActive" style={{ cursor:'pointer', fontSize:'12px', letterSpacing:'0.1em', textTransform:'uppercase' }}>
+                                        Mostrar banner en el inicio
+                                    </label>
+                                </FormGroup>
+                            </FormGrid>
+
+                            <FormActions style={{ marginTop: '20px' }}>
+                                <SubmitBtn
+                                    type="button"
+                                    disabled={loading}
+                                    onClick={async () => {
+                                        setLoading(true); setMsg('')
+                                        try {
+                                            await axios.put(`${API}/settings/banner`, banner, { headers })
+                                            setMsg('✅ Banner guardado')
+                                        } catch { setMsg('❌ Error al guardar') }
+                                        setLoading(false)
+                                        setTimeout(() => setMsg(''), 3000)
+                                    }}
+                                >
+                                    {loading ? 'Guardando…' : 'GUARDAR BANNER'}
                                 </SubmitBtn>
                             </FormActions>
                         </Form>
