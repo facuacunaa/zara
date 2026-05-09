@@ -236,6 +236,34 @@ const Homepage = () => {
                 </ArtistsTicker>
             )}
 
+            {/* ── ¿SOS ARTISTA? VENDÉ TU ARTE ────────────────────────── */}
+            <JoinSection>
+                <JoinInner>
+                    <JoinLeft>
+                        <JoinEyebrow>— Para artistas emprendedores</JoinEyebrow>
+                        <JoinTitle>¿Tenés obras<br/>para vender?</JoinTitle>
+                        <JoinBody>
+                            La Casita del Hornero es una plataforma diseñada para artistas locales que quieren llegar a más personas. Creá tu perfil, subí tus obras y empezá a vender sin complicaciones.
+                        </JoinBody>
+                        <JoinCta href="mailto:lacasitadelhornero@gmail.com">
+                            Quiero vender mi arte →
+                        </JoinCta>
+                    </JoinLeft>
+                    <JoinSteps>
+                        {[
+                            { n: '01', title: 'Creá tu perfil', body: 'Registrate como artista y contá tu historia al mundo.' },
+                            { n: '02', title: 'Subí tus obras', body: 'Fotografías, precio y descripción de cada pieza única.' },
+                            { n: '03', title: 'Empezá a vender', body: 'Tu tienda online lista para recibir compradores de todo el país.' },
+                        ].map(s => (
+                            <JoinStep key={s.n}>
+                                <JoinStepNum>{s.n}</JoinStepNum>
+                                <JoinStepTitle>{s.title}</JoinStepTitle>
+                                <JoinStepBody>{s.body}</JoinStepBody>
+                            </JoinStep>
+                        ))}
+                    </JoinSteps>
+                </JoinInner>
+            </JoinSection>
 
             {/* ── SECCIÓN EDITORIAL ──────────────────────────────────── */}
             {(editorial.editorialQuote || editorial.editorialBody || editorial.editorialImage1 || editorial.editorialImage2) && (
@@ -275,12 +303,34 @@ const Homepage = () => {
                 </EditorialSection>
             )}
 
-            {/* ── FOOTER STRIP ───────────────────────────────────────── */}
-            <FooterStrip>
-                <FooterStripText>
-                    {new Date().getFullYear()} — Todos los derechos reservados
-                </FooterStripText>
-            </FooterStrip>
+            {/* ── FOOTER ─────────────────────────────────────────────── */}
+            <SiteFooter>
+                <FooterInner>
+                    <FooterBrand>
+                        <FooterBrandName>La Casita<br/>del Hornero</FooterBrandName>
+                        <FooterBrandSub>Arte local · Bienal de Esculturas</FooterBrandSub>
+                    </FooterBrand>
+                    <FooterCol>
+                        <FooterColTitle>Comprar</FooterColTitle>
+                        <FooterLink as={Link} to="/products">Tienda</FooterLink>
+                        <FooterLink as={Link} to="/#coleccion">Novedades</FooterLink>
+                        <FooterLink as={Link} to="/#artistas">Artistas</FooterLink>
+                    </FooterCol>
+                    <FooterCol>
+                        <FooterColTitle>Para artistas</FooterColTitle>
+                        <FooterLink href="mailto:lacasitadelhornero@gmail.com">Vender mi arte</FooterLink>
+                        <FooterLink href="#coleccion">Cómo funciona</FooterLink>
+                    </FooterCol>
+                    <FooterCol>
+                        <FooterColTitle>Nosotros</FooterColTitle>
+                        <FooterLink as={Link} to="/#mision">Nuestra misión</FooterLink>
+                        <FooterLink href="#">Bienal de Esculturas</FooterLink>
+                    </FooterCol>
+                </FooterInner>
+                <FooterBottom>
+                    <span>© {new Date().getFullYear()} La Casita del Hornero · Todos los derechos reservados</span>
+                </FooterBottom>
+            </SiteFooter>
 
             {/* ── PRODUCT MODAL ──────────────────────────────────────── */}
             {selectedProd && (
@@ -1492,23 +1542,159 @@ const ShopCardPrice = styled.p`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   FOOTER STRIP
+   JOIN SECTION — VENDÉ TU ARTE
 ═══════════════════════════════════════════════════════════════ */
-const FooterStrip = styled.div`
-    background: #0a0a0a;
-    padding: 32px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+const JoinSection = styled.section`
+    background: #fafaf8;
+    padding: 100px 40px 120px;
+    border-top: 1px solid #e8e8e4;
+    @media (max-width: 640px) { padding: 72px 24px 96px; }
+`
+const JoinInner = styled.div`
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    @media (max-width: 900px) { grid-template-columns: 1fr; gap: 56px; }
+`
+const JoinLeft = styled.div``
+const JoinEyebrow = styled.p`
+    font-size: 0.62rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin: 0 0 1.4rem;
+`
+const JoinTitle = styled.h2`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #0a0a0a;
+    margin: 0 0 1.8rem;
+    line-height: 1.12;
+`
+const JoinBody = styled.p`
+    font-size: clamp(0.88rem, 1.4vw, 1rem);
+    line-height: 1.9;
+    color: #777;
+    margin: 0 0 2.5rem;
+    font-weight: 300;
+    max-width: 460px;
+`
+const JoinCta = styled.a`
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    border-bottom: 1px solid rgba(10,10,10,0.3);
+    padding-bottom: 4px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+    &:hover { border-color: #0a0a0a; }
+`
+const JoinSteps = styled.div`
+    border-top: 1px solid #e8e8e4;
+`
+const JoinStep = styled.div`
+    padding: 28px 0;
+    border-bottom: 1px solid #e8e8e4;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    grid-template-rows: auto auto;
+    gap: 0 16px;
+    align-items: start;
+`
+const JoinStepNum = styled.span`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 0.72rem;
+    color: #ccc;
+    letter-spacing: 0.1em;
+    grid-row: 1 / 3;
+    padding-top: 3px;
+`
+const JoinStepTitle = styled.p`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 300;
+    font-style: italic;
+    color: #0a0a0a;
+    margin: 0 0 6px;
+`
+const JoinStepBody = styled.p`
+    font-size: 0.78rem;
+    color: #aaa;
+    margin: 0;
+    line-height: 1.75;
+    letter-spacing: 0.02em;
 `
 
-const FooterStripText = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 8px;
-    letter-spacing: 0.35em;
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════════ */
+const SiteFooter = styled.footer`
+    background: #0a0a0a;
+`
+const FooterInner = styled.div`
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 80px 40px 64px;
+    @media (max-width: 900px) { grid-template-columns: 1fr 1fr; gap: 40px; padding: 60px 24px 48px; }
+    @media (max-width: 520px) { grid-template-columns: 1fr; gap: 36px; padding: 56px 24px 40px; }
+`
+const FooterBrand = styled.div``
+const FooterBrandName = styled.p`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    margin: 0 0 14px;
+    line-height: 1.15;
+`
+const FooterBrandSub = styled.p`
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.25);
     margin: 0;
+`
+const FooterCol = styled.div``
+const FooterColTitle = styled.p`
+    font-size: 0.62rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin: 0 0 20px;
+`
+const FooterLink = styled.a`
+    display: block;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+    letter-spacing: 0.02em;
+    &:hover { color: #fff; }
+`
+const FooterBottom = styled.div`
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 24px 40px;
+    max-width: 1300px;
+    margin: 0 auto;
+    @media (max-width: 640px) { padding: 20px 24px; }
+    span {
+        font-size: 0.62rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.2);
+    }
 `
 
 /* ═══════════════════════════════════════════════════════════════
