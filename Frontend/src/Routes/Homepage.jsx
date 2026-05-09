@@ -927,35 +927,41 @@ const CarouselOverlay = styled.div`
     inset: 0;
     background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.06) 0%,
-        rgba(0,0,0,0.22) 50%,
-        rgba(0,0,0,0.60) 100%
+        rgba(0,0,0,0.04) 0%,
+        rgba(0,0,0,0.18) 40%,
+        rgba(0,0,0,0.68) 100%
     );
 `
 const CarouselText = styled.div`
     position: absolute;
     bottom: 0;
     left: 0; right: 0;
-    padding: clamp(24px, 5vw, 60px) clamp(24px, 6vw, 80px);
+    padding: clamp(36px, 6vw, 80px) clamp(32px, 7vw, 100px);
     z-index: 2;
 `
 const CarouselTitle = styled.h2`
     font-family: 'Times New Roman', Georgia, serif;
-    font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+    font-size: clamp(2.6rem, 6.5vw, 6rem);
     font-weight: 300;
+    font-style: italic;
     color: #fff;
-    letter-spacing: 0.04em;
-    line-height: 1.1;
-    margin: 0 0 0.5rem;
-    text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    margin: 0 0 1rem;
+    text-shadow: 0 4px 32px rgba(0,0,0,0.35);
 `
 const CarouselSub = styled.p`
-    font-size: clamp(0.65rem, 1.4vw, 0.88rem);
-    color: rgba(255,255,255,0.80);
-    letter-spacing: 0.18em;
+    font-size: clamp(0.65rem, 1.2vw, 0.82rem);
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.30em;
     text-transform: uppercase;
     margin: 0;
+    padding-left: 2px;
     text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+    &::before {
+        content: '— ';
+        opacity: 0.6;
+    }
 `
 const CarouselBtn = styled.button`
     position: absolute;
