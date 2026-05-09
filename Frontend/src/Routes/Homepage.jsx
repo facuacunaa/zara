@@ -293,12 +293,14 @@ const PAINT_TEXTS = [
 
 function PaintIntro() {
     const canvasRef = useRef(null)
-    const [phase,   setPhase]   = useState(0)  // 0=animating 1=fading 2=gone
+    const alreadySeen = sessionStorage.getItem('paintSeen')
+    const [phase,   setPhase]   = useState(alreadySeen ? 2 : 0)  // 0=animating 1=fading 2=gone
     const [textIdx, setTextIdx] = useState(0)
 
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
+        sessionStorage.setItem('paintSeen', '1')
         canvas.width  = window.innerWidth
         canvas.height = window.innerHeight
         const W = canvas.width, H = canvas.height
