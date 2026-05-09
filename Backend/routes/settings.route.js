@@ -106,6 +106,45 @@ settingsRouter.put("/editorial", adminAuth, async (req, res) => {
     }
 })
 
+// ── CARRUSEL DE INICIO: subir imagen por slot (1-4) ──────────────────────
+settingsRouter.post("/carousel-image/:slot", adminAuth, async (req, res) => {
+    const slot = req.params.slot
+    if (!['1','2','3','4'].includes(slot)) return res.status(400).json({ msg: "Slot inválido" })
+    const { upload } = require("../config/cloudinary")
+    upload.single("image")(req, res, async (err) => {
+        if (err) return res.status(500).json({ msg: "Error subiendo imagen", error: err.message })
+        if (!req.file) return res.status(400).json({ msg: "No se envió imagen" })
+        const url = req.file.path
+        const field = `carouselImage${slot}`
+        try {
+            const settings = await SettingsModel.findOneAndUpdate(
+                { key: "homepage" },
+                { $set: { [field]: url } },
+                { new: true, upsert: true, strict: false }
+            )
+            res.json({ msg: "Imagen subida", url, settings })
+        } catch (e) {
+            res.status(500).json({ msg: "Error guardando", error: e.message })
+        }
+    })
+})
+
+// ── CARRUSEL DE INICIO: eliminar imagen por slot ──────────────────────────
+settingsRouter.delete("/carousel-image/:slot", adminAuth, async (req, res) => {
+    const slot = req.params.slot
+    if (!['1','2','3','4'].includes(slot)) return res.status(400).json({ msg: "Slot inválido" })
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { $set: { [`carouselImage${slot}`]: "" } },
+            { new: true, upsert: true, strict: false }
+        )
+        res.json({ msg: "Imagen eliminada", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── GUARDAR BANNER (solo admin) ───────────────────────────────────────────
 settingsRouter.put("/banner", adminAuth, async (req, res) => {
     const { bannerText, bannerLink, bannerBg, bannerColor, bannerActive } = req.body

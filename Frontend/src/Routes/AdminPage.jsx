@@ -25,11 +25,10 @@ const AdminPage = () => {
     const [artists, setArtists] = useState([])
     const [pwdMap, setPwdMap] = useState({})       // { artistId: newPassword }
     const [pwdLoading, setPwdLoading] = useState({})
-    const [homeVideo, setHomeVideo] = useState('')
-    const [homeVideoFile, setHomeVideoFile] = useState(null)
-    const [homeVideoProgress, setHomeVideoProgress] = useState(0)
-    const [heroVideoText, setHeroVideoText] = useState('')
-    const homeVideoRef = React.useRef()
+    const [carouselImgs, setCarouselImgs] = useState(['','','',''])
+    const [carouselFiles, setCarouselFiles] = useState([null,null,null,null])
+    const [carouselProgress, setCarouselProgress] = useState([0,0,0,0])
+    const carouselRefs = [React.useRef(), React.useRef(), React.useRef(), React.useRef()]
     const [editorial, setEditorial] = useState({ editorialLabel: '', editorialQuote: '', editorialBody: '', editorialCta: '' })
     const [editorialImg1, setEditorialImg1] = useState('')
     const [editorialImg2, setEditorialImg2] = useState('')
@@ -62,8 +61,12 @@ const AdminPage = () => {
     const fetchSettings = async () => {
         try {
             const res = await axios.get(`${API}/settings`)
-            setHomeVideo(res.data.heroVideo || '')
-            setHeroVideoText(res.data.heroVideoText || '')
+            setCarouselImgs([
+                res.data.carouselImage1 || '',
+                res.data.carouselImage2 || '',
+                res.data.carouselImage3 || '',
+                res.data.carouselImage4 || '',
+            ])
             setEditorial({
                 editorialLabel: res.data.editorialLabel || '',
                 editorialQuote: res.data.editorialQuote || '',
@@ -86,56 +89,46 @@ const AdminPage = () => {
         if (token) { fetchProducts(); fetchSettings(); fetchArtists() }
     }, [token])
 
-    // ── Upload home video ───────────────────────────────────────────────────
-    const uploadHomeVideo = async () => {
-        if (!homeVideoFile) return
-        setLoading(true); setHomeVideoProgress(0); setMsg('')
+    // ── Upload carousel image ─────────────────────────────────────────────
+    const uploadCarouselImg = async (idx) => {
+        const file = carouselFiles[idx]
+        if (!file) return
+        setLoading(true)
+        const prog = [...carouselProgress]; prog[idx] = 0; setCarouselProgress(prog)
         const fd = new FormData()
-        fd.append('video', homeVideoFile)
+        fd.append('image', file)
         try {
-            const res = await axios.post(`${API}/settings/home-video`, fd, {
+            const res = await axios.post(`${API}/settings/carousel-image/${idx+1}`, fd, {
                 headers,
-                onUploadProgress: e => setHomeVideoProgress(Math.round(e.loaded * 100 / e.total))
+                onUploadProgress: e => {
+                    const p = [...carouselProgress]
+                    p[idx] = Math.round(e.loaded * 100 / e.total)
+                    setCarouselProgress(p)
+                }
             })
-            setHomeVideo(res.data.url)
-            setHomeVideoFile(null)
-            if (homeVideoRef.current) homeVideoRef.current.value = ''
-            setMsg('✅ Video del home actualizado')
-        } catch {
-            setMsg('❌ Error subiendo video')
-        }
-        setLoading(false); setHomeVideoProgress(0)
-        setTimeout(() => setMsg(''), 4000)
-    }
-
-    // ── Save hero video text ────────────────────────────────────────────────
-    const saveHeroVideoText = async () => {
-        setLoading(true); setMsg('')
-        try {
-            await axios.put(`${API}/settings/hero-video-text`, { heroVideoText }, { headers })
-            setMsg('✅ Texto guardado')
-        } catch {
-            setMsg('❌ Error guardando texto')
-        }
+            const imgs = [...carouselImgs]; imgs[idx] = res.data.url; setCarouselImgs(imgs)
+            const files = [...carouselFiles]; files[idx] = null; setCarouselFiles(files)
+            if (carouselRefs[idx].current) carouselRefs[idx].current.value = ''
+            setMsg('✅ Imagen subida')
+        } catch { setMsg('❌ Error subiendo imagen') }
         setLoading(false)
-        setTimeout(() => setMsg(''), 4000)
+        setTimeout(() => setMsg(''), 3000)
     }
 
-    // ── Delete home video ───────────────────────────────────────────────────
-    const deleteHomeVideo = async () => {
-        if (!window.confirm('¿Eliminar el video del inicio?')) return
-        setLoading(true); setMsg('')
+    // ── Delete carousel image ───────────────────────────────────────────────
+    const deleteCarouselImg = async (idx) => {
+        if (!window.confirm('¿Eliminar esta imagen del carrusel?')) return
+        setLoading(true)
         try {
-            await axios.delete(`${API}/settings/home-video`, { headers })
-            setHomeVideo('')
-            setMsg('✅ Video eliminado')
-        } catch {
-            setMsg('❌ Error eliminando video')
-        }
+            await axios.delete(`${API}/settings/carousel-image/${idx+1}`, { headers })
+            const imgs = [...carouselImgs]; imgs[idx] = ''; setCarouselImgs(imgs)
+            setMsg('✅ Imagen eliminada')
+        } catch { setMsg('❌ Error eliminando imagen') }
         setLoading(false)
-        setTimeout(() => setMsg(''), 4000)
+        setTimeout(() => setMsg(''), 3000)
     }
 
+    // ── Login ───────────────────────────────────────────────────────────────
     // ── Login ───────────────────────────────────────────────────────────────
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -414,74 +407,69 @@ const AdminPage = () => {
                 {/* ── HOME ── */}
                 {tab === 'home' && (
                     <>
-                        <PageTitle>Video del Inicio</PageTitle>
+                        <PageTitle>Carrusel de inicio</PageTitle>
                         <Form as="div">
-                            <p style={{ fontSize: '11px', color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '24px' }}>
-                                Este video aparece en la sección "No somos una tienda, somos arte" del homepage.
+                            <p style={{ fontSize: '11px', color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '28px' }}>
+                                Subí hasta 4 imágenes. Aparecen en carrusel automático en el inicio, debajo de los productos destacados.
                             </p>
+                            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:'24px' }}>
+                                {[0,1,2,3].map(idx => (
+                                    <div key={idx} style={{ border:'1px solid #eee', padding:'16px' }}>
+                                        <p style={{ fontSize:'10px', color:'#aaa', letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:'12px' }}>
+                                            Banner {idx + 1}
+                                        </p>
 
-                            {/* Preview actual */}
-                            {homeVideo && (
-                                <div style={{ marginBottom: '28px' }}>
-                                    <p style={{ fontSize: '10px', color: '#aaa', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '10px' }}>Video actual</p>
-                                    <video
-                                        src={homeVideo} controls muted
-                                        style={{ width: '100%', maxWidth: '560px', maxHeight: '315px', objectFit: 'cover', display: 'block', background: '#000' }}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={deleteHomeVideo}
-                                        disabled={loading}
-                                        style={{ marginTop: '12px', background: 'none', border: '1px solid #ccc', padding: '6px 16px', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', color: '#c00' }}
-                                    >
-                                        Eliminar video
-                                    </button>
-                                </div>
-                            )}
+                                        {/* Preview */}
+                                        {carouselImgs[idx] ? (
+                                            <div style={{ marginBottom:'12px', position:'relative' }}>
+                                                <img
+                                                    src={carouselImgs[idx]}
+                                                    alt={`Banner ${idx+1}`}
+                                                    style={{ width:'100%', aspectRatio:'16/9', objectFit:'cover', display:'block' }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => deleteCarouselImg(idx)}
+                                                    disabled={loading}
+                                                    style={{ marginTop:'8px', background:'none', border:'1px solid #ccc', padding:'4px 12px', fontSize:'10px', letterSpacing:'0.15em', textTransform:'uppercase', cursor:'pointer', color:'#c00', width:'100%' }}
+                                                >
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div style={{ width:'100%', aspectRatio:'16/9', background:'#f5f5f5', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'12px', fontSize:'11px', color:'#bbb', letterSpacing:'0.1em' }}>
+                                                Sin imagen
+                                            </div>
+                                        )}
 
-                            {/* Texto sobre el video */}
-                            <FormGroup style={{ maxWidth: '480px', marginBottom: '28px' }}>
-                                <label>Texto sobre el video</label>
-                                <textarea
-                                    rows={3}
-                                    value={heroVideoText}
-                                    onChange={e => setHeroVideoText(e.target.value)}
-                                    placeholder="Escribí el texto que aparecerá encima del video..."
-                                    style={{ width: '100%', border: 'none', borderBottom: '1px solid #ddd', padding: '8px 0', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit', outline: 'none', background: 'transparent' }}
-                                />
-                                <SubmitBtn type="button" disabled={loading} onClick={saveHeroVideoText} style={{ marginTop: '12px' }}>
-                                    GUARDAR TEXTO
-                                </SubmitBtn>
-                            </FormGroup>
+                                        {/* Upload */}
+                                        <input
+                                            ref={carouselRefs[idx]}
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={e => {
+                                                const f = [...carouselFiles]; f[idx] = e.target.files[0]; setCarouselFiles(f)
+                                            }}
+                                            style={{ fontSize:'11px', width:'100%', marginBottom:'8px' }}
+                                        />
 
-                            {/* Upload */}
-                            <FormGroup style={{ maxWidth: '480px' }}>
-                                <label>Subir nuevo video (mp4, mov, webm — máx 200MB)</label>
-                                <input
-                                    ref={homeVideoRef}
-                                    type="file" accept="video/*"
-                                    onChange={e => setHomeVideoFile(e.target.files[0])}
-                                    style={{ border: 'none', borderBottom: '1px solid #ddd', padding: '8px 0', fontSize: '12px' }}
-                                />
-                            </FormGroup>
+                                        {carouselProgress[idx] > 0 && carouselProgress[idx] < 100 && (
+                                            <div style={{ background:'#f0f0f0', height:'3px', borderRadius:'2px', marginBottom:'8px' }}>
+                                                <div style={{ height:'100%', background:'#000', borderRadius:'2px', width:`${carouselProgress[idx]}%`, transition:'width 0.3s' }} />
+                                            </div>
+                                        )}
 
-                            {homeVideoFile && (
-                                <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>
-                                    Seleccionado: {homeVideoFile.name}
-                                </p>
-                            )}
-
-                            {homeVideoProgress > 0 && homeVideoProgress < 100 && (
-                                <div style={{ marginTop: '16px', background: '#f0f0f0', height: '4px', borderRadius: '2px', maxWidth: '480px' }}>
-                                    <div style={{ height: '100%', background: '#000', borderRadius: '2px', width: `${homeVideoProgress}%`, transition: 'width 0.3s' }} />
-                                </div>
-                            )}
-
-                            <FormActions style={{ marginTop: '28px' }}>
-                                <SubmitBtn type="button" disabled={loading || !homeVideoFile} onClick={uploadHomeVideo}>
-                                    {loading ? `Subiendo... ${homeVideoProgress}%` : 'SUBIR VIDEO'}
-                                </SubmitBtn>
-                            </FormActions>
+                                        <button
+                                            type="button"
+                                            disabled={loading || !carouselFiles[idx]}
+                                            onClick={() => uploadCarouselImg(idx)}
+                                            style={{ width:'100%', background: carouselFiles[idx] ? '#111' : '#ddd', color: carouselFiles[idx] ? '#fff' : '#999', border:'none', padding:'8px', fontSize:'10px', letterSpacing:'0.15em', textTransform:'uppercase', cursor: carouselFiles[idx] ? 'pointer' : 'default' }}
+                                        >
+                                            {loading ? 'Subiendo…' : 'SUBIR'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </Form>
 
                         {/* ── Editorial ── */}

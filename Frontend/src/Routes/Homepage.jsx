@@ -8,8 +8,7 @@ import AddCart from "../Components/Product-Page-Component/AddCart";
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
 const Homepage = () => {
-    const [homeVideo,      setHomeVideo]      = useState('')
-    const [heroVideoText,  setHeroVideoText]  = useState('')
+    const [carouselImgs,  setCarouselImgs]  = useState([])
     const [editorial,      setEditorial]      = useState({})
     const [artistProducts, setArtistProducts] = useState([])
     const [selectedProd,   setSelectedProd]   = useState(null)
@@ -26,10 +25,14 @@ const Homepage = () => {
     useEffect(() => {
         axios.get(`${API}/settings`)
             .then(r => {
-                setHomeVideo(r.data.heroVideo || '')
-                setHeroVideoText(r.data.heroVideoText || '')
                 setEditorial(r.data)
                 if (r.data.bannerActive && r.data.bannerText) setBanner(r.data)
+                setCarouselImgs([
+                    r.data.carouselImage1,
+                    r.data.carouselImage2,
+                    r.data.carouselImage3,
+                    r.data.carouselImage4,
+                ].filter(Boolean))
             })
             .catch(() => {})
     }, [])
@@ -185,25 +188,8 @@ const Homepage = () => {
                 </ArtistsTicker>
             )}
 
-            {/* ── SECCIÓN ARTE / MANIFIESTO ──────────────────────────── */}
-            {homeVideo && (
-                <ArtSection>
-                    <ArtVideoWrap>
-                        <video src={homeVideo} autoPlay loop muted playsInline />
-                        <ArtGradient />
-                        <ArtTextOverlay>
-                            <ArtEyebrow>— Manifiesto</ArtEyebrow>
-                            <ArtHeadline>
-                                No somos<br />una tienda,<br />somos arte.
-                            </ArtHeadline>
-                        </ArtTextOverlay>
-                        <ArtScrollHint>
-                            <span>Scroll</span>
-                            <ArtScrollLine />
-                        </ArtScrollHint>
-                    </ArtVideoWrap>
-                </ArtSection>
-            )}
+            {/* ── CARRUSEL DE INICIO ─────────────────────────────────── */}
+            {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
 
             {/* ── SECCIÓN EDITORIAL ──────────────────────────────────── */}
             {(editorial.editorialQuote || editorial.editorialBody || editorial.editorialImage1 || editorial.editorialImage2) && (
@@ -872,98 +858,93 @@ const ArtistsTickerDot = styled.span`
 /* ═══════════════════════════════════════════════════════════════
    ARTE / MANIFIESTO
 ═══════════════════════════════════════════════════════════════ */
-const ArtSection = styled.section`
-    background: #0a0a0a;
-    width: 100%;
-`
+function HomeCarousel({ images }) {
+    const [active, setActive] = useState(0)
 
-const ArtVideoWrap = styled.div`
+    useEffect(() => {
+        if (images.length <= 1) return
+        const id = setInterval(() => setActive(a => (a + 1) % images.length), 5000)
+        return () => clearInterval(id)
+    }, [images.length])
+
+    const prev = () => setActive(a => (a - 1 + images.length) % images.length)
+    const next = () => setActive(a => (a + 1) % images.length)
+
+    return (
+        <CarouselWrap>
+            {images.map((src, i) => (
+                <CarouselSlide key={i} $active={i === active}>
+                    <img src={src} alt={`Banner ${i + 1}`} />
+                </CarouselSlide>
+            ))}
+            {images.length > 1 && (
+                <>
+                    <CarouselBtn $side="left" onClick={prev} aria-label="Anterior">&#8592;</CarouselBtn>
+                    <CarouselBtn $side="right" onClick={next} aria-label="Siguiente">&#8594;</CarouselBtn>
+                    <CarouselDots>
+                        {images.map((_, i) => (
+                            <CarouselDot key={i} $active={i === active} onClick={() => setActive(i)} />
+                        ))}
+                    </CarouselDots>
+                </>
+            )}
+        </CarouselWrap>
+    )
+}
+
+const CarouselWrap = styled.div`
     position: relative;
     width: 100%;
-    height: 100vh;
+    aspect-ratio: 16/7;
     overflow: hidden;
-
-    video {
-        position: absolute; inset: 0;
-        width: 100%; height: 100%;
-        object-fit: cover;
-        opacity: 0.65;
-    }
+    background: #111;
+    @media (max-width: 600px) { aspect-ratio: 4/3; }
 `
-
-const ArtGradient = styled.div`
+const CarouselSlide = styled.div`
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        to bottom,
-        rgba(10,10,10,0.35) 0%,
-        rgba(10,10,10,0.05) 40%,
-        rgba(10,10,10,0.55) 100%
-    );
-    z-index: 1;
+    opacity: ${p => p.$active ? 1 : 0};
+    transition: opacity 0.8s ease;
+    img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+    }
 `
-
-const ArtTextOverlay = styled.div`
-    position: absolute; inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 24px;
-`
-
-const ArtEyebrow = styled.p`
-    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin: 0 0 28px;
-`
-
-const ArtHeadline = styled.h2`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(3rem, 8vw, 7rem);
-    font-weight: 300;
-    font-style: italic;
-    color: #fff;
-    line-height: 1.08;
-    margin: 0;
-    letter-spacing: -0.02em;
-`
-
-const ArtScrollHint = styled.div`
+const CarouselBtn = styled.button`
     position: absolute;
-    bottom: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    ${p => p.$side === 'left' ? 'left: 16px;' : 'right: 16px;'}
+    background: rgba(255,255,255,0.85);
+    border: none;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+    &:hover { background: #fff; }
+`
+const CarouselDots = styled.div`
+    position: absolute;
+    bottom: 14px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-
-    span {
-        font-family: 'DM Sans', sans-serif;
-        font-size: 8px;
-        letter-spacing: 0.4em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.4);
-    }
+    gap: 8px;
+    z-index: 2;
 `
-
-const ArtScrollLine = styled.div`
-    width: 1px;
-    height: 48px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0));
-    animation: pulse 2s ease-in-out infinite;
-
-    @keyframes pulse {
-        0%, 100% { opacity: 0.4; }
-        50%       { opacity: 1; }
-    }
+const CarouselDot = styled.button`
+    width: ${p => p.$active ? '22px' : '8px'};
+    height: 8px;
+    border-radius: 4px;
+    background: ${p => p.$active ? '#fff' : 'rgba(255,255,255,0.45)'};
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: width 0.3s, background 0.3s;
 `
 
 /* ═══════════════════════════════════════════════════════════════
