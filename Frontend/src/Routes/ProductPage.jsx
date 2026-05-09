@@ -280,49 +280,52 @@ const PageWrap = styled.div`
 const PageHeader = styled.div`
     background: #fafaf8;
     border-bottom: 1px solid #e8e8e4;
-    padding: 120px 40px 32px;
+    padding: 110px 40px 28px;
     position: sticky;
     top: 0;
     z-index: 50;
-    background: #fafaf8;
-
-    @media (max-width: 768px) { padding: 90px 20px 24px; }
+    @media (max-width: 768px) { padding: 80px 16px 20px; }
 `
 
 const HeaderInner = styled.div`
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
+    gap: 16px;
+    @media (max-width: 600px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
 `
 
 const HeaderLeft = styled.div``
 
 const PageEyebrow = styled.p`
-    font-family: 'DM Sans', sans-serif;
     font-size: 9px;
     letter-spacing: 0.45em;
     text-transform: uppercase;
     color: #bbb;
-    margin: 0 0 8px;
+    margin: 0 0 6px;
 `
 
 const PageTitle = styled.h1`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(2rem, 5vw, 4rem);
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
     font-weight: 300;
     font-style: italic;
     color: #0a0a0a;
     margin: 0;
-    letter-spacing: -0.02em;
     line-height: 1;
 `
 
 const HeaderRight = styled.div`
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    @media (max-width: 600px) {
+        width: 100%;
+    }
 `
 
 const SearchInput = styled.input`
@@ -330,41 +333,36 @@ const SearchInput = styled.input`
     border-bottom: 1px solid #ccc;
     background: transparent;
     padding: 8px 4px;
-    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     letter-spacing: 0.05em;
     color: #0a0a0a;
     outline: none;
-    width: 220px;
+    width: 200px;
     transition: border-color 0.2s;
-
     &::placeholder { color: #bbb; }
     &:focus { border-color: #0a0a0a; }
-
-    @media (max-width: 520px) { width: 140px; }
+    @media (max-width: 600px) { flex: 1; width: auto; }
 `
 
 const MobileFilterBtn = styled.button`
     display: none;
     position: relative;
-    font-family: 'DM Sans', sans-serif;
     font-size: 10px;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 8px 16px;
+    background: ${p => p.$active ? '#0a0a0a' : 'transparent'};
+    color: ${p => p.$active ? '#fff' : '#555'};
+    border: 1px solid ${p => p.$active ? '#0a0a0a' : '#ccc'};
+    padding: 8px 14px;
     cursor: pointer;
-    color: #555;
-    transition: border-color 0.2s, color 0.2s;
-    &:hover { border-color: #0a0a0a; color: #0a0a0a; }
-
+    white-space: nowrap;
+    transition: all 0.2s;
     @media (max-width: 900px) { display: flex; align-items: center; gap: 6px; }
 `
 
 const FilterDot = styled.span`
-    width: 6px; height: 6px;
-    background: #0a0a0a;
+    width: 5px; height: 5px;
+    background: currentColor;
     border-radius: 50%;
     flex-shrink: 0;
 `
@@ -375,74 +373,71 @@ const ShopLayout = styled.div`
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 40px 80px;
-
-    @media (max-width: 900px) { flex-direction: column; padding: 0 20px 80px; }
+    @media (max-width: 900px) { flex-direction: column; padding: 0 16px 60px; }
 `
 
 /* ── SIDEBAR ────────────────────────────────────────────────────────────── */
 const Sidebar = styled.aside`
-    width: 220px;
-    min-width: 220px;
-    padding-top: 40px;
-    padding-right: 40px;
+    width: 210px;
+    min-width: 210px;
+    padding-top: 36px;
+    padding-right: 36px;
     position: sticky;
-    top: 160px;
+    top: 140px;
 
     @media (max-width: 900px) {
         width: 100%;
         min-width: unset;
         padding: 0;
         position: static;
-        display: ${p => p.open ? 'block' : 'none'};
-        padding-bottom: 24px;
-        border-bottom: 1px solid #e8e8e4;
-        margin-bottom: 8px;
+        overflow: hidden;
+        max-height: ${p => p.open ? '600px' : '0'};
+        transition: max-height 0.35s ease;
+        border-bottom: ${p => p.open ? '1px solid #e8e8e4' : 'none'};
+        margin-bottom: ${p => p.open ? '8px' : '0'};
+        padding-bottom: ${p => p.open ? '20px' : '0'};
     }
 `
 
 const FilterBlock = styled.div`
-    margin-bottom: 36px;
+    margin-bottom: 32px;
 `
 
 const FilterTitle = styled.p`
-    font-family: 'DM Sans', sans-serif;
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
     color: #999;
-    margin: 0 0 16px;
+    margin: 0 0 14px;
 `
 
 const FilterOption = styled.div`
-    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     letter-spacing: 0.04em;
     color: ${p => p.active ? '#0a0a0a' : '#aaa'};
     cursor: pointer;
-    padding: 6px 0;
+    padding: 7px 0 7px 10px;
     transition: color 0.15s;
     border-left: 2px solid ${p => p.active ? '#0a0a0a' : 'transparent'};
-    padding-left: 10px;
-
     &:hover { color: #0a0a0a; }
+    @media (max-width: 900px) { padding: 10px 0 10px 10px; }
 `
 
 const FilterCheckbox = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
-    letter-spacing: 0.04em;
     color: ${p => p.active ? '#0a0a0a' : '#888'};
     cursor: pointer;
-    padding: 6px 0;
+    padding: 7px 0;
     transition: color 0.15s;
     &:hover { color: #0a0a0a; }
+    @media (max-width: 900px) { padding: 10px 0; }
 `
 
 const CheckboxBox = styled.span`
-    width: 14px; height: 14px;
+    width: 15px; height: 15px;
     border: 1px solid ${p => p.active ? '#0a0a0a' : '#ccc'};
     display: flex; align-items: center; justify-content: center;
     font-size: 9px;
@@ -453,7 +448,6 @@ const CheckboxBox = styled.span`
 `
 
 const ClearBtn = styled.button`
-    font-family: 'DM Sans', sans-serif;
     font-size: 9px;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -470,20 +464,20 @@ const ClearBtn = styled.button`
 /* ── GRID AREA ───────────────────────────────────────────────────────────── */
 const GridArea = styled.div`
     flex: 1;
-    padding-top: 40px;
+    min-width: 0;
+    padding-top: 36px;
 `
 
 const GridMeta = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 28px;
-    padding-bottom: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
     border-bottom: 1px solid #e8e8e4;
 `
 
 const ResultCount = styled.p`
-    font-family: 'DM Sans', sans-serif;
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -492,41 +486,38 @@ const ResultCount = styled.p`
 `
 
 const SortSelect = styled.select`
-    font-family: 'DM Sans', sans-serif;
     font-size: 10px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     color: #555;
     border: none;
     border-bottom: 1px solid #ccc;
     background: transparent;
-    padding: 4px 4px;
+    padding: 4px 2px;
     outline: none;
     cursor: pointer;
-
-    @media (max-width: 900px) { display: none; }
+    max-width: 160px;
+    @media (max-width: 500px) { display: none; }
 `
 
 const ProductGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 3px;
-
-    @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
-    @media (max-width: 700px)  { grid-template-columns: repeat(2, 1fr); }
+    gap: 2px;
+    @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 500px)  { grid-template-columns: repeat(2, 1fr); gap: 1px; }
 `
 
 const ProductCard = styled.div`
     cursor: pointer;
     background: #fff;
-
-    &:hover img { transform: scale(1.05); }
+    &:hover img { transform: scale(1.04); }
 `
 
 const CardMedia = styled.div`
     position: relative;
     overflow: hidden;
     background: #ededeb;
-    padding-bottom: 130%;
+    aspect-ratio: 3/4;
 
     img {
         position: absolute; inset: 0;
@@ -539,29 +530,27 @@ const CardMedia = styled.div`
 const CardOverlay = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: flex-end; justify-content: center;
-    padding-bottom: 20px;
-    background: linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 40%);
+    padding-bottom: 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.38) 0%, transparent 45%);
     opacity: 0;
     transition: opacity 0.3s ease;
-
     ${ProductCard}:hover & { opacity: 1; }
-
     span {
-        font-family: 'DM Sans', sans-serif;
-        font-size: 9px;
-        letter-spacing: 0.35em;
+        font-size: 8px;
+        letter-spacing: 0.32em;
         text-transform: uppercase;
         color: #fff;
-        border-bottom: 1px solid rgba(255,255,255,0.5);
-        padding-bottom: 3px;
+        border-bottom: 1px solid rgba(255,255,255,0.45);
+        padding-bottom: 2px;
     }
+    @media (max-width: 768px) { opacity: 1; }
 `
 
 const CardNoImg = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(3rem, 8vw, 6rem);
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
     font-weight: 300;
     font-style: italic;
     color: rgba(0,0,0,0.1);
@@ -569,38 +558,43 @@ const CardNoImg = styled.div`
 
 const ArtistBadge = styled.span`
     position: absolute;
-    top: 10px; left: 10px;
-    font-family: 'DM Sans', sans-serif;
+    top: 8px; left: 8px;
     font-size: 7px;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
     color: #fff;
-    background: rgba(10,10,10,0.5);
-    padding: 4px 8px;
+    background: rgba(10,10,10,0.45);
+    padding: 3px 7px;
     backdrop-filter: blur(4px);
+    max-width: calc(100% - 16px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `
 
 const CardBody = styled.div`
-    padding: 14px 12px 18px;
+    padding: 10px 10px 14px;
     border-bottom: 1px solid #f0f0ee;
 `
 
 const CardName = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.04em;
+    font-size: 11px;
+    letter-spacing: 0.03em;
     color: #1a1a1a;
-    margin: 0 0 6px;
-    white-space: nowrap;
+    margin: 0 0 5px;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
 `
 
 const CardPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 14px;
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 13px;
     font-style: italic;
-    color: #555;
+    color: #666;
     margin: 0;
 `
 
