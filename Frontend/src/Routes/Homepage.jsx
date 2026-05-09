@@ -61,6 +61,9 @@ const Homepage = () => {
                       </BannerWrap>
             )}
 
+            {/* ── CARRUSEL DE BANNERS ─────────────────────────────────── */}
+            {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
+
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
                 <FeaturedSection id="coleccion">
@@ -188,8 +191,6 @@ const Homepage = () => {
                 </ArtistsTicker>
             )}
 
-            {/* ── CARRUSEL DE INICIO ─────────────────────────────────── */}
-            {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
 
             {/* ── SECCIÓN EDITORIAL ──────────────────────────────────── */}
             {(editorial.editorialQuote || editorial.editorialBody || editorial.editorialImage1 || editorial.editorialImage2) && (
@@ -279,14 +280,14 @@ const PAINT_TEXTS = [
 
 function PaintIntro() {
     const canvasRef = useRef(null)
-    const alreadySeen = sessionStorage.getItem('paintSeen')
+    const alreadySeen = localStorage.getItem('paintSeen')
     const [phase,   setPhase]   = useState(alreadySeen ? 2 : 0)  // 0=animating 1=fading 2=gone
     const [textIdx, setTextIdx] = useState(0)
 
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
-        sessionStorage.setItem('paintSeen', '1')
+        localStorage.setItem('paintSeen', '1')
         canvas.width  = window.innerWidth
         canvas.height = window.innerHeight
         const W = canvas.width, H = canvas.height
@@ -415,6 +416,7 @@ const PaintFixed = styled.div`
     inset: 0;
     z-index: 100;
     pointer-events: none;
+    background: #050505;
     opacity: ${p => p.$fading ? 0 : 1};
     transition: opacity 0.9s ease;
 `
