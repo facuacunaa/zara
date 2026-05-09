@@ -504,7 +504,7 @@ const ProductGrid = styled.div`
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
     @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 500px)  { grid-template-columns: repeat(2, 1fr); gap: 1px; }
+    @media (max-width: 600px)  { grid-template-columns: repeat(1, 1fr); gap: 2px; }
 `
 
 const ProductCard = styled.div`
@@ -575,6 +575,7 @@ const ArtistBadge = styled.span`
 const CardBody = styled.div`
     padding: 10px 10px 14px;
     border-bottom: 1px solid #f0f0ee;
+    @media (max-width: 600px) { padding: 14px 12px 18px; }
 `
 
 const CardName = styled.p`
@@ -588,6 +589,7 @@ const CardName = styled.p`
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     line-height: 1.4;
+    @media (max-width: 600px) { font-size: 13px; }
 `
 
 const CardPrice = styled.p`
@@ -596,6 +598,7 @@ const CardPrice = styled.p`
     font-style: italic;
     color: #666;
     margin: 0;
+    @media (max-width: 600px) { font-size: 15px; }
 `
 
 /* ── SKELETON ─────────────────────────────────────────────────────────────── */
