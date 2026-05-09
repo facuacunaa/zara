@@ -36,6 +36,7 @@ const AdminPage = () => {
     const [editorialImg1, setEditorialImg1] = useState('')
     const [editorialImg2, setEditorialImg2] = useState('')
     const [banner, setBanner] = useState({ bannerText: '', bannerLink: '', bannerBg: '#111111', bannerColor: '#ffffff', bannerActive: false })
+    const [mission, setMission] = useState({ missionEyebrow: '', missionTitle: '', missionBody: '', missionCta: '', missionCtaLink: '' })
     const [imgProgress, setImgProgress] = useState({ 1: 0, 2: 0 })
     const editorialImgRef1 = React.useRef()
     const editorialImgRef2 = React.useRef()
@@ -88,6 +89,13 @@ const AdminPage = () => {
                 bannerBg:     res.data.bannerBg     || '#111111',
                 bannerColor:  res.data.bannerColor  || '#ffffff',
                 bannerActive: res.data.bannerActive || false,
+            })
+            setMission({
+                missionEyebrow: res.data.missionEyebrow || '',
+                missionTitle:   res.data.missionTitle   || '',
+                missionBody:    res.data.missionBody     || '',
+                missionCta:     res.data.missionCta      || '',
+                missionCtaLink: res.data.missionCtaLink  || '',
             })
         } catch {}
     }
@@ -712,6 +720,71 @@ const AdminPage = () => {
                                     }}
                                 >
                                     {loading ? 'Guardando…' : 'GUARDAR BANNER'}
+                                </SubmitBtn>
+                            </FormActions>
+                        </Form>
+
+                        {/* ── Misión ── */}
+                        <Form as="div" style={{ marginTop: '32px' }}>
+                            <SectionLabel>Sección "Nuestra misión"</SectionLabel>
+                            <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '24px' }}>
+                                Aparece entre el carrusel y los productos. Contá quiénes son, qué hacen y por qué. Dejá vacío para mostrar el texto por defecto.
+                            </p>
+                            <FormGrid>
+                                <FormGroup>
+                                    <label>Eyebrow (etiqueta pequeña)</label>
+                                    <input
+                                        value={mission.missionEyebrow}
+                                        onChange={e => setMission(m => ({ ...m, missionEyebrow: e.target.value }))}
+                                        placeholder="— Nuestra misión"
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Título en itálica</label>
+                                    <input
+                                        value={mission.missionTitle}
+                                        onChange={e => setMission(m => ({ ...m, missionTitle: e.target.value }))}
+                                        placeholder="Arte local, alcance global"
+                                    />
+                                </FormGroup>
+                                <FormGroup style={{ gridColumn: '1/-1' }}>
+                                    <label>Texto de la misión</label>
+                                    <textarea
+                                        rows={6}
+                                        value={mission.missionBody}
+                                        onChange={e => setMission(m => ({ ...m, missionBody: e.target.value }))}
+                                        placeholder="Contá la historia, los valores, el vínculo con la Bienal..."
+                                        style={{ width:'100%', border:'none', borderBottom:'1px solid #ddd', padding:'8px 0', fontSize:'13px', resize:'vertical', fontFamily:'inherit', outline:'none', background:'transparent' }}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Texto del botón CTA (opcional)</label>
+                                    <input
+                                        value={mission.missionCta}
+                                        onChange={e => setMission(m => ({ ...m, missionCta: e.target.value }))}
+                                        placeholder="Ver la colección →"
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Link del CTA</label>
+                                    <input
+                                        value={mission.missionCtaLink}
+                                        onChange={e => setMission(m => ({ ...m, missionCtaLink: e.target.value }))}
+                                        placeholder="/products"
+                                    />
+                                </FormGroup>
+                            </FormGrid>
+                            <FormActions style={{ marginTop: '20px' }}>
+                                <SubmitBtn type="button" disabled={loading} onClick={async () => {
+                                    setLoading(true); setMsg('')
+                                    try {
+                                        await axios.put(`${API}/settings/mission`, mission, { headers })
+                                        setMsg('✅ Misión guardada')
+                                    } catch { setMsg('❌ Error al guardar') }
+                                    setLoading(false)
+                                    setTimeout(() => setMsg(''), 3000)
+                                }}>
+                                    {loading ? 'Guardando…' : 'GUARDAR MISIÓN'}
                                 </SubmitBtn>
                             </FormActions>
                         </Form>

@@ -14,6 +14,7 @@ const Homepage = () => {
     const [selectedProd,   setSelectedProd]   = useState(null)
     const [artists,        setArtists]        = useState([])
     const [banner,         setBanner]         = useState(null)
+    const [mission,        setMission]        = useState(null)
     useEffect(() => {
         axios.get(`${API}/artist`)
             .then(r => setArtists(r.data || []))
@@ -27,6 +28,7 @@ const Homepage = () => {
             .then(r => {
                 setEditorial(r.data)
                 if (r.data.bannerActive && r.data.bannerText) setBanner(r.data)
+                if (r.data.missionTitle || r.data.missionBody) setMission(r.data)
                 setCarouselImgs(
                     [1,2,3,4].map(n => ({
                         img:   r.data[`carouselImage${n}`] || '',
@@ -64,6 +66,28 @@ const Homepage = () => {
 
             {/* ── CARRUSEL DE BANNERS ─────────────────────────────────── */}
             {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
+
+            {/* ── MISIÓN ──────────────────────────────────────────────── */}
+            <MissionSection>
+                <MissionInner>
+                    <MissionEyebrow>
+                        {mission?.missionEyebrow || '— Nuestra misión'}
+                    </MissionEyebrow>
+                    <MissionTitle>
+                        {mission?.missionTitle || 'Arte local,\nalcance global'}
+                    </MissionTitle>
+                    <MissionDivider />
+                    <MissionBody>
+                        {mission?.missionBody ||
+                            'Somos una plataforma dedicada a visibilizar y potenciar a los emprendedores locales que viven del arte. Nacimos en el corazón del circuito de la Bienal de Esculturas, donde el arte ocupa cada rincón del espacio público, y quisimos llevar esa misma energía al mundo digital.\n\nCreemos que cada obra merece ser vista, cada artista merece ser conocido y cada comprador merece conectar directamente con quien crea. Aquí, el arte no es decoración: es identidad, es comunidad, es sustento.'}
+                    </MissionBody>
+                    {(mission?.missionCta) && (
+                        <MissionCta href={mission.missionCtaLink || '/products'}>
+                            {mission.missionCta}
+                        </MissionCta>
+                    )}
+                </MissionInner>
+            </MissionSection>
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
@@ -253,6 +277,59 @@ const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
 `
+const MissionSection = styled.section`
+    background: #faf8f5;
+    width: 100%;
+    padding: clamp(64px, 10vw, 120px) clamp(24px, 8vw, 160px);
+`
+const MissionInner = styled.div`
+    max-width: 760px;
+    margin: 0 auto;
+`
+const MissionEyebrow = styled.p`
+    font-size: 0.7rem;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0 0 2rem;
+`
+const MissionTitle = styled.h2`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.1;
+    color: #111;
+    margin: 0 0 2.5rem;
+    white-space: pre-line;
+`
+const MissionDivider = styled.div`
+    width: 40px;
+    height: 1px;
+    background: #bbb;
+    margin-bottom: 2.5rem;
+`
+const MissionBody = styled.p`
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    line-height: 1.85;
+    color: #555;
+    margin: 0 0 2.5rem;
+    white-space: pre-line;
+    font-weight: 300;
+`
+const MissionCta = styled.a`
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #111;
+    text-decoration: none;
+    border-bottom: 1px solid #111;
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+    &:hover { opacity: 0.5; }
+`
+
 const BannerWrap = styled.div`
     display: block;
     width: 100%;

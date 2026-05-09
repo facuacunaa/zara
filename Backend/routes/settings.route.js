@@ -164,6 +164,21 @@ settingsRouter.put("/carousel-texts", adminAuth, async (req, res) => {
     }
 })
 
+// ── GUARDAR MISIÓN / MANIFIESTO (solo admin) ─────────────────────────────
+settingsRouter.put("/mission", adminAuth, async (req, res) => {
+    const { missionEyebrow, missionTitle, missionBody, missionCta, missionCtaLink } = req.body
+    try {
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "homepage" },
+            { $set: { missionEyebrow, missionTitle, missionBody, missionCta, missionCtaLink } },
+            { new: true, upsert: true, strict: false }
+        )
+        res.json({ msg: "Misión guardada", settings })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── GUARDAR BANNER (solo admin) ───────────────────────────────────────────
 settingsRouter.put("/banner", adminAuth, async (req, res) => {
     const { bannerText, bannerLink, bannerBg, bannerColor, bannerActive } = req.body
