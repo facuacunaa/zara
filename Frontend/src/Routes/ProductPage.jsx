@@ -374,6 +374,7 @@ const ShopLayout = styled.div`
     margin: 0 auto;
     padding: 0 40px 80px;
     @media (max-width: 900px) { flex-direction: column; padding: 0 16px 60px; }
+    @media (max-width: 600px) { padding: 0 0 60px; }
 `
 
 /* ── SIDEBAR ────────────────────────────────────────────────────────────── */
@@ -466,6 +467,10 @@ const GridArea = styled.div`
     flex: 1;
     min-width: 0;
     padding-top: 36px;
+    @media (max-width: 600px) {
+        width: 100%;
+        padding-top: 0;
+    }
 `
 
 const GridMeta = styled.div`
@@ -475,6 +480,7 @@ const GridMeta = styled.div`
     margin-bottom: 24px;
     padding-bottom: 14px;
     border-bottom: 1px solid #e8e8e4;
+    @media (max-width: 600px) { padding: 14px 16px; margin-bottom: 0; }
 `
 
 const ResultCount = styled.p`
@@ -504,7 +510,7 @@ const ProductGrid = styled.div`
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
     @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 600px)  { grid-template-columns: repeat(1, 1fr); gap: 2px; }
+    @media (max-width: 600px)  { grid-template-columns: repeat(2, 1fr); gap: 2px; }
 `
 
 const ProductCard = styled.div`
