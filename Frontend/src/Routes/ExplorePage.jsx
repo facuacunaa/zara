@@ -4,6 +4,7 @@ import styled, { keyframes } from 'styled-components'
 import Navbar from '../Components/Navbar'
 import { Link } from 'react-router-dom'
 import AddCart from '../Components/Product-Page-Component/AddCart'
+import PageLoader from '../Components/PageLoader'
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
@@ -133,6 +134,8 @@ export default function ExplorePage() {
         const el = sectionRefs.current[slug]
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+
+    if (loading) return <PageLoader />
 
     return (
         <PageWrap>
