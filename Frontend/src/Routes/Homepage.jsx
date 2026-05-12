@@ -80,7 +80,7 @@ const Homepage = () => {
                         <MissionBtnPrimary as={Link} to="/products">
                             Ver tienda
                         </MissionBtnPrimary>
-                        <MissionBtnSecondary as={Link} to="/#artistas">
+                        <MissionBtnSecondary as={Link} to="/explorar">
                             Conocer artistas
                         </MissionBtnSecondary>
                     </MissionActions>
