@@ -197,6 +197,7 @@ const Homepage = () => {
                     <ArtistsShowcaseHeader>
                         <ArtistsShowcaseEyebrow>— Nuestros artistas</ArtistsShowcaseEyebrow>
                         <ArtistsShowcaseTitle>Conocé a quienes<br/>dan vida al arte</ArtistsShowcaseTitle>
+                        <ArtistsShowcaseLink to="/explorar">Explorar artistas →</ArtistsShowcaseLink>
                     </ArtistsShowcaseHeader>
                     <ArtistsGrid count={artists.length}>
                         {artists.map(a => (
@@ -945,6 +946,20 @@ const ArtistsShowcaseTitle = styled.h2`
     line-height: 1.12;
     margin: 0;
     letter-spacing: -0.02em;
+`
+
+const ArtistsShowcaseLink = styled(Link)`
+    display: inline-block;
+    margin-top: 24px;
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 3px;
+    transition: color 0.2s, border-color 0.2s;
+    &:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
 `
 
 const ArtistsGrid = styled.div`

@@ -237,6 +237,7 @@ const Navbar = ({ activeIndexs }) => {
                     {/* Links secundarios */}
                     <SidebarFooterLinks>
                         <Link to="/products">Tienda</Link>
+                        <Link to="/explorar">Artistas</Link>
                         <Link to="/cart">Carrito {cart && cart.length > 0 ? `(${cart.length})` : ''}</Link>
                         {!isAuth
                             ? <Link to="/login" state={{ path: '/' }}>Iniciar sesión</Link>

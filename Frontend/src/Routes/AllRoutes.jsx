@@ -19,6 +19,7 @@ const ArtistProductPage = lazy(() => import('./ArtistProductPage'))
 const AdminPage       = lazy(() => import('./AdminPage'))
 const ArtistPortal    = lazy(() => import('./ArtistPortal'))
 const ProductPage     = lazy(() => import('./ProductPage'))
+const ExplorePage     = lazy(() => import('./ExplorePage'))
 
 const AllRoutes = () => {
   return (
@@ -39,6 +40,7 @@ const AllRoutes = () => {
         <Route path='/otp'                       element={<OTP />} />
         <Route path='/admin'                     element={<AdminPage />} />
         <Route path='/artist-portal'             element={<ArtistPortal />} />
+        <Route path='/explorar'                  element={<ExplorePage />} />
         <Route path='/:slug/producto/:productId' element={<ArtistProductPage />} />
         <Route path='/:slug'                     element={<ArtistPage />} />
       </Routes>
