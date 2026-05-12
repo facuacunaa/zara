@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import axios from 'axios'
 import styled, { keyframes } from 'styled-components'
 import Navbar from '../Components/Navbar'
@@ -6,6 +6,30 @@ import { Link } from 'react-router-dom'
 import AddCart from '../Components/Product-Page-Component/AddCart'
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
+
+/* ── LAZY IMAGE con skeleton ────────────────────────────────────────────────── */
+function FadeImg({ src, alt, style }) {
+    const [loaded, setLoaded] = useState(false)
+    return (
+        <div style={{ position: 'absolute', inset: 0 }}>
+            {!loaded && <ImgSkeleton />}
+            {src && (
+                <img
+                    src={src} alt={alt} loading="lazy"
+                    onLoad={() => setLoaded(true)}
+                    style={{
+                        position: 'absolute', inset: 0,
+                        width: '100%', height: '100%',
+                        objectFit: 'cover',
+                        opacity: loaded ? 1 : 0,
+                        transition: 'opacity 0.8s ease',
+                        ...style,
+                    }}
+                />
+            )}
+        </div>
+    )
+}
 
 /* ── PRODUCT MODAL ──────────────────────────────────────────────────────────── */
 function ExploreProdModal({ product, onClose }) {
@@ -190,7 +214,7 @@ export default function ExplorePage() {
                                 <ArtistCover $reverse={!isEven}>
                                     <ArtistImgWrap $reverse={!isEven}>
                                         {img ? (
-                                            <img src={img} alt={artist.name} loading="lazy" />
+                                            <FadeImg src={img} alt={artist.name} />
                                         ) : (
                                             <ArtistImgPlaceholder>
                                                 <span>{artist.name?.charAt(0)?.toUpperCase()}</span>
@@ -245,7 +269,7 @@ export default function ExplorePage() {
                                                 <WorkCard key={p._id || i} onClick={() => setSelectedProd(p)}>
                                                     <WorkCardImg>
                                                         {p.image
-                                                            ? <img src={p.image} alt={p.name} loading="lazy" />
+                                                            ? <FadeImg src={p.image} alt={p.name} />
                                                             : <WorkCardNoImg>{p.name?.charAt(0)}</WorkCardNoImg>
                                                         }
                                                         <WorkCardOverlay>
@@ -311,6 +335,20 @@ const fadeUp = keyframes`
 const shimmer = keyframes`
     0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+`
+const ImgSkeleton = styled.div`
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        #1a1a1a 0%,
+        #242424 40%,
+        #2a2a2a 50%,
+        #242424 60%,
+        #1a1a1a 100%
+    );
+    background-size: 200% 100%;
+    animation: ${shimmer} 1.8s ease-in-out infinite;
 `
 
 const PageWrap = styled.div`

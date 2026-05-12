@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import ProtectedRoute from '../Components/ProtectedRoute'
+import PageLoader from '../Components/PageLoader'
 
 const Homepage        = lazy(() => import('./Homepage'))
 const SinglePage      = lazy(() => import('../Components/SinglePage'))
@@ -23,7 +24,7 @@ const ExplorePage     = lazy(() => import('./ExplorePage'))
 
 const AllRoutes = () => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path='/'                          element={<Homepage />} />
         <Route path='/product/:id'               element={<SinglePage />} />

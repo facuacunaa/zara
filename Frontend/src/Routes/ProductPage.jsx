@@ -608,36 +608,51 @@ const CardPrice = styled.p`
 `
 
 /* ── SKELETON ─────────────────────────────────────────────────────────────── */
-const SkeletonGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3px;
-
-    @media (max-width: 700px) { grid-template-columns: repeat(2, 1fr); }
-`
-
-const SkeletonCard = styled.div`
-    background: #fff;
-    padding-bottom: 8px;
-`
-
-const SkeletonImg = styled.div`
-    width: 100%;
-    padding-bottom: 130%;
-    background: linear-gradient(90deg, #efefed 25%, #e6e6e4 50%, #efefed 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-
-    @keyframes shimmer {
+const skeletonAnim = `
+    @keyframes skeletonShimmer {
         0%   { background-position: 200% 0; }
         100% { background-position: -200% 0; }
     }
 `
 
+const SkeletonGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    @media (max-width: 700px) { grid-template-columns: repeat(2, 1fr); }
+`
+
+const SkeletonCard = styled.div`
+    background: #fafaf8;
+    padding-bottom: 8px;
+`
+
+const SkeletonImg = styled.div`
+    width: 100%;
+    padding-bottom: 133%;
+    background: linear-gradient(
+        90deg,
+        #f0f0ee 0%,
+        #e8e8e6 40%,
+        #ebebea 50%,
+        #e8e8e6 60%,
+        #f0f0ee 100%
+    );
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.6s ease-in-out infinite;
+    ${skeletonAnim}
+`
+
 const SkeletonLine = styled.div`
-    height: 10px;
+    height: 9px;
     width: ${p => p.w || '80%'};
-    background: #efefed;
+    background: linear-gradient(
+        90deg,
+        #f0f0ee 0%, #e8e8e6 40%, #ebebea 50%, #e8e8e6 60%, #f0f0ee 100%
+    );
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.6s ease-in-out infinite;
+    border-radius: 2px;
     border-radius: 2px;
     margin: 12px 12px 6px;
     animation: shimmer 1.4s infinite;
