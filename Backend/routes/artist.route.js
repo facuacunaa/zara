@@ -78,17 +78,18 @@ artistRouter.get("/", async (req, res) => {
 artistRouter.get("/all-products", async (req, res) => {
     try {
         const artists = await ArtistModel.find({})
-            .select("name slug shopProducts")
+            .select("name slug shopProducts profileImage")
             .lean()
-        // Aplanar: cada producto lleva artistName y artistSlug
+        // Aplanar: cada producto lleva artistName, artistSlug y artistProfileImage
         const products = []
         for (const artist of artists) {
             for (const product of (artist.shopProducts || [])) {
                 if (product.name) {
                     products.push({
                         ...product,
-                        artistName: artist.name,
-                        artistSlug: artist.slug,
+                        artistName:         artist.name,
+                        artistSlug:         artist.slug,
+                        artistProfileImage: artist.profileImage || '',
                     })
                 }
             }

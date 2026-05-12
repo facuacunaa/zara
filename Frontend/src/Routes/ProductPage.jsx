@@ -3,6 +3,7 @@ import axios from 'axios'
 import styled from 'styled-components'
 import Navbar from '../Components/Navbar'
 import AddCart from '../Components/Product-Page-Component/AddCart'
+import RelatedSections from '../Components/Product-Page-Component/RelatedSections'
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
@@ -27,7 +28,7 @@ function parsePrice(str) {
 }
 
 /* ── PRODUCT MODAL ────────────────────────────────────────────────────────── */
-function ProdModal({ product, onClose }) {
+function ProdModal({ product, onClose, allProducts, onSelect }) {
     const [visible,   setVisible]   = useState(false)
     const [imgLoaded, setImgLoaded] = useState(false)
 
@@ -77,6 +78,11 @@ function ProdModal({ product, onClose }) {
                         )}
                         <AddCart data={cartData} />
                     </ModalBody>
+                    <RelatedSections
+                        product={product}
+                        allProducts={allProducts}
+                        onSelect={onSelect}
+                    />
                 </div>
             </ModalPanel>
         </>
@@ -268,7 +274,12 @@ export default function ProductPage() {
             </ShopLayout>
 
             {selectedProd && (
-                <ProdModal product={selectedProd} onClose={() => setSelectedProd(null)} />
+                <ProdModal
+                    product={selectedProd}
+                    onClose={() => setSelectedProd(null)}
+                    allProducts={products}
+                    onSelect={setSelectedProd}
+                />
             )}
         </PageWrap>
     )

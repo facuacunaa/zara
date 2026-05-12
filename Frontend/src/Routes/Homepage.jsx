@@ -5,6 +5,7 @@ import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
 import PageLoader from "../Components/PageLoader";
 import AddCart from "../Components/Product-Page-Component/AddCart";
+import RelatedSections from "../Components/Product-Page-Component/RelatedSections";
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
@@ -349,7 +350,12 @@ const Homepage = () => {
 
             {/* ── PRODUCT MODAL ──────────────────────────────────────── */}
             {selectedProd && (
-                <HomeProdModal product={selectedProd} onClose={() => setSelectedProd(null)} />
+                <HomeProdModal
+                    product={selectedProd}
+                    onClose={() => setSelectedProd(null)}
+                    allProducts={artistProducts}
+                    onSelect={setSelectedProd}
+                />
             )}
 
             </ContentReveal>}
@@ -1749,7 +1755,7 @@ const FooterBottom = styled.div`
 /* ═══════════════════════════════════════════════════════════════
    PRODUCT MODAL
 ═══════════════════════════════════════════════════════════════ */
-function HomeProdModal({ product, onClose }) {
+function HomeProdModal({ product, onClose, allProducts, onSelect }) {
     const [visible,   setVisible]   = useState(false)
     const [imgLoaded, setImgLoaded] = useState(false)
 
@@ -1832,6 +1838,11 @@ function HomeProdModal({ product, onClose }) {
                         )}
                         <AddCart data={cartData} />
                     </div>
+                    <RelatedSections
+                        product={product}
+                        allProducts={allProducts}
+                        onSelect={onSelect}
+                    />
                 </div>
             </ModalPanel>
         </>
