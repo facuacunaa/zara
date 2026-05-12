@@ -458,7 +458,7 @@ const HeroScrollLine = styled.div`
 /* ── STICKY NAV ─────────────────────────────────────────────────────────────── */
 const StickyNav = styled.nav`
     position: sticky;
-    top: 0;
+    top: 64px;
     z-index: 50;
     background: rgba(250,250,248,0.96);
     backdrop-filter: blur(12px);
@@ -549,7 +549,7 @@ const ArtistsWrap = styled.div`
     background: #fafaf8;
 `
 const ArtistBlock = styled.article`
-    scroll-margin-top: 60px;
+    scroll-margin-top: 114px;
 `
 const ArtistCover = styled.div`
     display: grid;
