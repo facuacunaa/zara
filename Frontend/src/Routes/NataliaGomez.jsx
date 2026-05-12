@@ -201,8 +201,8 @@ export default function ArtistPage() {
             src={artist.heroVideo} autoPlay loop muted playsInline preload="none"
             className="absolute inset-0 w-full h-full object-cover opacity-80"
           />
-        ) : img(0) ? (
-          <img src={img(0)} alt={artist.name} className="absolute inset-0 w-full h-full object-cover opacity-80" />
+        ) : (img(0) || artist.profileImage) ? (
+          <img src={img(0) || artist.profileImage} alt={artist.name} className="absolute inset-0 w-full h-full object-cover opacity-80" />
         ) : (
           <div className="absolute inset-0 bg-ink" />
         )}
@@ -213,6 +213,20 @@ export default function ArtistPage() {
               {g('subtitle')}
             </p>
           )}
+          {/* Foto de perfil */}
+          {artist.profileImage && (
+            <div style={{
+              width: 96, height: 96,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '2px solid rgba(255,255,255,0.25)',
+              marginBottom: 20,
+              flexShrink: 0,
+            }}>
+              <img src={artist.profileImage} alt={artist.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          )}
           <h1 className="font-serif text-[clamp(2.5rem,8vw,7rem)] font-light text-white leading-none tracking-tight">
             {artist.name}
           </h1>
@@ -220,7 +234,7 @@ export default function ArtistPage() {
       </section>
 
       {/* ── 2. HISTORIA DEL ARTISTA ─────────────────────────────────────── */}
-      {(g('bioText') || g('bioGoals') || g('bioQuote')) && (
+      {(g('bioText') || g('bioGoals') || g('bioQuote') || artist.profileImage) && (
         <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto">
           {/* Encabezado */}
           <p className="font-sans text-[8px] tracking-widest3 uppercase text-ash mb-10">
@@ -228,14 +242,23 @@ export default function ArtistPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
-            {/* Columna izquierda: historia */}
-            {g('bioText') && (
-              <div>
+            {/* Columna izquierda: foto de perfil + historia */}
+            <div className="flex flex-col gap-10">
+              {artist.profileImage && (
+                <div style={{ position: 'relative', width: '100%', paddingBottom: '120%', overflow: 'hidden', background: '#ededeb' }}>
+                  <img
+                    src={artist.profileImage}
+                    alt={artist.name}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
+              {g('bioText') && (
                 <p className="font-sans text-[13px] text-ink leading-[2] tracking-wide whitespace-pre-line">
                   {g('bioText')}
                 </p>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Columna derecha: metas + quote */}
             <div className="flex flex-col gap-10">
