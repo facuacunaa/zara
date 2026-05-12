@@ -8,7 +8,8 @@ const hotspotSchema = new mongoose.Schema({
 }, { _id: false })
 
 const shopProductSchema = new mongoose.Schema({
-    image:       { type: String, default: "" },
+    image:       { type: String, default: "" },          // thumbnail / primera foto
+    images:      [{ type: String }],                     // hasta 5 fotos
     name:        { type: String, default: "" },
     price:       { type: String, default: "" },
     description: { type: String, default: "" },

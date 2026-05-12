@@ -17,16 +17,24 @@ function parsePrice(str) {
    - onSelect    : (product) => void  — swap to another product
 ───────────────────────────────────────────────────────────────────────────── */
 export default function ProductDetailModal({ product, onClose, allProducts, onSelect }) {
-    const [visible,   setVisible]   = useState(false)
-    const [imgLoaded, setImgLoaded] = useState(false)
+    const [visible,    setVisible]    = useState(false)
+    const [imgLoaded,  setImgLoaded]  = useState(false)
+    const [activeIdx,  setActiveIdx]  = useState(0)
+
+    // All display images: prefer images[] array, fallback to single image
+    const displayImages = (product.images?.length ? product.images : (product.image ? [product.image] : []))
+    const activeImg     = displayImages[activeIdx] || displayImages[0] || ''
 
     useEffect(() => {
         const t = setTimeout(() => setVisible(true), 10)
         return () => clearTimeout(t)
     }, [])
 
-    // Reset image loaded state when product changes
-    useEffect(() => { setImgLoaded(false) }, [product._id, product.name])
+    // Reset on product change
+    useEffect(() => {
+        setImgLoaded(false)
+        setActiveIdx(0)
+    }, [product._id, product.name])
 
     useEffect(() => {
         const fn = e => { if (e.key === 'Escape') onClose() }
@@ -72,13 +80,14 @@ export default function ProductDetailModal({ product, onClose, allProducts, onSe
 
                 {/* ── BODY (image left, scroll right) ──────────────────── */}
                 <Body>
-                    {/* LEFT — sticky image */}
+                    {/* LEFT — sticky image + thumbnails */}
                     <ImageCol>
                         <ImageWrap>
                             {!imgLoaded && <ImgSkeleton />}
-                            {product.image && (
+                            {activeImg && (
                                 <img
-                                    src={product.image}
+                                    key={activeImg}
+                                    src={activeImg}
                                     alt={product.name}
                                     onLoad={() => setImgLoaded(true)}
                                     style={{
@@ -91,6 +100,21 @@ export default function ProductDetailModal({ product, onClose, allProducts, onSe
                                 />
                             )}
                         </ImageWrap>
+
+                        {/* Thumbnail strip — only if more than 1 image */}
+                        {displayImages.length > 1 && (
+                            <ThumbStrip>
+                                {displayImages.map((url, i) => (
+                                    <Thumb
+                                        key={i}
+                                        $active={i === activeIdx}
+                                        onClick={() => { setActiveIdx(i); setImgLoaded(false) }}
+                                    >
+                                        <img src={url} alt={`foto ${i + 1}`} loading="lazy" />
+                                    </Thumb>
+                                ))}
+                            </ThumbStrip>
+                        )}
                     </ImageCol>
 
                     {/* RIGHT — scrollable info + related */}
@@ -368,4 +392,45 @@ const InfoMetaItem = styled.li`
 const InfoMetaIcon = styled.span`
     font-size: 8px;
     color: #ccc;
+`
+
+/* ── Thumbnail strip ─────────────────────────────────────────────────────── */
+const ThumbStrip = styled.div`
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+
+    @media (max-width: 768px) {
+        position: static;
+        background: #0a0a0a;
+        padding: 8px 12px;
+    }
+`
+
+const Thumb = styled.button`
+    flex-shrink: 0;
+    width: 44px; height: 60px;
+    border: 2px solid ${p => p.$active ? '#fff' : 'rgba(255,255,255,0.3)'};
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: border-color 0.2s;
+    opacity: ${p => p.$active ? 1 : 0.65};
+
+    img {
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+    }
+
+    &:hover {
+        border-color: #fff;
+        opacity: 1;
+    }
 `

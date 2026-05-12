@@ -88,8 +88,9 @@ export default function ArtistPortal() {
   const [shopProgress,    setShopProgress]    = useState(0)
   const [productProgress, setProductProgress] = useState(0)
 
-  // Nuevo producto para Shop the Look
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', file: null, preview: null })
+  // Nuevo producto para Shop the Look  — slots: array de 5 { file, preview }
+  const EMPTY_SLOTS = () => Array(5).fill(null).map(() => ({ file: null, preview: null }))
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', slots: EMPTY_SLOTS() })
   // Producto en edición (null = modo agregar)
   const [editingIdx, setEditingIdx] = useState(null)   // índice del producto editado
 
@@ -294,20 +295,21 @@ export default function ArtistPortal() {
   /* ── Agregar producto al Shop the Look ──────────────────────────────── */
   const addShopProduct = async () => {
     if (!newProduct.name || !newProduct.price) return flash('❌ Completá nombre y precio')
-    if (!newProduct.file) return flash('❌ Seleccioná una imagen para el producto')
+    const hasImage = newProduct.slots.some(s => s.file)
+    if (!hasImage) return flash('❌ Seleccioná al menos una imagen')
     setLoading(true); setProductProgress(0)
     const form = new FormData()
-    form.append('image',       newProduct.file)
     form.append('name',        newProduct.name)
     form.append('price',       newProduct.price)
     form.append('description', newProduct.description)
+    newProduct.slots.forEach(s => { if (s.file) form.append('images', s.file) })
     try {
       const res = await axios.post(`${API}/artist/shop-products`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setProductProgress(Math.round((e.loaded * 100) / e.total))
       })
       if (res.data?.artist) applyArtist(res.data.artist)
-      setNewProduct({ name: '', price: '', description: '', file: null, preview: null })
+      setNewProduct({ name: '', price: '', description: '', slots: EMPTY_SLOTS() })
       flash('✅ Producto agregado')
     } catch {
       flash('❌ Error al agregar producto')
@@ -333,14 +335,20 @@ export default function ArtistPortal() {
     form.append('name',        newProduct.name)
     form.append('price',       newProduct.price)
     form.append('description', newProduct.description)
-    if (newProduct.file) form.append('image', newProduct.file)
+    // Existing URLs to keep (slots with a preview URL but no new file)
+    const keepImages = newProduct.slots
+      .filter(s => s.preview && !s.file && s.preview.startsWith('http'))
+      .map(s => s.preview)
+    form.append('keepImages', JSON.stringify(keepImages))
+    // New files to upload
+    newProduct.slots.forEach(s => { if (s.file) form.append('images', s.file) })
     try {
       const res = await axios.patch(`${API}/artist/shop-products/${editingIdx}`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setProductProgress(Math.round((e.loaded * 100) / e.total))
       })
       if (res.data?.artist) applyArtist(res.data.artist)
-      setNewProduct({ name: '', price: '', description: '', file: null, preview: null })
+      setNewProduct({ name: '', price: '', description: '', slots: EMPTY_SLOTS() })
       setEditingIdx(null)
       flash('✅ Producto actualizado')
     } catch { flash('❌ Error al actualizar producto') }
@@ -350,7 +358,7 @@ export default function ArtistPortal() {
   /* ── Cancelar edición ────────────────────────────────────────────────── */
   const cancelEdit = () => {
     setEditingIdx(null)
-    setNewProduct({ name: '', price: '', description: '', file: null, preview: null })
+    setNewProduct({ name: '', price: '', description: '', slots: EMPTY_SLOTS() })
   }
 
   /* ── Guardar hotspots ────────────────────────────────────────────────── */
@@ -895,7 +903,11 @@ export default function ArtistPortal() {
                       <ProductItemActions>
                         <ProductItemEdit onClick={() => {
                           setEditingIdx(i)
-                          setNewProduct({ name: p.name, price: p.price, description: p.description || '', file: null, preview: p.image || null })
+                          const existingImgs = p.images?.length ? p.images : (p.image ? [p.image] : [])
+                          const loadedSlots = EMPTY_SLOTS().map((s, si) =>
+                            existingImgs[si] ? { file: null, preview: existingImgs[si] } : s
+                          )
+                          setNewProduct({ name: p.name, price: p.price, description: p.description || '', slots: loadedSlots })
                           document.getElementById('product-form-box')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                         }}>✏ Editar</ProductItemEdit>
                         <ProductItemDelete onClick={() => deleteShopProduct(i)}>✕</ProductItemDelete>
@@ -918,36 +930,55 @@ export default function ArtistPortal() {
                   )}
                 </div>
 
-                {/* Preview de imagen seleccionada */}
-                <ProductImgPicker onClick={() => productImgRef.current?.click()}>
-                  {newProduct.preview ? (
-                    <>
-                      <img src={newProduct.preview} alt="preview" />
-                      {editingIdx !== null && !newProduct.file && (
-                        <ProductImgKeepBadge>Imagen actual · click para cambiar</ProductImgKeepBadge>
-                      )}
-                    </>
-                  ) : (
-                    <div className="placeholder">
-                      <span>+</span>
-                      <p>Seleccionar foto</p>
-                    </div>
-                  )}
-                  {productProgress > 0 && (
-                    <ProductImgUploading>
-                      <span>{productProgress}%</span>
-                    </ProductImgUploading>
-                  )}
-                  <input
-                    ref={productImgRef}
-                    type="file" accept="image/*" hidden
-                    onChange={e => {
-                      const f = e.target.files[0]
-                      if (!f) return
-                      setNewProduct(p => ({ ...p, file: f, preview: URL.createObjectURL(f) }))
-                    }}
-                  />
-                </ProductImgPicker>
+                {/* 5 slots de imagen */}
+                <ProductImgSlotsLabel>
+                  Fotos del producto <span>hasta 5 · la primera es la portada</span>
+                </ProductImgSlotsLabel>
+                <ProductImgSlots>
+                  {newProduct.slots.map((slot, si) => {
+                    const inputId = `slot-input-${si}`
+                    return (
+                      <ProductImgSlot key={si} hasImg={!!slot.preview}>
+                        {slot.preview ? (
+                          <>
+                            <img src={slot.preview} alt={`slot ${si}`} />
+                            {si === 0 && <SlotMainBadge>Portada</SlotMainBadge>}
+                            <SlotRemoveBtn onClick={() => {
+                              setNewProduct(p => {
+                                const slots = [...p.slots]
+                                slots[si] = { file: null, preview: null }
+                                return { ...p, slots }
+                              })
+                            }}>✕</SlotRemoveBtn>
+                          </>
+                        ) : (
+                          <label htmlFor={inputId} style={{ cursor: 'pointer', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                            <span style={{ fontSize: 22, color: '#ccc' }}>+</span>
+                            <span style={{ fontSize: 9, color: '#bbb', letterSpacing: '.1em', textTransform: 'uppercase' }}>{si === 0 ? 'Portada' : `Foto ${si + 1}`}</span>
+                          </label>
+                        )}
+                        {productProgress > 0 && loading && si === 0 && (
+                          <ProductImgUploading><span>{productProgress}%</span></ProductImgUploading>
+                        )}
+                        <input
+                          id={inputId}
+                          type="file" accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={e => {
+                            const f = e.target.files[0]
+                            if (!f) return
+                            setNewProduct(p => {
+                              const slots = [...p.slots]
+                              slots[si] = { file: f, preview: URL.createObjectURL(f) }
+                              return { ...p, slots }
+                            })
+                            e.target.value = ''
+                          }}
+                        />
+                      </ProductImgSlot>
+                    )
+                  })}
+                </ProductImgSlots>
 
                 <ProductFormFields>
                   <InfoGroup full>
@@ -1166,9 +1197,20 @@ const AddProductBox    = styled.div`background:${p=>p.editing?'#fff':'#f9f9f9'};
   transition:border .2s,background .2s;`
 const CancelEditBtn    = styled.button`background:transparent;border:none;font-size:10px;letter-spacing:.15em;
   color:#aaa;cursor:pointer;text-transform:uppercase;padding:4px 0;&:hover{color:#000;}`
-const ProductImgKeepBadge = styled.div`position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);
-  color:#fff;font-size:9px;text-align:center;padding:5px;letter-spacing:.05em;`
 const ProductFormBtns  = styled.div`display:flex;gap:12px;margin-top:20px;align-items:center;`
+const ProductImgSlotsLabel = styled.p`font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#888;margin:0 0 10px;
+  span{font-weight:300;color:#bbb;letter-spacing:.1em;text-transform:none;margin-left:6px;}`
+const ProductImgSlots  = styled.div`display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;
+  @media(max-width:480px){grid-template-columns:repeat(3,1fr);}`
+const ProductImgSlot   = styled.div`aspect-ratio:2/3;background:${p=>p.hasImg?'#000':'#f0f0f0'};
+  border:1px dashed ${p=>p.hasImg?'transparent':'#ddd'};overflow:hidden;position:relative;
+  &:hover{border-color:#999;}`
+const SlotMainBadge    = styled.div`position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);
+  color:#fff;font-size:8px;text-align:center;padding:4px;letter-spacing:.1em;text-transform:uppercase;`
+const SlotRemoveBtn    = styled.button`position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);
+  color:#fff;border:none;width:18px;height:18px;font-size:9px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;opacity:0;transition:opacity .15s;
+  ${ProductImgSlot}:hover &{opacity:1;}`
 const ProductImgPicker = styled.div`width:140px;aspect-ratio:2/3;background:#f0f0f0;border:2px dashed #ddd;
   cursor:pointer;overflow:hidden;position:relative;margin-bottom:16px;
   img{width:100%;height:100%;object-fit:cover;display:block;}
