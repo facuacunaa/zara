@@ -8,9 +8,10 @@ const hotspotSchema = new mongoose.Schema({
 }, { _id: false })
 
 const shopProductSchema = new mongoose.Schema({
-    image: { type: String, default: "" },
-    name:  { type: String, default: "" },
-    price: { type: String, default: "" },
+    image:       { type: String, default: "" },
+    name:        { type: String, default: "" },
+    price:       { type: String, default: "" },
+    description: { type: String, default: "" },
     // _id: true (default) — cada producto tiene su propio ObjectId para la ruta de detalle
 })
 

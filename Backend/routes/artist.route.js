@@ -304,12 +304,12 @@ artistRouter.get("/:slug/shop-products/:productId", async (req, res) => {
 // ── AGREGAR PRODUCTO AL SHOP THE LOOK ─────────────────────────────────────
 artistRouter.post("/shop-products", artistAuth, upload.single("image"), async (req, res) => {
     try {
-        const { name, price } = req.body
+        const { name, price, description = "" } = req.body
         if (!name || !price) return res.status(400).json({ msg: "Nombre y precio requeridos" })
         const image = req.file ? req.file.path : ""
         const artist = await ArtistModel.findByIdAndUpdate(
             req.artistId,
-            { $push: { shopProducts: { image, name, price } } },
+            { $push: { shopProducts: { image, name, price, description } } },
             { new: true }
         ).select("-password")
         res.json({ msg: "Producto agregado", artist })

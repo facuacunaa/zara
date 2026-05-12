@@ -1786,8 +1786,16 @@ function HomeProdModal({ product, onClose }) {
                         <p style={{
                             fontFamily: 'DM Sans, sans-serif',
                             fontSize: '12px', letterSpacing: '0.1em',
-                            color: '#999', margin: '0 0 36px'
+                            color: '#999', margin: product.description ? '0 0 20px' : '0 0 36px'
                         }}>{product.price}</p>
+                        {product.description && (
+                            <p style={{
+                                fontFamily: 'DM Sans, sans-serif',
+                                fontSize: '13px', lineHeight: '1.75',
+                                color: '#666', margin: '0 0 28px',
+                                whiteSpace: 'pre-line'
+                            }}>{product.description}</p>
+                        )}
                         <AddCart data={cartData} />
                     </div>
                 </div>

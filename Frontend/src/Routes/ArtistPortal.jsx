@@ -89,7 +89,7 @@ export default function ArtistPortal() {
   const [productProgress, setProductProgress] = useState(0)
 
   // Nuevo producto para Shop the Look
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', file: null, preview: null })
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', file: null, preview: null })
 
   // Textos editables
   const [texts, setTexts] = useState(EMPTY_TEXTS)
@@ -295,16 +295,17 @@ export default function ArtistPortal() {
     if (!newProduct.file) return flash('❌ Seleccioná una imagen para el producto')
     setLoading(true); setProductProgress(0)
     const form = new FormData()
-    form.append('image', newProduct.file)
-    form.append('name',  newProduct.name)
-    form.append('price', newProduct.price)
+    form.append('image',       newProduct.file)
+    form.append('name',        newProduct.name)
+    form.append('price',       newProduct.price)
+    form.append('description', newProduct.description)
     try {
       const res = await axios.post(`${API}/artist/shop-products`, form, {
         headers: { ...headers, 'Content-Type': 'multipart/form-data' },
         onUploadProgress: e => setProductProgress(Math.round((e.loaded * 100) / e.total))
       })
       if (res.data?.artist) applyArtist(res.data.artist)
-      setNewProduct({ name: '', price: '', file: null, preview: null })
+      setNewProduct({ name: '', price: '', description: '', file: null, preview: null })
       flash('✅ Producto agregado')
     } catch {
       flash('❌ Error al agregar producto')
@@ -912,6 +913,15 @@ export default function ArtistPortal() {
                       value={newProduct.price}
                       onChange={e => setNewProduct(p => ({ ...p, price: e.target.value }))}
                       placeholder="$249"
+                    />
+                  </InfoGroup>
+                  <InfoGroup full>
+                    <InfoLabel>Descripción <span style={{color:'#ccc',fontWeight:300}}>(opcional)</span></InfoLabel>
+                    <InfoTextarea
+                      rows={3}
+                      value={newProduct.description}
+                      onChange={e => setNewProduct(p => ({ ...p, description: e.target.value }))}
+                      placeholder="Describe la técnica, materiales, dimensiones o la historia detrás de la obra…"
                     />
                   </InfoGroup>
                 </ProductFormFields>

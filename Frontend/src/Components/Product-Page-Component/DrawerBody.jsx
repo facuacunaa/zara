@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { getCart } from '../../Redux/App/action'
 
-const DrawerBody = () => {
+const DrawerBody = ({ addedId } = {}) => {
     const dispatch = useDispatch()
     const cartdata = useSelector((store) => store.AppReducer.cart)
 
@@ -17,8 +17,8 @@ const DrawerBody = () => {
     return (
         <Wrap>
             <DrawerTitle>
-                Carrito
-                {cartdata?.length > 0 && <DrawerCount>{cartdata.length}</DrawerCount>}
+                En tu carrito
+                {cartdata?.length > 0 && <DrawerCount>{cartdata.length} {cartdata.length === 1 ? 'obra' : 'obras'}</DrawerCount>}
             </DrawerTitle>
 
             {(!cartdata || cartdata.length === 0) ? (

@@ -72,6 +72,9 @@ function ProdModal({ product, onClose }) {
                     <ModalBody>
                         <ModalName>{product.name}</ModalName>
                         <ModalPrice>{product.price}</ModalPrice>
+                        {product.description && (
+                            <ModalDesc>{product.description}</ModalDesc>
+                        )}
                         <AddCart data={cartData} />
                     </ModalBody>
                 </div>
@@ -748,5 +751,12 @@ const ModalName = styled.p`
 const ModalPrice = styled.p`
     font-family: 'DM Sans', sans-serif;
     font-size: 12px; letter-spacing: 0.1em;
-    color: #999; margin: 0 0 36px;
+    color: #999; margin: 0 0 20px;
+`
+
+const ModalDesc = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; line-height: 1.75;
+    color: #666; margin: 0 0 28px;
+    white-space: pre-line;
 `
