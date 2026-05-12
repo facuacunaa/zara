@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
+import PageLoader from "../Components/PageLoader";
 import AddCart from "../Components/Product-Page-Component/AddCart";
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
@@ -15,13 +16,18 @@ const Homepage = () => {
     const [artists,        setArtists]        = useState([])
     const [banner,         setBanner]         = useState(null)
     const [mission,        setMission]        = useState(null)
+
+    // ── Gate: show content only when paint intro + critical data are ready ──
+    const [paintDone,      setPaintDone]      = useState(false)
+    const [settingsLoaded, setSettingsLoaded] = useState(false)
+    const [productsLoaded, setProductsLoaded] = useState(false)
+    const allReady = paintDone && settingsLoaded && productsLoaded
+
     useEffect(() => {
         axios.get(`${API}/artist`)
             .then(r => setArtists(r.data || []))
             .catch(() => {})
     }, [])
-
-
 
     useEffect(() => {
         axios.get(`${API}/settings`)
@@ -38,12 +44,14 @@ const Homepage = () => {
                 )
             })
             .catch(() => {})
+            .finally(() => setSettingsLoaded(true))
     }, [])
 
     useEffect(() => {
         axios.get(`${API}/artist/all-products`)
             .then(r => setArtistProducts(r.data || []))
             .catch(() => {})
+            .finally(() => setProductsLoaded(true))
     }, [])
 
     return (
@@ -51,7 +59,13 @@ const Homepage = () => {
             <Navbar />
 
             {/* ── PAINT INTRO ─────────────────────────────────────────── */}
-            <PaintIntro />
+            <PaintIntro onDone={() => setPaintDone(true)} />
+
+            {/* ── LOADING BRIDGE: paint done but data not yet ready ────── */}
+            {paintDone && !allReady && <PageLoader />}
+
+            {/* ── MAIN CONTENT — only mounts once hero + products ready ── */}
+            {allReady && <ContentReveal>
 
             {/* ── BANNER ──────────────────────────────────────────────── */}
             {banner && (
@@ -337,6 +351,8 @@ const Homepage = () => {
             {selectedProd && (
                 <HomeProdModal product={selectedProd} onClose={() => setSelectedProd(null)} />
             )}
+
+            </ContentReveal>}
         </HomeWrap>
     );
 }
@@ -344,9 +360,16 @@ const Homepage = () => {
 /* ═══════════════════════════════════════════════════════════════
    LAYOUT
 ═══════════════════════════════════════════════════════════════ */
+const revealAnim = keyframes`
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+`
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
+`
+const ContentReveal = styled.div`
+    animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 `
 const MissionSection = styled.section`
     background: #111;
@@ -500,11 +523,19 @@ function safeStorage(action, key, val) {
     catch(e) { return null }
 }
 
-function PaintIntro() {
-    const canvasRef = useRef(null)
+function PaintIntro({ onDone }) {
+    const canvasRef  = useRef(null)
+    const onDoneRef  = useRef(onDone)
+    useEffect(() => { onDoneRef.current = onDone }, [onDone])
+
     const alreadySeen = safeStorage('get', 'paintSeen')
     const [phase,   setPhase]   = useState(alreadySeen ? 2 : 0)
     const [textIdx, setTextIdx] = useState(0)
+
+    // If already seen, fire immediately so the gate opens
+    useEffect(() => {
+        if (alreadySeen) onDoneRef.current?.()
+    }, []) // eslint-disable-line
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -602,12 +633,15 @@ function PaintIntro() {
                 ctx.fillStyle = 'rgba(252,248,242,1)'
                 ctx.fillRect(0, 0, W, H)
                 setTimeout(() => setPhase(1), 80)
-                setTimeout(() => setPhase(2), 980)
+                setTimeout(() => { setPhase(2); onDoneRef.current?.() }, 980)
             }
         }
         rafId = requestAnimationFrame(frame)
         // Safety fallback: force-hide overlay after 8s no matter what
-        const safetyId = setTimeout(() => { setPhase(1); setTimeout(() => setPhase(2), 900) }, 8000)
+        const safetyId = setTimeout(() => {
+            setPhase(1)
+            setTimeout(() => { setPhase(2); onDoneRef.current?.() }, 900)
+        }, 8000)
         return () => { cancelAnimationFrame(rafId); clearTimeout(safetyId) }
     }, [])
 
