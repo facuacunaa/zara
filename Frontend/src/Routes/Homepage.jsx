@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import PageLoader from "../Components/PageLoader";
 import AddCart from "../Components/Product-Page-Component/AddCart";
 import RelatedSections from "../Components/Product-Page-Component/RelatedSections";
+import ProductDetailModal from "../Components/Product-Page-Component/ProductDetailModal";
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
 
@@ -350,7 +351,7 @@ const Homepage = () => {
 
             {/* ── PRODUCT MODAL ──────────────────────────────────────── */}
             {selectedProd && (
-                <HomeProdModal
+                <ProductDetailModal
                     product={selectedProd}
                     onClose={() => setSelectedProd(null)}
                     allProducts={artistProducts}
