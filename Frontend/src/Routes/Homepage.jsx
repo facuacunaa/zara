@@ -471,9 +471,9 @@ function ArtistsSlider({ artists }) {
 const SliderSection = styled.section`
     position: relative;
     width: 100%;
-    height: 85vh;
-    min-height: 520px;
-    max-height: 900px;
+    height: 52vh;
+    min-height: 320px;
+    max-height: 520px;
     overflow: hidden;
     background: #0a0a0a;
 `
@@ -523,7 +523,7 @@ const SlideEyebrow = styled.p`
 `
 const SlideName = styled.h2`
     font-family:'Playfair Display',Georgia,serif;
-    font-size:clamp(2.2rem,6vw,4.5rem);font-weight:300;font-style:italic;
+    font-size:clamp(1.6rem,4vw,2.8rem);font-weight:300;font-style:italic;
     color:#fff;line-height:1.1;margin:0;
     text-shadow:0 2px 24px rgba(0,0,0,.4);
 `
@@ -554,7 +554,7 @@ const SliderArrow = styled.button`
     @media(max-width:640px){display:none;}
 `
 const SliderDots = styled.div`
-    position:absolute;bottom:44px;left:50%;transform:translateX(-50%);
+    position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
     display:flex;gap:8px;z-index:2;
 `
 const Dot = styled.button`
