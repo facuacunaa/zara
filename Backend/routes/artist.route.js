@@ -318,6 +318,29 @@ artistRouter.post("/shop-products", artistAuth, upload.single("image"), async (r
     }
 })
 
+// ── EDITAR PRODUCTO DEL SHOP THE LOOK ────────────────────────────────────
+artistRouter.patch("/shop-products/:index", artistAuth, upload.single("image"), async (req, res) => {
+    try {
+        const artist = await ArtistModel.findById(req.artistId)
+        const idx = parseInt(req.params.index)
+        if (isNaN(idx) || idx < 0 || idx >= artist.shopProducts.length)
+            return res.status(400).json({ msg: "Índice inválido" })
+
+        const { name, price, description } = req.body
+        if (name        !== undefined) artist.shopProducts[idx].name        = name
+        if (price       !== undefined) artist.shopProducts[idx].price       = price
+        if (description !== undefined) artist.shopProducts[idx].description = description
+        if (req.file)                  artist.shopProducts[idx].image       = req.file.path
+
+        artist.markModified("shopProducts")
+        await artist.save()
+        const updated = await ArtistModel.findById(req.artistId).select("-password")
+        res.json({ msg: "Producto actualizado", artist: updated })
+    } catch (err) {
+        res.status(500).json({ msg: "Error", error: err.message })
+    }
+})
+
 // ── ELIMINAR PRODUCTO DEL SHOP THE LOOK ───────────────────────────────────
 artistRouter.delete("/shop-products/:index", artistAuth, async (req, res) => {
     try {

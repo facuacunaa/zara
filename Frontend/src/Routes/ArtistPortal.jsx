@@ -90,6 +90,8 @@ export default function ArtistPortal() {
 
   // Nuevo producto para Shop the Look
   const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '', file: null, preview: null })
+  // Producto en edición (null = modo agregar)
+  const [editingIdx, setEditingIdx] = useState(null)   // índice del producto editado
 
   // Textos editables
   const [texts, setTexts] = useState(EMPTY_TEXTS)
@@ -321,6 +323,34 @@ export default function ArtistPortal() {
       if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Producto eliminado')
     } catch { flash('❌ Error al eliminar') }
+  }
+
+  /* ── Actualizar producto del Shop the Look ───────────────────────────── */
+  const updateShopProduct = async () => {
+    if (!newProduct.name || !newProduct.price) return flash('❌ Completá nombre y precio')
+    setLoading(true); setProductProgress(0)
+    const form = new FormData()
+    form.append('name',        newProduct.name)
+    form.append('price',       newProduct.price)
+    form.append('description', newProduct.description)
+    if (newProduct.file) form.append('image', newProduct.file)
+    try {
+      const res = await axios.patch(`${API}/artist/shop-products/${editingIdx}`, form, {
+        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: e => setProductProgress(Math.round((e.loaded * 100) / e.total))
+      })
+      if (res.data?.artist) applyArtist(res.data.artist)
+      setNewProduct({ name: '', price: '', description: '', file: null, preview: null })
+      setEditingIdx(null)
+      flash('✅ Producto actualizado')
+    } catch { flash('❌ Error al actualizar producto') }
+    setLoading(false); setProductProgress(0)
+  }
+
+  /* ── Cancelar edición ────────────────────────────────────────────────── */
+  const cancelEdit = () => {
+    setEditingIdx(null)
+    setNewProduct({ name: '', price: '', description: '', file: null, preview: null })
   }
 
   /* ── Guardar hotspots ────────────────────────────────────────────────── */
@@ -852,15 +882,24 @@ export default function ArtistPortal() {
               {artist.shopProducts?.length > 0 ? (
                 <ProductGrid>
                   {artist.shopProducts.map((p, i) => (
-                    <ProductItem key={i}>
+                    <ProductItem key={i} editing={editingIdx === i}>
+                      {editingIdx === i && <ProductEditingBadge>Editando</ProductEditingBadge>}
                       <ProductItemImg>
                         {p.image ? <img src={p.image} alt={p.name} /> : <span>Sin imagen</span>}
                       </ProductItemImg>
                       <ProductItemInfo>
                         <strong>{p.name}</strong>
                         <span>{p.price}</span>
+                        {p.description && <em>{p.description.slice(0, 60)}{p.description.length > 60 ? '…' : ''}</em>}
                       </ProductItemInfo>
-                      <ProductItemDelete onClick={() => deleteShopProduct(i)}>✕ Eliminar</ProductItemDelete>
+                      <ProductItemActions>
+                        <ProductItemEdit onClick={() => {
+                          setEditingIdx(i)
+                          setNewProduct({ name: p.name, price: p.price, description: p.description || '', file: null, preview: p.image || null })
+                          document.getElementById('product-form-box')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        }}>✏ Editar</ProductItemEdit>
+                        <ProductItemDelete onClick={() => deleteShopProduct(i)}>✕</ProductItemDelete>
+                      </ProductItemActions>
                     </ProductItem>
                   ))}
                 </ProductGrid>
@@ -868,14 +907,26 @@ export default function ArtistPortal() {
                 <Empty>No hay productos aún. Agregá el primero abajo.</Empty>
               )}
 
-              {/* Formulario para agregar producto */}
-              <AddProductBox>
-                <SectionTitle style={{ marginBottom: 16 }}>Agregar producto</SectionTitle>
+              {/* Formulario para agregar / editar producto */}
+              <AddProductBox id="product-form-box" editing={editingIdx !== null}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <SectionTitle style={{ margin: 0 }}>
+                    {editingIdx !== null ? `Editando producto ${editingIdx + 1}` : 'Agregar producto'}
+                  </SectionTitle>
+                  {editingIdx !== null && (
+                    <CancelEditBtn onClick={cancelEdit}>✕ Cancelar</CancelEditBtn>
+                  )}
+                </div>
 
                 {/* Preview de imagen seleccionada */}
                 <ProductImgPicker onClick={() => productImgRef.current?.click()}>
                   {newProduct.preview ? (
-                    <img src={newProduct.preview} alt="preview" />
+                    <>
+                      <img src={newProduct.preview} alt="preview" />
+                      {editingIdx !== null && !newProduct.file && (
+                        <ProductImgKeepBadge>Imagen actual · click para cambiar</ProductImgKeepBadge>
+                      )}
+                    </>
                   ) : (
                     <div className="placeholder">
                       <span>+</span>
@@ -926,15 +977,20 @@ export default function ArtistPortal() {
                   </InfoGroup>
                 </ProductFormFields>
 
-                <SaveBtn
-                  style={{ marginTop: 20 }}
-                  disabled={loading}
-                  onClick={addShopProduct}
-                >
-                  {loading && productProgress > 0
-                    ? `Subiendo… ${productProgress}%`
-                    : '+ AGREGAR PRODUCTO'}
-                </SaveBtn>
+                <ProductFormBtns>
+                  {editingIdx !== null ? (
+                    <>
+                      <SaveBtn disabled={loading} onClick={updateShopProduct} style={{ flex: 1 }}>
+                        {loading && productProgress > 0 ? `Guardando… ${productProgress}%` : '✓ GUARDAR CAMBIOS'}
+                      </SaveBtn>
+                      <CancelEditBtn onClick={cancelEdit} style={{ padding: '12px 20px' }}>Cancelar</CancelEditBtn>
+                    </>
+                  ) : (
+                    <SaveBtn disabled={loading} onClick={addShopProduct} style={{ flex: 1 }}>
+                      {loading && productProgress > 0 ? `Subiendo… ${productProgress}%` : '+ AGREGAR PRODUCTO'}
+                    </SaveBtn>
+                  )}
+                </ProductFormBtns>
               </AddProductBox>
             </Section>
           </>
@@ -1086,17 +1142,33 @@ const Empty           = styled.p`text-align:center;color:#bbb;font-size:13px;pad
 
 /* Shop Products */
 const ProductGrid      = styled.div`display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:24px;`
-const ProductItem      = styled.div`background:#fafafa;border:1px solid #eee;overflow:hidden;`
+const ProductItem      = styled.div`background:#fafafa;border:1px solid ${p=>p.editing?'#0a0a0a':'#eee'};overflow:hidden;
+  position:relative;transition:border-color .2s;
+  ${p=>p.editing&&'box-shadow:0 0 0 2px rgba(0,0,0,.08);'}`
+const ProductEditingBadge = styled.div`position:absolute;top:0;left:0;right:0;background:#0a0a0a;color:#fff;
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;text-align:center;padding:4px 0;z-index:1;`
 const ProductItemImg   = styled.div`aspect-ratio:2/3;background:#f0f0f0;overflow:hidden;position:relative;
   img{width:100%;height:100%;object-fit:cover;display:block;}
   span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#bbb;}`
-const ProductItemInfo  = styled.div`padding:10px 12px 6px;display:flex;flex-direction:column;gap:2px;
+const ProductItemInfo  = styled.div`padding:10px 12px 6px;display:flex;flex-direction:column;gap:3px;
   strong{font-size:11px;font-weight:500;letter-spacing:.05em;}
-  span{font-size:12px;color:#888;font-family:Georgia,serif;}`
-const ProductItemDelete= styled.button`width:100%;background:transparent;border:none;border-top:1px solid #eee;
-  padding:8px;font-size:10px;color:#c00;cursor:pointer;letter-spacing:.1em;
+  span{font-size:12px;color:#888;font-family:Georgia,serif;}
+  em{font-size:10px;color:#bbb;font-style:normal;line-height:1.4;}`
+const ProductItemActions = styled.div`display:flex;border-top:1px solid #eee;`
+const ProductItemEdit  = styled.button`flex:1;background:transparent;border:none;border-right:1px solid #eee;
+  padding:8px;font-size:10px;color:#555;cursor:pointer;letter-spacing:.05em;
+  &:hover{background:#0a0a0a;color:white;}`
+const ProductItemDelete= styled.button`flex:0 0 36px;background:transparent;border:none;
+  padding:8px;font-size:11px;color:#c00;cursor:pointer;
   &:hover{background:#c00;color:white;}`
-const AddProductBox    = styled.div`background:#f9f9f9;border:1px dashed #ddd;padding:24px;`
+const AddProductBox    = styled.div`background:${p=>p.editing?'#fff':'#f9f9f9'};
+  border:${p=>p.editing?'2px solid #0a0a0a':'1px dashed #ddd'};padding:24px;
+  transition:border .2s,background .2s;`
+const CancelEditBtn    = styled.button`background:transparent;border:none;font-size:10px;letter-spacing:.15em;
+  color:#aaa;cursor:pointer;text-transform:uppercase;padding:4px 0;&:hover{color:#000;}`
+const ProductImgKeepBadge = styled.div`position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);
+  color:#fff;font-size:9px;text-align:center;padding:5px;letter-spacing:.05em;`
+const ProductFormBtns  = styled.div`display:flex;gap:12px;margin-top:20px;align-items:center;`
 const ProductImgPicker = styled.div`width:140px;aspect-ratio:2/3;background:#f0f0f0;border:2px dashed #ddd;
   cursor:pointer;overflow:hidden;position:relative;margin-bottom:16px;
   img{width:100%;height:100%;object-fit:cover;display:block;}
