@@ -204,16 +204,12 @@ const Navbar = ({ activeIndexs }) => {
                     <SidebarBrand>La Casita<br/>del Hornero</SidebarBrand>
 
                     {/* Artistas */}
-                    {artists.length > 0 && (
-                        <ArtistList>
-                            <ArtistListLabel>— Artistas</ArtistListLabel>
-                            {artists.map(a => (
-                                <ArtistItem key={a.slug}>
-                                    <Link to={`/${a.slug}`}>{a.name}</Link>
-                                </ArtistItem>
-                            ))}
-                        </ArtistList>
-                    )}
+                    <ArtistList>
+                        <ArtistListLabel>— Artistas</ArtistListLabel>
+                        <ArtistItem>
+                            <Link to="/explorar">Conocer a los artistas</Link>
+                        </ArtistItem>
+                    </ArtistList>
 
                     {/* Acceso portales */}
                     <PortalSection>
@@ -237,7 +233,6 @@ const Navbar = ({ activeIndexs }) => {
                     {/* Links secundarios */}
                     <SidebarFooterLinks>
                         <Link to="/products">Tienda</Link>
-                        <Link to="/explorar">Artistas</Link>
                         <Link to="/cart">Carrito {cart && cart.length > 0 ? `(${cart.length})` : ''}</Link>
                         {!isAuth
                             ? <Link to="/login" state={{ path: '/' }}>Iniciar sesión</Link>
