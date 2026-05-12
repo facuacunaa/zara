@@ -67,7 +67,7 @@ artistRouter.post("/login", async (req, res) => {
 // ── LISTAR TODOS LOS ARTISTAS (público) ───────────────────────────────────
 artistRouter.get("/", async (req, res) => {
     try {
-        const artists = await ArtistModel.find({}).select("name slug").lean()
+        const artists = await ArtistModel.find({}).select("name slug profileImage images").lean()
         res.json(artists)
     } catch (err) {
         res.status(500).json({ msg: "Error", error: err.message })
