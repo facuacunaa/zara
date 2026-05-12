@@ -6,10 +6,10 @@ const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.ap
 
 /* ── Etiquetas de los slots de imágenes ───────────────────────────────────── */
 const IMAGE_SLOTS = [
-  { label: 'Imagen hero',           hint: 'Aparece de fondo en el hero si no hay video' },
-  { label: 'Imagen junto al texto', hint: 'Sección 3 – imagen a la derecha del texto'   },
-  { label: 'Imagen par izquierda',  hint: 'Sección 4 – primera imagen lado a lado'      },
-  { label: 'Imagen par derecha',    hint: 'Sección 4 – segunda imagen lado a lado'      },
+  { label: 'Imagen hero',           hint: 'Aparece de fondo en el hero si no hay video',      section: 'hero',      where: 'Pantalla inicial · 100% ancho' },
+  { label: 'Imagen junto al texto', hint: 'Sección Texto + Imagen — a la derecha del texto',  section: 'block',     where: 'Texto + Imagen · columna derecha' },
+  { label: 'Imagen par izquierda',  hint: 'Sección Texto + Imagen — primera imagen',          section: 'block',     where: 'Texto + Imagen · imagen adicional' },
+  { label: 'Imagen par derecha',    hint: 'Sección Texto + Imagen — segunda imagen',          section: 'block',     where: 'Texto + Imagen · imagen adicional' },
 ]
 
 /* ── Estado inicial de textos ─────────────────────────────────────────────── */
@@ -32,6 +32,46 @@ const EMPTY_TEXTS = {
 
 /* ── Hotspot vacío ────────────────────────────────────────────────────────── */
 const EMPTY_HOTSPOT = { x: 50, y: 50, name: '', price: '' }
+
+/* ── MAPA VISUAL DE LA PÁGINA ─────────────────────────────────────────────── */
+const PAGE_SECTIONS = [
+  { id: 'hero',      label: 'Hero',           flex: 5  },
+  { id: 'bio',       label: 'Historia',        flex: 2.5},
+  { id: 'editorial', label: 'Statement',       flex: 1.5},
+  { id: 'block',     label: 'Texto + Imagen',  flex: 2  },
+  { id: 'shop',      label: 'Shop the Look',   flex: 2.5},
+  { id: 'products',  label: 'Productos',       flex: 2  },
+  { id: 'footer',    label: 'Pie de página',   flex: 1  },
+]
+
+function PageMap({ active, labels = false }) {
+  return (
+    <MapBox>
+      {PAGE_SECTIONS.map(s => (
+        <MapSlice key={s.id} $flex={s.flex} $active={s.id === active}>
+          {labels && s.id === active && <MapSliceLabel>{s.label}</MapSliceLabel>}
+        </MapSlice>
+      ))}
+    </MapBox>
+  )
+}
+
+function WhereItGoes({ section, text, extra }) {
+  const found = PAGE_SECTIONS.find(s => s.id === section)
+  return (
+    <WhereBanner>
+      <WhereMap>
+        <PageMap active={section} labels />
+        <WhereMapLabel>{found?.label || section}</WhereMapLabel>
+      </WhereMap>
+      <WhereInfo>
+        <WhereBadge>Dónde aparece en tu página</WhereBadge>
+        <WhereText>{text}</WhereText>
+        {extra && <WhereExtra>{extra}</WhereExtra>}
+      </WhereInfo>
+    </WhereBanner>
+  )
+}
 
 export default function ArtistPortal() {
   const [token,    setToken]   = useState(localStorage.getItem('artistToken') || '')
@@ -357,6 +397,7 @@ export default function ArtistPortal() {
             <Section>
               <SectionTitle>Foto de perfil</SectionTitle>
               <SectionSub>Aparece en la página principal para que los clientes te encuentren. Usá una foto tuya o de tus obras.</SectionSub>
+              <WhereItGoes section="hero" text="Se muestra en la galería de artistas (/explorar) y como imagen de fondo del hero si no tenés video." extra="Formato recomendado: cuadrado o vertical · mínimo 600×600px" />
               <ProfilePhotoWrap>
                 <ProfilePhotoBox onClick={() => !loading && profileRef.current?.click()}>
                   {profileProgress > 0 ? (
@@ -390,6 +431,7 @@ export default function ArtistPortal() {
             <Section>
               <SectionTitle>Video hero</SectionTitle>
               <SectionSub>Se reproduce automáticamente al entrar a tu página. MP4, MOV o WEBM · Máx. 200MB</SectionSub>
+              <WhereItGoes section="hero" text="Ocupa toda la pantalla al abrir tu página. Es lo primero que ve el visitante — elegí un video que represente tu trabajo." extra="Si no tenés video, se usa la foto de perfil como fondo." />
               <HeroPreviewBox>
                 {artist.heroVideo
                   ? <HeroVideo src={artist.heroVideo} autoPlay muted loop playsInline />
@@ -422,6 +464,7 @@ export default function ArtistPortal() {
             <Section>
               <SectionTitle>Subtítulo del hero</SectionTitle>
               <SectionSub>Aparece sobre el nombre en el hero. Ej: COLECCIÓN EXCLUSIVA · 2024</SectionSub>
+              <WhereItGoes section="hero" text="Aparece en letras pequeñas encima de tu nombre en la pantalla inicial de tu página." />
               <InfoInput
                 value={texts.subtitle}
                 onChange={e => setTexts({...texts, subtitle: e.target.value})}
@@ -455,6 +498,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Título de la sección</SectionTitle>
                 <SectionSub>Aparece como etiqueta pequeña antes de tu historia. Por defecto: "Mi historia"</SectionSub>
+                <WhereItGoes section="bio" text="Etiqueta que encabeza tu sección de historia, visible justo después del hero." />
                 <InfoGroup full>
                   <InfoLabel>Título (ej: Mi historia · Sobre mí · Quién soy)</InfoLabel>
                   <InfoInput
@@ -468,6 +512,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Tu historia</SectionTitle>
                 <SectionSub>Contá quién sos, de dónde venís, qué te llevó a la moda y al arte.</SectionSub>
+                <WhereItGoes section="bio" text="Aparece en la columna izquierda de la sección Historia, debajo del hero. Es el texto principal donde contás tu recorrido." extra="Podés usar saltos de línea para separar párrafos." />
                 <InfoGroup full>
                   <InfoLabel>Texto libre (podés usar saltos de línea)</InfoLabel>
                   <InfoTextarea
@@ -482,6 +527,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Tus metas y lo que intentás retratar</SectionTitle>
                 <SectionSub>Contá cuál es tu visión, qué emoción o mensaje querés transmitir con cada colección.</SectionSub>
+                <WhereItGoes section="bio" text="Aparece en la columna derecha de la Historia, junto a tu texto principal. Resalta tu visión artística." />
                 <InfoGroup full>
                   <InfoLabel>Metas y visión</InfoLabel>
                   <InfoTextarea
@@ -496,6 +542,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Tu frase personal</SectionTitle>
                 <SectionSub>Una cita tuya que defina tu filosofía. Aparece destacada al final de tu historia.</SectionSub>
+                <WhereItGoes section="bio" text='Aparece como blockquote en la columna derecha de tu Historia, con el formato: "Tu frase" — Tu nombre.' />
                 <InfoGroup full>
                   <InfoLabel>Frase (sin comillas, las agrega automático)</InfoLabel>
                   <InfoInput
@@ -530,6 +577,10 @@ export default function ArtistPortal() {
                     <SlotNum>{i + 1}</SlotNum>
                     <SlotLabel>{slot.label}</SlotLabel>
                     <SlotHint>{slot.hint}</SlotHint>
+                    <SlotWhere>
+                      <SlotPageMap><PageMap active={slot.section} /></SlotPageMap>
+                      <SlotWhereTxt>{slot.where}</SlotWhereTxt>
+                    </SlotWhere>
 
                     {uploading ? (
                       <SlotUploading>
@@ -589,6 +640,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Frase editorial</SectionTitle>
                 <SectionSub>Aparece centrada debajo del hero. Si dejás vacío, no se muestra.</SectionSub>
+                <WhereItGoes section="editorial" text="Bloque de texto grande y centrado entre el Hero y tu Historia. Ideal para una frase impactante que defina tu colección." />
                 <InfoGrid>
                   <InfoGroup>
                     <InfoLabel>Etiqueta pequeña (ej: — La colección)</InfoLabel>
@@ -615,6 +667,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Texto junto a la imagen</SectionTitle>
                 <SectionSub>Este texto aparece a la izquierda, con la "Imagen junto al texto" a la derecha.</SectionSub>
+                <WhereItGoes section="block" text="Grid de dos columnas: tu texto a la izquierda, la Imagen junto al texto a la derecha. Aparece a la mitad de la página." extra='La imagen se sube en la pestaña "Imágenes" → slot 2.' />
                 <InfoGrid>
                   <InfoGroup full>
                     <InfoLabel>Título (itálica grande)</InfoLabel>
@@ -635,6 +688,7 @@ export default function ArtistPortal() {
               <Section>
                 <SectionTitle>Sección de productos</SectionTitle>
                 <SectionSub>Encabezado que aparece arriba del grid de todos los productos.</SectionSub>
+                <WhereItGoes section="products" text="Título y descripción que encabezan el grid de productos en tu página. Los productos se gestionan en la pestaña Productos." />
                 <InfoGrid>
                   <InfoGroup full>
                     <InfoLabel>Título de la sección</InfoLabel>
@@ -654,6 +708,7 @@ export default function ArtistPortal() {
               {/* ── Footer ── */}
               <Section>
                 <SectionTitle>Footer</SectionTitle>
+                <WhereItGoes section="footer" text="Pie de página de tu perfil artístico. El texto pequeño y la palabra final aparecen al final de toda tu página." />
                 <InfoGrid>
                   <InfoGroup full>
                     <InfoLabel>Texto pequeño del footer</InfoLabel>
@@ -686,6 +741,7 @@ export default function ArtistPortal() {
             <Section>
               <SectionTitle>Imagen de fondo</SectionTitle>
               <SectionSub>Esta imagen aparece con los hotspots superpuestos.</SectionSub>
+              <WhereItGoes section="shop" text='Imagen principal de la sección "Shop the Look". Sobre ella se muestran los puntos interactivos (hotspots) que llevan a cada producto.' extra="Usá una foto de alta calidad que muestre varios de tus productos a la vez." />
               <ShopImgPreview>
                 {artist.shopImage
                   ? <img src={artist.shopImage} alt="shop" />
@@ -789,6 +845,7 @@ export default function ArtistPortal() {
             <Section>
               <SectionTitle>Productos del look</SectionTitle>
               <SectionSub>Estos productos aparecen como tarjetas debajo del Shop the Look. Subí la foto, nombre y precio de cada prenda.</SectionSub>
+              <WhereItGoes section="products" text='Aparecen como tarjetas comprables debajo de la imagen principal de "Shop the Look" y también en la tienda general (/products).' />
 
               {/* Grid de productos existentes */}
               {artist.shopProducts?.length > 0 ? (
@@ -1042,3 +1099,100 @@ const ProductImgUploading = styled.div`position:absolute;inset:0;background:rgba
   span{color:white;font-size:13px;font-weight:500;}`
 const ProductFormFields= styled.div`display:grid;grid-template-columns:1fr 1fr;gap:14px;
   @media(max-width:480px){grid-template-columns:1fr;}`
+
+/* ── PageMap & WhereItGoes ─────────────────────────────────────────────────── */
+const MapBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 28px;
+  height: 80px;
+  gap: 2px;
+  flex-shrink: 0;
+`
+const MapSlice = styled.div`
+  flex: ${p => p.$flex};
+  background: ${p => p.$active ? '#111' : '#e8e8e8'};
+  border-radius: 2px;
+  transition: background .2s;
+  position: relative;
+`
+const MapSliceLabel = styled.span`
+  display: none;
+`
+
+/* Where it goes banner */
+const WhereBanner = styled.div`
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  background: #f7f7f5;
+  border: 1px solid #ebebeb;
+  border-left: 3px solid #111;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border-radius: 0 2px 2px 0;
+`
+const WhereMap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+`
+const WhereMapLabel = styled.span`
+  font-size: 8px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #111;
+  font-weight: 500;
+  text-align: center;
+  max-width: 40px;
+  line-height: 1.3;
+`
+const WhereInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+`
+const WhereBadge = styled.span`
+  font-size: 8px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: #888;
+`
+const WhereText = styled.p`
+  font-size: 11px;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+`
+const WhereExtra = styled.p`
+  font-size: 10px;
+  color: #aaa;
+  margin: 0;
+  line-height: 1.5;
+`
+
+/* Slot where badge */
+const SlotWhere = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 12px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 4px;
+`
+const SlotPageMap = styled.div`
+  flex-shrink: 0;
+  > div {
+    width: 18px;
+    height: 52px;
+  }
+`
+const SlotWhereTxt = styled.span`
+  font-size: 9px;
+  color: #aaa;
+  line-height: 1.4;
+  letter-spacing: .03em;
+`
