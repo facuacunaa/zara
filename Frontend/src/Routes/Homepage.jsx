@@ -125,6 +125,9 @@ const Homepage = () => {
                 </MissionRight>
             </MissionSection>
 
+            {/* ── SLIDER DE ARTISTAS ──────────────────────────────────── */}
+            {artists.length > 0 && <ArtistsSlider artists={artists} />}
+
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
                 <FeaturedSection id="coleccion">
@@ -363,6 +366,212 @@ const Homepage = () => {
         </HomeWrap>
     );
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ARTISTS SLIDER
+═══════════════════════════════════════════════════════════════ */
+const SLIDE_DURATION = 5000   // ms per slide
+
+function ArtistsSlider({ artists }) {
+    const [current,   setCurrent]   = useState(0)
+    const [paused,    setPaused]    = useState(false)
+    const [progress,  setProgress]  = useState(0)
+    const intervalRef = useRef(null)
+    const rafRef      = useRef(null)
+    const startRef    = useRef(null)
+
+    const total = artists.length
+
+    const goTo = (idx) => {
+        setCurrent((idx + total) % total)
+        setProgress(0)
+        startRef.current = null
+    }
+    const next = () => goTo(current + 1)
+    const prev = () => goTo(current - 1)
+
+    // Progress bar + auto-advance
+    useEffect(() => {
+        if (paused) { cancelAnimationFrame(rafRef.current); return }
+        const tick = (ts) => {
+            if (!startRef.current) startRef.current = ts
+            const elapsed = ts - startRef.current
+            const p = Math.min(elapsed / SLIDE_DURATION, 1)
+            setProgress(p)
+            if (p < 1) {
+                rafRef.current = requestAnimationFrame(tick)
+            } else {
+                setCurrent(c => (c + 1) % total)
+                setProgress(0)
+                startRef.current = null
+                rafRef.current = requestAnimationFrame(tick)
+            }
+        }
+        rafRef.current = requestAnimationFrame(tick)
+        return () => cancelAnimationFrame(rafRef.current)
+    }, [paused, current, total])
+
+    const a = artists[current]
+    const bg = a.profileImage || a.images?.[0] || ''
+
+    return (
+        <SliderSection onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+
+            {/* ── SLIDES (absolute-stacked, only current visible) ─── */}
+            <SliderTrack>
+                {artists.map((artist, i) => {
+                    const photo = artist.profileImage || artist.images?.[0] || ''
+                    return (
+                        <Slide key={artist._id || artist.slug} $active={i === current}>
+                            {photo
+                                ? <SlideImg src={photo} alt={artist.name} />
+                                : <SlidePlaceholder>{artist.name.charAt(0)}</SlidePlaceholder>
+                            }
+                            <SlideOverlay />
+                            <SlideContent $active={i === current}>
+                                <SlideEyebrow>— Artista</SlideEyebrow>
+                                <SlideName>{artist.name}</SlideName>
+                                <SlideNum>{String(i + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</SlideNum>
+                                <SlideCta to={`/${artist.slug}`}>
+                                    Ver perfil &nbsp;→
+                                </SlideCta>
+                            </SlideContent>
+                        </Slide>
+                    )
+                })}
+            </SliderTrack>
+
+            {/* ── ARROWS ──────────────────────────────────────────── */}
+            <SliderArrow $side="left" onClick={prev}>
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <polyline points="13,3 6,10 13,17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </SliderArrow>
+            <SliderArrow $side="right" onClick={next}>
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <polyline points="7,3 14,10 7,17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </SliderArrow>
+
+            {/* ── DOTS ────────────────────────────────────────────── */}
+            <SliderDots>
+                {artists.map((_, i) => (
+                    <Dot key={i} $active={i === current} onClick={() => goTo(i)} />
+                ))}
+            </SliderDots>
+
+            {/* ── PROGRESS BAR ────────────────────────────────────── */}
+            <ProgressBar>
+                <ProgressFill style={{ width: `${progress * 100}%` }} />
+            </ProgressBar>
+        </SliderSection>
+    )
+}
+
+const SliderSection = styled.section`
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    min-height: 520px;
+    max-height: 900px;
+    overflow: hidden;
+    background: #0a0a0a;
+`
+const SliderTrack = styled.div`
+    position: absolute; inset: 0;
+`
+const slideInAnim = keyframes`from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:scale(1)}`
+const Slide = styled.div`
+    position: absolute; inset: 0;
+    opacity: ${p => p.$active ? 1 : 0};
+    transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: ${p => p.$active ? 'auto' : 'none'};
+`
+const SlideImg = styled.img`
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transform-origin: center;
+`
+const SlidePlaceholder = styled.div`
+    width:100%;height:100%;background:#111;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(4rem,15vw,10rem);font-style:italic;color:rgba(255,255,255,.06);
+`
+const SlideOverlay = styled.div`
+    position: absolute; inset: 0;
+    background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.72) 0%,
+        rgba(0,0,0,0.45) 50%,
+        rgba(0,0,0,0.15) 100%
+    );
+`
+const contentIn = keyframes`from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}`
+const SlideContent = styled.div`
+    position: absolute;
+    bottom: 14%;
+    left: clamp(28px, 8vw, 100px);
+    display: flex; flex-direction: column; gap: 16px;
+    max-width: 520px;
+    opacity: ${p => p.$active ? 1 : 0};
+    animation: ${p => p.$active ? contentIn : 'none'} 0.75s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+`
+const SlideEyebrow = styled.p`
+    font-family:'DM Sans',sans-serif;font-size:10px;
+    letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0;
+`
+const SlideName = styled.h2`
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:clamp(2.2rem,6vw,4.5rem);font-weight:300;font-style:italic;
+    color:#fff;line-height:1.1;margin:0;
+    text-shadow:0 2px 24px rgba(0,0,0,.4);
+`
+const SlideNum = styled.span`
+    font-family:'DM Sans',sans-serif;font-size:9px;
+    letter-spacing:.35em;color:rgba(255,255,255,.3);
+`
+const SlideCta = styled(Link)`
+    display:inline-flex;align-items:center;
+    font-family:'DM Sans',sans-serif;font-size:10px;
+    letter-spacing:.25em;text-transform:uppercase;
+    color:#fff;text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,.4);
+    padding-bottom:4px;width:fit-content;
+    transition:border-color .2s,color .2s;
+    &:hover{border-color:#fff;color:#f0e8d8;}
+`
+const SliderArrow = styled.button`
+    position:absolute;top:50%;transform:translateY(-50%);
+    ${p => p.$side === 'left' ? 'left:24px;' : 'right:24px;'}
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;width:44px;height:44px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:2;
+    transition:background .2s;
+    &:hover{background:rgba(255,255,255,.22);}
+    @media(max-width:640px){display:none;}
+`
+const SliderDots = styled.div`
+    position:absolute;bottom:44px;left:50%;transform:translateX(-50%);
+    display:flex;gap:8px;z-index:2;
+`
+const Dot = styled.button`
+    width:${p => p.$active ? '24px' : '6px'};height:6px;
+    border-radius:3px;
+    background:${p => p.$active ? '#fff' : 'rgba(255,255,255,.3)'};
+    border:none;cursor:pointer;padding:0;
+    transition:width .35s cubic-bezier(.16,1,.3,1),background .35s;
+`
+const ProgressBar = styled.div`
+    position:absolute;bottom:0;left:0;right:0;
+    height:2px;background:rgba(255,255,255,.1);z-index:2;
+`
+const ProgressFill = styled.div`
+    height:100%;background:rgba(255,255,255,.7);
+    transition:width .05s linear;
+`
 
 /* ═══════════════════════════════════════════════════════════════
    LAYOUT
