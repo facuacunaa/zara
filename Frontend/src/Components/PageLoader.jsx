@@ -70,12 +70,13 @@ const Sub = styled.p`
     animation: ${blink} 1.8s ease-in-out infinite;
 `
 
-/* Pájaro anclado al centro */
+/* Pájaro anclado al centro — z-index alto para pasar por DELANTE del logo */
 const BirdWrap = styled.div`
     position: absolute;
     top: 50%; left: 50%;
     width: 0; height: 0;
     pointer-events: none;
+    z-index: 10;
     animation: ${flyIn} 3s cubic-bezier(0.33, 0.1, 0.5, 1) 0.5s both;
 `
 
