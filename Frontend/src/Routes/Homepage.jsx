@@ -160,7 +160,8 @@ const Homepage = () => {
                 </MissionRight>
             </MissionSection>
 
-            {/* ── CARRUSELES POR ARTISTA ─────────────────────────────── */}
+            {/* ── ARTISTAS: CARRUSELES + PERFILES (una sola tarjeta) ─── */}
+            <ArtistsFullCard>
             {artistProducts.length > 0 && (() => {
                 const map = {}
                 const order = []
@@ -209,7 +210,6 @@ const Homepage = () => {
                 )
             })()}
 
-            {/* ── ARTISTAS: PERFILES ─────────────────────────────────── */}
             {artists.length > 0 && (
                 <ArtistsShowcase id="artistas">
                     <ArtistsShowcaseHeader>
@@ -240,6 +240,7 @@ const Homepage = () => {
                     </ArtistsGrid>
                 </ArtistsShowcase>
             )}
+            </ArtistsFullCard>
 
             {/* ── TICKER DE ARTISTAS ─────────────────────────────────── */}
             {artists.length > 0 && (
@@ -1160,9 +1161,6 @@ const ArtistsShowcase = styled.section`
         ),
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     padding: 100px 40px 120px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
 `
@@ -1700,8 +1698,14 @@ const ShopTitle = styled.h2`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   CARRUSELES POR ARTISTA
+   ARTISTAS — tarjeta unificada (carruseles + perfiles)
 ═══════════════════════════════════════════════════════════════ */
+const ArtistsFullCard = styled.div`
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
+`
+
 const CarouselsSection = styled.section`
     background:
         repeating-linear-gradient(
@@ -1716,9 +1720,6 @@ const CarouselsSection = styled.section`
         ),
         linear-gradient(145deg, #2D1408 0%, #4A2510 35%, #3A1C0A 65%, #2A1208 100%);
     padding: 100px 0 120px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
 
 const CarouselsSectionHeader = styled.div`
