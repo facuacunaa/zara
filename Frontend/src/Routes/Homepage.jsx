@@ -19,12 +19,10 @@ const Homepage = () => {
     const [banner,         setBanner]         = useState(null)
     const [mission,        setMission]        = useState(null)
 
-    // ── Gate: show content only when paint intro + critical data are ready ──
-    const [paintDone,      setPaintDone]      = useState(false)
+    // ── Gate: show content only when loader is done ──
     const [settingsLoaded, setSettingsLoaded] = useState(false)
     const [productsLoaded, setProductsLoaded] = useState(false)
     const [loaderDone,     setLoaderDone]     = useState(false)
-    const allReady = paintDone && settingsLoaded && productsLoaded
     const dataReady = settingsLoaded && productsLoaded
 
     useEffect(() => {
@@ -62,11 +60,8 @@ const Homepage = () => {
         <HomeWrap>
             <Navbar />
 
-            {/* ── PAINT INTRO ─────────────────────────────────────────── */}
-            <PaintIntro onDone={() => setPaintDone(true)} />
-
-            {/* ── LOADING BRIDGE: paint done pero loader no terminó ───── */}
-            {paintDone && !loaderDone && (
+            {/* ── PAGE LOADER ─────────────────────────────────────────── */}
+            {!loaderDone && (
                 <PageLoader
                     ready={dataReady}
                     onDone={() => setLoaderDone(true)}
@@ -718,193 +713,6 @@ const PAINT_TEXTS = [
     { head: 'Colección\nlimitada',      sub: 'Obras originales, irrepetibles' },
     { head: 'Arte\nartesanal',          sub: 'Seguí bajando para ver la tienda' },
 ]
-
-function safeStorage(action, key, val) {
-    try { return action === 'get' ? localStorage.getItem(key) : localStorage.setItem(key, val) }
-    catch(e) { return null }
-}
-
-function PaintIntro({ onDone }) {
-    const canvasRef  = useRef(null)
-    const onDoneRef  = useRef(onDone)
-    useEffect(() => { onDoneRef.current = onDone }, [onDone])
-
-    const alreadySeen = safeStorage('get', 'paintSeen')
-    const [phase,   setPhase]   = useState(alreadySeen ? 2 : 0)
-    const [textIdx, setTextIdx] = useState(0)
-
-    // If already seen, fire immediately so the gate opens
-    useEffect(() => {
-        if (alreadySeen) onDoneRef.current?.()
-    }, []) // eslint-disable-line
-
-    useEffect(() => {
-        const canvas = canvasRef.current
-        if (!canvas) return
-        safeStorage('set', 'paintSeen', '1')
-        canvas.width  = window.innerWidth
-        canvas.height = window.innerHeight
-        const W = canvas.width, H = canvas.height
-        const ctx = canvas.getContext('2d')
-
-        const bz = ([p0,p1,p2,p3], t) => {
-            const m = 1 - t
-            return [
-                m*m*m*p0[0]+3*m*m*t*p1[0]+3*m*t*t*p2[0]+t*t*t*p3[0],
-                m*m*m*p0[1]+3*m*m*t*p1[1]+3*m*t*t*p2[1]+t*t*t*p3[1],
-            ]
-        }
-        const C = [
-            'rgba(252,248,242,0.97)',
-            'rgba(255,253,250,0.98)',
-            'rgba(250,246,240,0.96)',
-            'rgba(254,252,247,0.97)',
-        ]
-        const DUR = 0.55
-        const STROKES = [
-            { path:[[0,0.06],[0.30,0.02],[0.70,0.10],[1.02,0.04]], w:0.23, t0:0.00, c:C[0] },
-            { path:[[1.02,0.23],[0.65,0.18],[0.35,0.28],[0,0.21]], w:0.22, t0:0.45, c:C[1] },
-            { path:[[0,0.40],[0.28,0.35],[0.72,0.44],[1.02,0.38]], w:0.23, t0:0.90, c:C[2] },
-            { path:[[1.02,0.57],[0.60,0.52],[0.38,0.61],[0,0.55]], w:0.22, t0:1.35, c:C[3] },
-            { path:[[0,0.74],[0.32,0.70],[0.68,0.78],[1.02,0.72]], w:0.23, t0:1.80, c:C[0] },
-            { path:[[1.02,0.91],[0.60,0.87],[0.38,0.95],[0,0.89]], w:0.24, t0:2.25, c:C[1] },
-            { path:[[0.05,0.14],[0.28,0.09],[0.62,0.18],[0.95,0.13]], w:0.16, t0:0.68, c:C[2] },
-            { path:[[0.95,0.80],[0.65,0.76],[0.32,0.84],[0.05,0.79]], w:0.16, t0:2.50, c:C[3] },
-        ]
-        const SAMP = 64
-        const TOTAL = 2.50 + DUR  // last stroke done ~3.05s
-
-        const drawStroke = (s, progress) => {
-            if (progress <= 0) return
-            const pts = s.path.map(([fx,fy]) => [fx*W, fy*H])
-            const steps = Math.max(2, Math.floor(SAMP * progress))
-            const lw = s.w * H * (0.82 + 0.18 * Math.sin(progress * Math.PI))
-            ctx.beginPath()
-            for (let i = 0; i <= steps; i++) {
-                const [x,y] = bz(pts, i/SAMP)
-                i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)
-            }
-            ctx.lineWidth = lw; ctx.strokeStyle = s.c
-            ctx.lineCap = 'round'; ctx.lineJoin = 'round'
-            ctx.stroke()
-            ctx.beginPath()
-            for (let i = 0; i <= steps; i++) {
-                const [x,y] = bz(pts, i/SAMP)
-                i === 0 ? ctx.moveTo(x+4, y+3) : ctx.lineTo(x+4, y+3)
-            }
-            ctx.lineWidth = lw * 0.55
-            ctx.strokeStyle = s.c.replace(/[\d.]+\)$/, '0.28)')
-            ctx.stroke()
-            ctx.beginPath()
-            for (let i = 0; i <= steps; i++) {
-                const [x,y] = bz(pts, i/SAMP)
-                i === 0 ? ctx.moveTo(x-2, y-3) : ctx.lineTo(x-2, y-3)
-            }
-            ctx.lineWidth = lw * 0.18
-            ctx.strokeStyle = 'rgba(255,255,255,0.55)'
-            ctx.stroke()
-        }
-
-        const TEXTS = [0, 0.25, 0.50, 0.75]
-        let startTs = null, rafId, done = false
-
-        const frame = (ts) => {
-            if (!startTs) startTs = ts
-            const time = (ts - startTs) / 1000
-            const p = Math.min(1, time / TOTAL)
-
-            ctx.fillStyle = '#050505'
-            ctx.fillRect(0, 0, W, H)
-            STROKES.forEach(s => {
-                const sp = Math.min(1, Math.max(0, (time - s.t0) / DUR))
-                drawStroke(s, sp)
-            })
-            if (p >= 0.95) {
-                const a = Math.min(1, (p - 0.95) / 0.05)
-                ctx.fillStyle = `rgba(252,248,242,${a})`
-                ctx.fillRect(0, 0, W, H)
-            }
-
-            setTextIdx(p < 0.25 ? 0 : p < 0.50 ? 1 : p < 0.75 ? 2 : 3)
-
-            if (p < 1) {
-                rafId = requestAnimationFrame(frame)
-            } else if (!done) {
-                done = true
-                ctx.fillStyle = 'rgba(252,248,242,1)'
-                ctx.fillRect(0, 0, W, H)
-                setTimeout(() => setPhase(1), 80)
-                setTimeout(() => { setPhase(2); onDoneRef.current?.() }, 980)
-            }
-        }
-        rafId = requestAnimationFrame(frame)
-        // Safety fallback: force-hide overlay after 8s no matter what
-        const safetyId = setTimeout(() => {
-            setPhase(1)
-            setTimeout(() => { setPhase(2); onDoneRef.current?.() }, 900)
-        }, 8000)
-        return () => { cancelAnimationFrame(rafId); clearTimeout(safetyId) }
-    }, [])
-
-    if (phase === 2) return null
-
-    const LABELS = [
-        { head: 'Arte que\ntransforma',  sub: 'Piezas únicas de artistas locales' },
-        { head: 'Cada trazo\ncuenta',    sub: 'Hecho a mano, pensado para vos' },
-        { head: 'Colección\nlimitada',   sub: 'Obras originales, irrepetibles' },
-        { head: 'Arte\nartesanal',       sub: 'Descubrí la tienda' },
-    ]
-    const txt = LABELS[textIdx]
-    const darkText = textIdx >= 3
-
-    return (
-        <PaintFixed $fading={phase === 1}>
-            <canvas ref={canvasRef} style={{ position:'absolute', inset:0, width:'100%', height:'100%' }} />
-            <PaintTextBlock $dark={darkText}>
-                <PaintTextHead>
-                    {txt.head.split('\n').map((l, i) => <span key={i}>{l}<br/></span>)}
-                </PaintTextHead>
-                <PaintTextSub>{txt.sub}</PaintTextSub>
-            </PaintTextBlock>
-        </PaintFixed>
-    )
-}
-
-const PaintFixed = styled.div`
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    pointer-events: none;
-    background: #050505;
-    opacity: ${p => p.$fading ? 0 : 1};
-    transition: opacity 0.9s ease;
-`
-const PaintTextBlock = styled.div`
-    position: absolute;
-    bottom: 18%;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    color: ${p => p.$dark ? '#111' : '#f8f4ef'};
-    transition: color 0.5s ease;
-    white-space: nowrap;
-`
-const PaintTextHead = styled.h1`
-    font-family: 'Times New Roman', serif;
-    font-size: clamp(2.4rem, 7vw, 5rem);
-    font-weight: 300;
-    letter-spacing: 0.06em;
-    line-height: 1.1;
-    margin: 0 0 0.6rem;
-    text-transform: uppercase;
-`
-const PaintTextSub = styled.p`
-    font-size: clamp(0.7rem, 1.6vw, 0.9rem);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin: 0;
-    opacity: 0.65;
-`
 
 /* ═══════════════════════════════════════════════════════════════
    HERO
