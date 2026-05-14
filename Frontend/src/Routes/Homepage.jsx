@@ -565,7 +565,7 @@ const MissionTitle = styled.h2`
     font-weight: 300;
     font-style: italic;
     line-height: 1.12;
-    color: #fff;
+    color: #F5EDE0;
     margin: 0 0 2.5rem;
     white-space: pre-line;
     text-shadow:
@@ -936,7 +936,7 @@ const HeroTitle = styled.h1`
     font-size: clamp(3rem, 9vw, 8rem);
     font-weight: 300;
     font-style: italic;
-    color: #fff;
+    color: #F5EDE0;
     line-height: 1.05;
     margin: 0 0 28px;
     letter-spacing: -0.02em;
@@ -1038,7 +1038,7 @@ const FeaturedTitle = styled.h2`
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 300;
     font-style: italic;
-    color: #0a0a0a;
+    color: #1A3D2B;
     margin: 0;
     letter-spacing: -0.02em;
     flex: 1;
@@ -1172,7 +1172,7 @@ const ArtistsShowcaseTitle = styled.h2`
     font-size: clamp(2.2rem, 5vw, 4.5rem);
     font-weight: 300;
     font-style: italic;
-    color: #fff;
+    color: #F5EDE0;
     line-height: 1.12;
     margin: 0;
     letter-spacing: -0.02em;
@@ -1450,7 +1450,7 @@ const CarouselTitle = styled.h2`
     font-size: clamp(2.6rem, 6.5vw, 6rem);
     font-weight: 300;
     font-style: italic;
-    color: #fff;
+    color: #F5EDE0;
     letter-spacing: 0.02em;
     line-height: 1.05;
     margin: 0 0 1rem;
@@ -1621,7 +1621,7 @@ const EditorialQuote = styled.h2`
     font-size: clamp(2rem, 4.5vw, 4.2rem);
     font-weight: 300;
     font-style: italic;
-    color: #0a0a0a;
+    color: #1A3D2B;
     line-height: 1.18;
     margin: 0 0 40px;
     letter-spacing: -0.015em;
@@ -1675,7 +1675,7 @@ const ShopTitle = styled.h2`
     font-size: clamp(2.5rem, 5.5vw, 5rem);
     font-weight: 300;
     font-style: italic;
-    color: #0a0a0a;
+    color: #1A3D2B;
     line-height: 1.1;
     margin: 0 0 16px;
     letter-spacing: -0.02em;
@@ -1720,7 +1720,7 @@ const ArtistCarouselName = styled.h3`
     font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-weight: 300;
     font-style: italic;
-    color: #0a0a0a;
+    color: #1A3D2B;
     margin: 0;
     letter-spacing: -0.01em;
     text-shadow:
@@ -1874,7 +1874,7 @@ const JoinTitle = styled.h2`
     font-size: clamp(2rem, 4vw, 3.4rem);
     font-weight: 300;
     font-style: italic;
-    color: #0a0a0a;
+    color: #1A3D2B;
     margin: 0 0 1.8rem;
     line-height: 1.12;
     text-shadow:
@@ -1971,7 +1971,7 @@ const FooterBrandName = styled.p`
     font-size: clamp(1.4rem, 3vw, 2rem);
     font-weight: 300;
     font-style: italic;
-    color: #fff;
+    color: #F5EDE0;
     margin: 0 0 14px;
     line-height: 1.15;
     text-shadow:

@@ -426,7 +426,7 @@ const HeroTitle = styled.h1`
     font-family: 'Times New Roman', Georgia, serif;
     font-size: clamp(4rem, 12vw, 10rem);
     font-weight: 300;
-    color: #fff;
+    color: #F5EDE0;
     line-height: 0.95;
     margin: 0 0 2.5rem;
     letter-spacing: -0.02em;
@@ -756,7 +756,7 @@ const ArtistName = styled.h2`
     font-size: clamp(2.2rem, 5vw, 4.5rem);
     font-weight: 300;
     font-style: italic;
-    color: #0a0a0a;
+    color: #1A3D2B;
     margin: 0 0 2rem;
     line-height: 1.08;
     letter-spacing: -0.01em;
@@ -984,7 +984,7 @@ const CtaTitle = styled.h2`
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 300;
     font-style: italic;
-    color: #fff;
+    color: #F5EDE0;
     margin: 0;
     line-height: 1.1;
     text-shadow:
