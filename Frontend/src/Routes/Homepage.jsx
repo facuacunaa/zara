@@ -430,8 +430,9 @@ function ArtistsSlider({ artists }) {
 const SliderSection = styled.section`
     padding: 40px 0 0;
     background: #F5EDE0;
-    border-top: 1px solid #efefed;
     overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
 `
 const SliderHeader = styled.div`
     display: flex; align-items: center; justify-content: space-between;
@@ -506,9 +507,14 @@ const revealAnim = keyframes`
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
+    background: #B8A890;
 `
 const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 10px;
 `
 const MissionSection = styled.section`
     background:
@@ -527,6 +533,9 @@ const MissionSection = styled.section`
     display: grid;
     grid-template-columns: 1fr 1fr;
     min-height: 420px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.18);
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
     }
@@ -660,6 +669,8 @@ const MissionStatDivider = styled.div`
 const BannerWrap = styled.div`
     display: block;
     width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
     /* Fondo sólido arriba, se desvanece hacia abajo */
     background: linear-gradient(
         to bottom,
@@ -1019,6 +1030,9 @@ const HeroScrollHint = styled.div`
 const FeaturedSection = styled.section`
     background: #F5EDE0;
     padding: 52px 40px 80px;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    overflow: hidden;
 
     @media (max-width: 640px) { padding: 36px 20px 64px; }
 `
@@ -1146,6 +1160,9 @@ const ArtistsShowcase = styled.section`
         ),
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     padding: 100px 40px 120px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
 `
@@ -1303,8 +1320,8 @@ const ArtistsTicker = styled.div`
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     overflow: hidden;
     padding: 18px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
 
 const ArtistsTrack = styled.div`
@@ -1395,6 +1412,8 @@ const CarouselWrap = styled.div`
     height: 75vh;
     min-height: 380px;
     overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.14);
     background:
         repeating-linear-gradient(
             65deg,
@@ -1543,6 +1562,8 @@ const EditorialSection = styled.section`
     background: #FAF6F0;
     padding: 100px 0 140px;
     overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
 `
 
 const EditorialLayout = styled.div`
@@ -1681,6 +1702,9 @@ const CarouselsSection = styled.section`
         ),
         linear-gradient(145deg, #2D1408 0%, #4A2510 35%, #3A1C0A 65%, #2A1208 100%);
     padding: 100px 0 120px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
 
 const CarouselsSectionHeader = styled.div`
@@ -1835,7 +1859,9 @@ const ShopCardPrice = styled.p`
 const JoinSection = styled.section`
     background: #F5EDE0;
     padding: 100px 40px 120px;
-    border-top: 1px solid #D8C8B0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
     @media (max-width: 640px) { padding: 72px 24px 96px; }
 `
 const JoinInner = styled.div`
@@ -1936,6 +1962,9 @@ const SiteFooter = styled.footer`
             rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
         ),
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
 const FooterInner = styled.div`
     display: grid;
