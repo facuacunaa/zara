@@ -568,6 +568,11 @@ const MissionTitle = styled.h2`
     color: #fff;
     margin: 0 0 2.5rem;
     white-space: pre-line;
+    text-shadow:
+        1px 2px 0 rgba(196,154,38,0.65),
+        2px 4px 0 rgba(170,130,20,0.45),
+        3px 6px 0 rgba(145,108,15,0.3),
+        4px 8px 14px rgba(0,0,0,0.45);
 `
 const MissionActions = styled.div`
     display: flex;
@@ -935,6 +940,11 @@ const HeroTitle = styled.h1`
     line-height: 1.05;
     margin: 0 0 28px;
     letter-spacing: -0.02em;
+    text-shadow:
+        1px 2px 0 rgba(196,154,38,0.7),
+        2px 4px 0 rgba(170,130,20,0.5),
+        3px 6px 0 rgba(145,108,15,0.35),
+        4px 8px 16px rgba(0,0,0,0.5);
 `
 
 const HeroSub = styled.p`
@@ -1032,6 +1042,10 @@ const FeaturedTitle = styled.h2`
     margin: 0;
     letter-spacing: -0.02em;
     flex: 1;
+    text-shadow:
+        1px 2px 0 rgba(26,61,43,0.3),
+        2px 4px 0 rgba(18,46,32,0.2),
+        3px 6px 10px rgba(0,0,0,0.1);
 `
 
 const FeaturedViewAll = styled(Link)`
@@ -1162,6 +1176,11 @@ const ArtistsShowcaseTitle = styled.h2`
     line-height: 1.12;
     margin: 0;
     letter-spacing: -0.02em;
+    text-shadow:
+        1px 2px 0 rgba(196,154,38,0.65),
+        2px 4px 0 rgba(170,130,20,0.45),
+        3px 6px 0 rgba(145,108,15,0.3),
+        4px 8px 14px rgba(0,0,0,0.45);
 `
 
 const ArtistsShowcaseLink = styled(Link)`
@@ -1435,7 +1454,11 @@ const CarouselTitle = styled.h2`
     letter-spacing: 0.02em;
     line-height: 1.05;
     margin: 0 0 1rem;
-    text-shadow: 0 4px 32px rgba(0,0,0,0.35);
+    text-shadow:
+        1px 2px 0 rgba(196,154,38,0.6),
+        2px 4px 0 rgba(170,130,20,0.4),
+        3px 6px 0 rgba(145,108,15,0.25),
+        4px 8px 18px rgba(0,0,0,0.5);
 `
 const CarouselSub = styled.p`
     font-size: clamp(0.65rem, 1.2vw, 0.82rem);
@@ -1603,6 +1626,10 @@ const EditorialQuote = styled.h2`
     margin: 0 0 40px;
     letter-spacing: -0.015em;
     white-space: pre-line;
+    text-shadow:
+        1px 2px 0 rgba(26,61,43,0.3),
+        2px 4px 0 rgba(18,46,32,0.2),
+        3px 6px 10px rgba(0,0,0,0.1);
 `
 
 const EditorialBody = styled.p`
@@ -1652,6 +1679,10 @@ const ShopTitle = styled.h2`
     line-height: 1.1;
     margin: 0 0 16px;
     letter-spacing: -0.02em;
+    text-shadow:
+        1px 2px 0 rgba(26,61,43,0.3),
+        2px 4px 0 rgba(18,46,32,0.2),
+        3px 6px 10px rgba(0,0,0,0.1);
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1692,6 +1723,10 @@ const ArtistCarouselName = styled.h3`
     color: #0a0a0a;
     margin: 0;
     letter-spacing: -0.01em;
+    text-shadow:
+        1px 2px 0 rgba(26,61,43,0.3),
+        2px 4px 0 rgba(18,46,32,0.2),
+        3px 6px 10px rgba(0,0,0,0.1);
 `
 
 const ArtistCarouselLink = styled(Link)`
@@ -1842,6 +1877,10 @@ const JoinTitle = styled.h2`
     color: #0a0a0a;
     margin: 0 0 1.8rem;
     line-height: 1.12;
+    text-shadow:
+        1px 2px 0 rgba(26,61,43,0.3),
+        2px 4px 0 rgba(18,46,32,0.2),
+        3px 6px 10px rgba(0,0,0,0.1);
 `
 const JoinBody = styled.p`
     font-size: clamp(0.88rem, 1.4vw, 1rem);
@@ -1935,6 +1974,11 @@ const FooterBrandName = styled.p`
     color: #fff;
     margin: 0 0 14px;
     line-height: 1.15;
+    text-shadow:
+        1px 2px 0 rgba(196,154,38,0.65),
+        2px 4px 0 rgba(170,130,20,0.45),
+        3px 6px 0 rgba(145,108,15,0.3),
+        4px 8px 14px rgba(0,0,0,0.45);
 `
 const FooterBrandSub = styled.p`
     font-size: 0.62rem;
