@@ -566,15 +566,28 @@ const MissionBtnPrimary = styled.a`
     align-items: center;
     justify-content: center;
     padding: 13px 28px;
-    background: #C4956A;
+    background:
+        repeating-linear-gradient(
+            -52deg,
+            transparent 0px, transparent 5px,
+            rgba(255,255,255,0.035) 5px, rgba(255,255,255,0.035) 7px
+        ),
+        linear-gradient(
+            135deg,
+            #6B3A28 0%,
+            #9B5E32 22%,
+            #C4854A 50%,
+            #9B6035 76%,
+            #7B4525 100%
+        );
     color: #fff;
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     text-decoration: none;
     font-weight: 500;
-    transition: background 0.2s, color 0.2s;
-    &:hover { background: #A07048; }
+    transition: filter 0.25s;
+    &:hover { filter: brightness(0.85); }
 `
 const MissionBtnSecondary = styled.a`
     display: inline-flex;

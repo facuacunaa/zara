@@ -957,14 +957,27 @@ const CtaBtn = styled.a`
     display: inline-flex;
     align-items: center;
     padding: 14px 32px;
-    background: #F5EDE0;
-    color: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            -52deg,
+            transparent 0px, transparent 5px,
+            rgba(255,255,255,0.035) 5px, rgba(255,255,255,0.035) 7px
+        ),
+        linear-gradient(
+            135deg,
+            #6B3A28 0%,
+            #9B5E32 22%,
+            #C4854A 50%,
+            #9B6035 76%,
+            #7B4525 100%
+        );
+    color: #fff;
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
-    transition: background 0.2s;
-    &:hover { background: #EDE3D5; }
+    transition: filter 0.25s;
+    &:hover { filter: brightness(0.85); }
 `
 
 /* ── MODAL ───────────────────────────────────────────────────────────────────── */
