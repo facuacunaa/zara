@@ -28,16 +28,20 @@ const logoFadeIn = keyframes`
     to   { opacity: 1; transform: perspective(700px) rotateX(6deg)  rotateY(-8deg)  scale(1); }
 `
 
-/* ── Pájaro: UN viaje — entra desde izquierda, cruza sobre logo, pica a casita ── */
+/* ── Pájaro: entra desde izquierda, baja hacia la casita y entra ── */
 const flyIn = keyframes`
-    0%   { transform: translate(-62vw, -8vh)  scale(0.5)  rotate(-4deg); opacity: 0; }
-    8%   { transform: translate(-46vw, -7vh)  scale(0.7)  rotate(-5deg); opacity: 1; }
-    36%  { transform: translate(-12vw, -3vh)  scale(1.0)  rotate(-4deg); opacity: 1; }
-    52%  { transform: translate(  2vw,  0vh)  scale(1.05) rotate(-2deg); opacity: 1; }
-    64%  { transform: translate(  6vw,  4vh)  scale(0.85) rotate(18deg); opacity: 1; }
-    78%  { transform: translate(  6vw,  9vh)  scale(0.45) rotate(36deg); opacity: 1; }
-    90%  { transform: translate(  6vw, 11vh)  scale(0.15) rotate(44deg); opacity: 0.5; }
-    100% { transform: translate(  6vw, 12vh)  scale(0)    rotate(48deg); opacity: 0; }
+    /* llega volando desde la izquierda a media altura */
+    0%   { transform: translate(-62vw,  2vh) scale(0.5)  rotate(-3deg); opacity: 0; }
+    7%   { transform: translate(-46vw,  1vh) scale(0.7)  rotate(-4deg); opacity: 1; }
+    /* se acerca al logo */
+    30%  { transform: translate(-16vw,  0vh) scale(0.95) rotate(-3deg); opacity: 1; }
+    /* empieza a bajar hacia la casita (centro-bajo del logo) */
+    50%  { transform: translate( -5vw,  4vh) scale(1.0)  rotate( 5deg); opacity: 1; }
+    /* apunta directo a la casita */
+    68%  { transform: translate( -1vw,  8vh) scale(0.75) rotate(12deg); opacity: 1; }
+    /* entra en la casita — se achica y desaparece */
+    84%  { transform: translate(  1vw, 10vh) scale(0.35) rotate(18deg); opacity: 0.8; }
+    100% { transform: translate(  1vw, 11vh) scale(0)    rotate(22deg); opacity: 0; }
 `
 
 /* ── Sombra del logo en el suelo ── */
