@@ -681,8 +681,9 @@ const BannerWrap = styled.div`
     /* Fondo sólido arriba, se desvanece hacia abajo */
     background: linear-gradient(
         to bottom,
-        ${p => p.$bg || 'rgba(58,122,84,0.13)'} 0%,
-        ${p => p.$bg || 'rgba(58,122,84,0.13)'} 45%,
+        ${p => p.$bg || 'rgba(58,122,84,0.10)'} 0%,
+        ${p => p.$bg || 'rgba(58,122,84,0.07)'} 30%,
+        ${p => p.$bg || 'rgba(58,122,84,0.03)'} 65%,
         transparent 100%
     );
     color: ${p => p.$color || '#3A7A54'};
