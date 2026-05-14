@@ -29,36 +29,22 @@ const flapBottom = keyframes`
     50%       { d: path("M12 8 Q18 12 24 10"); }
 `
 
-/* ── Pájaro: vuelo desde la izquierda hacia el logo ── */
+/* ── Pájaro: vuelo desde la izquierda hacia la casita (centro-inferior del logo) ── */
 const flyIn = keyframes`
-    0%   { transform: translate(-55vw, 18vh) scale(0.7) rotate(-5deg); opacity: 0; }
-    10%  { opacity: 1; }
-    60%  { transform: translate(-8vw,  4vh)  scale(1.1) rotate(-8deg); }
-    80%  { transform: translate( 0vw,  0vh)  scale(1.0) rotate(-3deg); }
-    88%  { transform: translate( 2vw, -2vh)  scale(0.95) rotate(0deg); opacity: 1; }
-    100% { transform: translate( 0vw,  0vh)  scale(0)   rotate(0deg); opacity: 0; }
-`
-
-/* ── Círculo blanco ── */
-const LogoCircle = styled.div`
-    width:  clamp(220px, 38vw, 340px);
-    height: clamp(220px, 38vw, 340px);
-    border-radius: 50%;
-    background: rgba(255,255,255,0.96);
-    box-shadow:
-        0 0  0   6px  rgba(255,255,255,0.15),
-        0 12px 48px   rgba(0,0,0,0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation:
-        ${fadeIn}  0.5s ease both,
-        ${floatUp} 3.5s ease-in-out 0.5s infinite;
+    0%   { transform: translate(-58vw, 12vh) scale(0.65) rotate(-4deg); opacity: 0; }
+    8%   { opacity: 1; }
+    55%  { transform: translate(-10vw,  6vh) scale(1.05) rotate(-7deg); }
+    78%  { transform: translate(  2vw,  8vh) scale(0.9)  rotate(-2deg); }
+    90%  { transform: translate(  4vw, 10vh) scale(0.55) rotate(5deg);  opacity: 1; }
+    100% { transform: translate(  4vw, 11vh) scale(0)    rotate(5deg);  opacity: 0; }
 `
 
 const LogoImg = styled.img`
-    width:  78%;
+    width: clamp(200px, 35vw, 320px);
     height: auto;
+    animation:
+        ${fadeIn}  0.6s ease both,
+        ${floatUp} 3.5s ease-in-out 0.6s infinite;
 `
 
 /* ── Texto ── */
@@ -123,7 +109,7 @@ function Bird() {
             {/* Ala izquierda */}
             <path
                 d="M12 8 Q6 2 0 5"
-                stroke="#2d5a3d" strokeWidth="2.2"
+                stroke="#111" strokeWidth="2.2"
                 strokeLinecap="round"
                 style={{
                     animation: 'flapL 0.38s ease-in-out infinite alternate',
@@ -133,7 +119,7 @@ function Bird() {
             {/* Ala derecha */}
             <path
                 d="M12 8 Q18 2 24 5"
-                stroke="#2d5a3d" strokeWidth="2.2"
+                stroke="#111" strokeWidth="2.2"
                 strokeLinecap="round"
                 style={{
                     animation: 'flapR 0.38s ease-in-out infinite alternate-reverse',
@@ -141,11 +127,11 @@ function Bird() {
                 }}
             />
             {/* Cuerpo */}
-            <ellipse cx="12" cy="9" rx="3" ry="2" fill="#2d5a3d" />
+            <ellipse cx="12" cy="9" rx="3" ry="2" fill="#111" />
             {/* Pico */}
-            <path d="M15 8.5 L17.5 8 L15 9" fill="#c49a26" />
+            <path d="M15 8.5 L17.5 8 L15 9" fill="#888" />
             {/* Cola */}
-            <path d="M9 10 Q7 13 5 12 Q7 11 9 10Z" fill="#2d5a3d" />
+            <path d="M9 10 Q7 13 5 12 Q7 11 9 10Z" fill="#111" />
         </BirdSvg>
     )
 }
@@ -169,9 +155,7 @@ export default function PageLoader() {
                 <Bird />
             </BirdWrap>
 
-            <LogoCircle>
-                <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
-            </LogoCircle>
+            <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
 
             <Sub>Cargando</Sub>
         </Wrap>
