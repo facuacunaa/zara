@@ -90,8 +90,7 @@ const Homepage = () => {
             {artistProducts.length > 0 && (
                 <FeaturedSection id="coleccion">
                     <FeaturedSectionHeader>
-                        <ShopEyebrow>— Nueva colección</ShopEyebrow>
-                        <FeaturedTitle>Lo más reciente</FeaturedTitle>
+                        <FeaturedTitle>Productos de nuestros artistas</FeaturedTitle>
                         <FeaturedViewAll to="/products">Ver todo →</FeaturedViewAll>
                     </FeaturedSectionHeader>
                     <FeaturedGrid>
@@ -429,10 +428,9 @@ function ArtistsSlider({ artists }) {
 }
 
 const SliderSection = styled.section`
-    padding: 40px 0 44px;
+    padding: 40px 0 0;
     background: #F5EDE0;
     border-top: 1px solid #efefed;
-    border-bottom: 1px solid #efefed;
     overflow: hidden;
 `
 const SliderHeader = styled.div`
@@ -1008,9 +1006,9 @@ const HeroScrollHint = styled.div`
 ═══════════════════════════════════════════════════════════════ */
 const FeaturedSection = styled.section`
     background: #F5EDE0;
-    padding: 100px 40px 120px;
+    padding: 52px 40px 80px;
 
-    @media (max-width: 640px) { padding: 72px 20px 96px; }
+    @media (max-width: 640px) { padding: 36px 20px 64px; }
 `
 
 const FeaturedSectionHeader = styled.div`
