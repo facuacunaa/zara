@@ -488,10 +488,11 @@ const HorizontalTrack = styled.div`
 const ArtistPanel = styled.article`
     flex: 0 0 100vw;
     width: 100vw;
-    min-height: calc(100vh - 64px);
+    min-height: calc(75vh - 64px);
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;
+    @media (max-width: 768px) { min-height: auto; }
 `
 
 const NavArrowBtn = styled.button`
@@ -662,7 +663,7 @@ const ArtistCover = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     flex: 1;
-    min-height: calc(100vh - 64px);
+    min-height: calc(75vh - 64px);
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
         min-height: auto;
@@ -672,7 +673,7 @@ const ArtistImgWrap = styled.div`
     position: relative;
     overflow: hidden;
     background: #1A3D2B;
-    min-height: 60vh;
+    min-height: 45vh;
 
     img {
         position: absolute; inset: 0;
@@ -682,7 +683,7 @@ const ArtistImgWrap = styled.div`
     }
     &:hover img { transform: scale(1.04); }
 
-    @media (max-width: 768px) { min-height: 55vw; }
+    @media (max-width: 768px) { min-height: 48vw; }
 `
 const ArtistImgPlaceholder = styled.div`
     position: absolute; inset: 0;
