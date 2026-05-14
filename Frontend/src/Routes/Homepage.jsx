@@ -128,39 +128,6 @@ const Homepage = () => {
                 </MissionRight>
             </MissionSection>
 
-            {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
-            {artistProducts.length > 0 && (
-                <FeaturedSection id="coleccion">
-                    <FeaturedSectionHeader>
-                        <ShopEyebrow>— Nueva colección</ShopEyebrow>
-                        <FeaturedTitle>Lo más reciente</FeaturedTitle>
-                        <FeaturedViewAll to="/products">Ver todo →</FeaturedViewAll>
-                    </FeaturedSectionHeader>
-                    <FeaturedGrid>
-                        {artistProducts.slice(0, 8).map((p, i) => (
-                            <FeaturedCard key={p._id || i} onClick={() => setSelectedProd(p)}>
-                                <FeaturedCardMedia>
-                                    {p.image
-                                        ? <img src={p.image} alt={p.name} loading="lazy" />
-                                        : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
-                                    }
-                                    <ShopCardOverlay>
-                                        <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
-                                    </ShopCardOverlay>
-                                    {p.artistName && (
-                                        <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>
-                                    )}
-                                </FeaturedCardMedia>
-                                <FeaturedCardBody>
-                                    <FeaturedCardName>{p.name}</FeaturedCardName>
-                                    <FeaturedCardPrice>{p.price}</FeaturedCardPrice>
-                                </FeaturedCardBody>
-                            </FeaturedCard>
-                        ))}
-                    </FeaturedGrid>
-                </FeaturedSection>
-            )}
-
             {/* ── CARRUSELES POR ARTISTA ─────────────────────────────── */}
             {artistProducts.length > 0 && (() => {
                 const map = {}
@@ -254,6 +221,39 @@ const Homepage = () => {
                         ))}
                     </ArtistsTrack>
                 </ArtistsTicker>
+            )}
+
+            {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
+            {artistProducts.length > 0 && (
+                <FeaturedSection id="coleccion">
+                    <FeaturedSectionHeader>
+                        <ShopEyebrow>— Nueva colección</ShopEyebrow>
+                        <FeaturedTitle>Lo más reciente</FeaturedTitle>
+                        <FeaturedViewAll to="/products">Ver todo →</FeaturedViewAll>
+                    </FeaturedSectionHeader>
+                    <FeaturedGrid>
+                        {artistProducts.slice(0, 8).map((p, i) => (
+                            <FeaturedCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                                <FeaturedCardMedia>
+                                    {p.image
+                                        ? <img src={p.image} alt={p.name} loading="lazy" />
+                                        : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
+                                    }
+                                    <ShopCardOverlay>
+                                        <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
+                                    </ShopCardOverlay>
+                                    {p.artistName && (
+                                        <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>
+                                    )}
+                                </FeaturedCardMedia>
+                                <FeaturedCardBody>
+                                    <FeaturedCardName>{p.name}</FeaturedCardName>
+                                    <FeaturedCardPrice>{p.price}</FeaturedCardPrice>
+                                </FeaturedCardBody>
+                            </FeaturedCard>
+                        ))}
+                    </FeaturedGrid>
+                </FeaturedSection>
             )}
 
             {/* ── ¿SOS ARTISTA? VENDÉ TU ARTE ────────────────────────── */}
