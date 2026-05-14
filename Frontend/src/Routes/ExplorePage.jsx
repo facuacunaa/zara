@@ -165,30 +165,32 @@ export default function ExplorePage() {
                 </HeroScroll>
             </ExploreHero>
 
-            {/* ── STICKY NAV ───────────────────────────────────────────────── */}
-            {artists.length > 0 && (
-                <StickyNav ref={navRef}>
-                    <NavInner>
-                        <NavLabel>Artistas</NavLabel>
-                        <NavList>
+            {/* ── LAYOUT: SIDEBAR + CONTENIDO ─────────────────────────────── */}
+            <ExploreLayout>
+
+                {/* Sidebar izquierdo */}
+                {artists.length > 0 && (
+                    <ArtistSidebar>
+                        <SidebarInnerNav>
+                            <SidebarNavLabel>Artistas</SidebarNavLabel>
                             {artists.map(a => (
-                                <NavItem
+                                <SidebarArtistBtn
                                     key={a._id}
                                     $active={activeSlug === a.slug}
                                     onClick={() => scrollTo(a.slug)}
                                 >
+                                    <SidebarActiveLine $active={activeSlug === a.slug} />
                                     {a.name}
-                                </NavItem>
+                                </SidebarArtistBtn>
                             ))}
-                        </NavList>
-                        <NavRight>
-                            <Link to="/products">Ver tienda →</Link>
-                        </NavRight>
-                    </NavInner>
-                </StickyNav>
-            )}
+                            <SidebarDivider />
+                            <SidebarStoreLink to="/products">Ver tienda →</SidebarStoreLink>
+                        </SidebarInnerNav>
+                    </ArtistSidebar>
+                )}
 
-            {/* ── ARTISTAS ─────────────────────────────────────────────────── */}
+                {/* Contenido principal */}
+                <ExploreMain>
             {loading ? (
                 <LoadingWrap>
                     {[1,2,3].map(i => <LoadingBlock key={i} />)}
@@ -302,6 +304,8 @@ export default function ExplorePage() {
                     })}
                 </ArtistsWrap>
             )}
+                </ExploreMain>
+            </ExploreLayout>
 
             {/* ── CTA FINAL ────────────────────────────────────────────────── */}
             <CtaStrip>
@@ -458,73 +462,96 @@ const HeroScrollLine = styled.div`
     background: rgba(255,255,255,0.15);
 `
 
-/* ── STICKY NAV ─────────────────────────────────────────────────────────────── */
-const StickyNav = styled.nav`
+/* ── LAYOUT SIDEBAR + MAIN ───────────────────────────────────────────────────── */
+const ExploreLayout = styled.div`
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+`
+
+const ArtistSidebar = styled.aside`
+    width: 220px;
+    flex-shrink: 0;
     position: sticky;
     top: 64px;
-    z-index: 50;
-    background: rgba(250,250,248,0.96);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid #e8e8e4;
-`
-const NavInner = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 40px;
-    overflow-x: auto;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    background: #fff;
+    border-right: 1px solid #e8e8e4;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
-    @media (max-width: 640px) { padding: 0 20px; }
+
+    @media (max-width: 900px) {
+        display: none;
+    }
 `
-const NavLabel = styled.span`
-    font-size: 0.6rem;
-    letter-spacing: 0.4em;
+
+const SidebarInnerNav = styled.div`
+    padding: 36px 0 48px;
+    display: flex;
+    flex-direction: column;
+`
+
+const SidebarNavLabel = styled.p`
+    font-size: 0.58rem;
+    letter-spacing: 0.5em;
     text-transform: uppercase;
     color: #ccc;
-    white-space: nowrap;
-    margin-right: 28px;
-    padding: 18px 0;
-    flex-shrink: 0;
+    margin: 0 0 20px;
+    padding: 0 28px;
 `
-const NavList = styled.div`
+
+const SidebarArtistBtn = styled.button`
     display: flex;
     align-items: center;
-    gap: 0;
-    flex: 1;
-    overflow-x: auto;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
-`
-const NavItem = styled.button`
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: ${p => p.$active ? '#0a0a0a' : '#aaa'};
+    gap: 12px;
     background: none;
     border: none;
-    border-bottom: 2px solid ${p => p.$active ? '#0a0a0a' : 'transparent'};
-    padding: 18px 18px 16px;
     cursor: pointer;
-    white-space: nowrap;
-    transition: color 0.2s, border-color 0.2s;
+    text-align: left;
+    padding: 11px 28px;
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: ${p => p.$active ? '1.05rem' : '0.95rem'};
+    font-style: italic;
+    font-weight: 300;
+    color: ${p => p.$active ? '#0a0a0a' : '#bbb'};
+    transition: color 0.2s, font-size 0.2s;
+    position: relative;
+    width: 100%;
+
     &:hover { color: #0a0a0a; }
 `
-const NavRight = styled.div`
-    margin-left: auto;
-    padding-left: 28px;
+
+const SidebarActiveLine = styled.span`
+    display: block;
+    width: 2px;
+    height: ${p => p.$active ? '18px' : '0px'};
+    background: #0a0a0a;
     flex-shrink: 0;
-    a {
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: #aaa;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: color 0.2s;
-        &:hover { color: #0a0a0a; }
-    }
+    transition: height 0.25s ease;
+    border-radius: 1px;
+`
+
+const SidebarDivider = styled.div`
+    height: 1px;
+    background: #e8e8e4;
+    margin: 20px 28px;
+`
+
+const SidebarStoreLink = styled(Link)`
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #bbb;
+    text-decoration: none;
+    padding: 0 28px;
+    transition: color 0.2s;
+    &:hover { color: #0a0a0a; }
+`
+
+const ExploreMain = styled.div`
+    flex: 1;
+    min-width: 0;
 `
 
 /* ── LOADING ─────────────────────────────────────────────────────────────────── */
