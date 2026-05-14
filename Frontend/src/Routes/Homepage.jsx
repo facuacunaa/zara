@@ -511,7 +511,18 @@ const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 `
 const MissionSection = styled.section`
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1103,7 +1114,18 @@ const FeaturedCardPrice = styled.p`
    ARTISTAS: PERFILES
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsShowcase = styled.section`
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     padding: 100px 40px 120px;
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
@@ -1162,7 +1184,18 @@ const ArtistsGrid = styled.div`
 const ArtistProfileCard = styled.div`
     position: relative;
     overflow: hidden;
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
 
     a { display: block; text-decoration: none; color: inherit; }
 
@@ -1236,7 +1269,18 @@ const ArtistCardCta = styled.p`
    TICKER DE ARTISTAS
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsTicker = styled.div`
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     overflow: hidden;
     padding: 18px 0;
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -1331,7 +1375,18 @@ const CarouselWrap = styled.div`
     height: 75vh;
     min-height: 380px;
     overflow: hidden;
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     @media (max-width: 600px) { height: 55vh; min-height: 220px; }
 `
 const CarouselSlide = styled.div`
@@ -1837,7 +1892,18 @@ const JoinStepBody = styled.p`
    FOOTER
 ═══════════════════════════════════════════════════════════════ */
 const SiteFooter = styled.footer`
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
 `
 const FooterInner = styled.div`
     display: grid;

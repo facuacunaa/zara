@@ -22,7 +22,18 @@ const Wrap = styled.div`
     position: fixed;
     inset: 0;
     z-index: 200;
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     display: flex;
     flex-direction: column;
     align-items: center;

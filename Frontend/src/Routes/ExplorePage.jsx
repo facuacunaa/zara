@@ -371,7 +371,18 @@ const PageWrap = styled.div`
 /* ── HERO ──────────────────────────────────────────────────────────────────── */
 const ExploreHero = styled.section`
     position: relative;
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     min-height: 60vh;
     display: flex;
     flex-direction: column;
@@ -672,7 +683,18 @@ const ArtistCover = styled.div`
 const ArtistImgWrap = styled.div`
     position: relative;
     overflow: hidden;
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     min-height: 45vh;
 
     img {
@@ -913,7 +935,18 @@ const DivTag = styled.span`
 
 /* ── CTA STRIP ───────────────────────────────────────────────────────────────── */
 const CtaStrip = styled.section`
-    background: #1A3D2B;
+    background:
+        repeating-linear-gradient(
+            65deg,
+            transparent 0px, transparent 13px,
+            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+        ),
+        repeating-linear-gradient(
+            -25deg,
+            transparent 0px, transparent 20px,
+            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+        ),
+        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     padding: 100px 60px 120px;
     @media (max-width: 900px) { padding: 72px 28px 96px; }
 `
