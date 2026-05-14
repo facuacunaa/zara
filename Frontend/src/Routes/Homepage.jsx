@@ -173,8 +173,8 @@ const Homepage = () => {
                 return (
                     <CarouselsSection>
                         <CarouselsSectionHeader>
-                            <ShopEyebrow>— Tienda</ShopEyebrow>
-                            <ShopTitle>Por artista</ShopTitle>
+                            <ShopEyebrow>— Colección</ShopEyebrow>
+                            <ShopTitle>Nuestros artistas destacados</ShopTitle>
                         </CarouselsSectionHeader>
                         {order.map(key => {
                             const { slug, name, products } = map[key]
@@ -1675,21 +1675,33 @@ const ShopTitle = styled.h2`
     font-size: clamp(2.5rem, 5.5vw, 5rem);
     font-weight: 300;
     font-style: italic;
-    color: #1A3D2B;
+    color: #F5EDE0;
     line-height: 1.1;
     margin: 0 0 16px;
     letter-spacing: -0.02em;
     text-shadow:
-        1px 2px 0 rgba(26,61,43,0.3),
-        2px 4px 0 rgba(18,46,32,0.2),
-        3px 6px 10px rgba(0,0,0,0.1);
+        1px 2px 0 rgba(196,154,38,0.65),
+        2px 4px 0 rgba(170,130,20,0.45),
+        3px 6px 0 rgba(145,108,15,0.3),
+        4px 8px 14px rgba(0,0,0,0.45);
 `
 
 /* ═══════════════════════════════════════════════════════════════
    CARRUSELES POR ARTISTA
 ═══════════════════════════════════════════════════════════════ */
 const CarouselsSection = styled.section`
-    background: #EDE3D5;
+    background:
+        repeating-linear-gradient(
+            -52deg,
+            transparent 0px, transparent 5px,
+            rgba(255,255,255,0.025) 5px, rgba(255,255,255,0.025) 7px
+        ),
+        repeating-linear-gradient(
+            38deg,
+            transparent 0px, transparent 9px,
+            rgba(255,255,255,0.015) 9px, rgba(255,255,255,0.015) 10px
+        ),
+        linear-gradient(145deg, #2D1408 0%, #4A2510 35%, #3A1C0A 65%, #2A1208 100%);
     padding: 100px 0 120px;
 `
 
@@ -1709,7 +1721,7 @@ const ArtistCarouselHeader = styled.div`
     align-items: baseline;
     justify-content: space-between;
     padding: 0 40px 24px;
-    border-bottom: 1px solid #D8C8B0;
+    border-bottom: 1px solid rgba(245,237,224,0.15);
     margin-bottom: 3px;
 
     @media (max-width: 640px) { padding: 0 20px 20px; }
@@ -1720,13 +1732,14 @@ const ArtistCarouselName = styled.h3`
     font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-weight: 300;
     font-style: italic;
-    color: #1A3D2B;
+    color: #F5EDE0;
     margin: 0;
     letter-spacing: -0.01em;
     text-shadow:
-        1px 2px 0 rgba(26,61,43,0.3),
-        2px 4px 0 rgba(18,46,32,0.2),
-        3px 6px 10px rgba(0,0,0,0.1);
+        1px 2px 0 rgba(196,154,38,0.65),
+        2px 4px 0 rgba(170,130,20,0.45),
+        3px 6px 0 rgba(145,108,15,0.3),
+        4px 8px 14px rgba(0,0,0,0.45);
 `
 
 const ArtistCarouselLink = styled(Link)`
@@ -1734,11 +1747,11 @@ const ArtistCarouselLink = styled(Link)`
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #aaa;
+    color: rgba(245,237,224,0.45);
     text-decoration: none;
     flex-shrink: 0;
     transition: color 0.2s;
-    &:hover { color: #0a0a0a; }
+    &:hover { color: #F5EDE0; }
 `
 
 const ArtistCarouselTrack = styled.div`
