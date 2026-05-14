@@ -600,19 +600,21 @@ const NavDot = styled.button`
 /* Obras dentro del panel info */
 const PanelWorksTrack = styled.div`
     display: flex;
-    gap: 8px;
+    gap: 10px;
     overflow-x: auto;
-    margin-top: 28px;
-    padding-bottom: 8px;
+    margin-top: 32px;
+    padding-bottom: 10px;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
 `
 
 const PanelWorkCard = styled.div`
-    flex: 0 0 120px;
+    flex: 0 0 180px;
     cursor: pointer;
-    &:hover img { transform: scale(1.05); }
-    @media (max-width: 640px) { flex: 0 0 100px; }
+    &:hover img { transform: scale(1.04); }
+    @media (max-width: 640px) { flex: 0 0 150px; }
 `
 
 const PanelWorkImg = styled.div`
@@ -620,12 +622,12 @@ const PanelWorkImg = styled.div`
     overflow: hidden;
     background: #e8e8e6;
     padding-bottom: 125%;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 0.7s ease;
+        transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 `
 
