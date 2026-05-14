@@ -51,7 +51,12 @@ const AdminPage = () => {
         try {
             const res = await axios.get(`${API}/admin/products`, { headers })
             setProducts(res.data)
-        } catch {
+        } catch (err) {
+            const detail = err?.response?.status === 401
+                ? 'Sesión expirada — volvé a iniciar sesión'
+                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+            setMsg(`❌ ${detail}`)
+            console.error(err?.response?.data || err)
             setProducts([])
         }
     }
@@ -61,7 +66,14 @@ const AdminPage = () => {
         try {
             const res = await axios.get(`${API}/admin/artists`, { headers })
             setArtists(res.data)
-        } catch { setArtists([]) }
+        } catch (err) {
+            const detail = err?.response?.status === 401
+                ? 'Sesión expirada — volvé a iniciar sesión'
+                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+            setMsg(`❌ ${detail}`)
+            console.error(err?.response?.data || err)
+            setArtists([])
+        }
     }
 
     // ── Fetch settings ──────────────────────────────────────────────────────
@@ -101,12 +113,25 @@ const AdminPage = () => {
                 missionCta:     res.data.missionCta      || '',
                 missionCtaLink: res.data.missionCtaLink  || '',
             })
-        } catch {}
+        } catch (err) { console.error('fetchSettings error:', err?.response?.data || err) }
     }
 
     useEffect(() => {
         if (token) { fetchProducts(); fetchSettings(); fetchArtists() }
     }, [token])
+
+    useEffect(() => {
+        if (!token) return
+        // Verify token is still valid
+        axios.get(`${API}/admin/products`, { headers: { Authorization: `Bearer ${token}` } })
+            .catch(err => {
+                if (err?.response?.status === 401 || err?.response?.status === 403) {
+                    localStorage.removeItem('adminToken')
+                    setToken('')
+                    setMsg('❌ Sesión expirada. Iniciá sesión de nuevo.')
+                }
+            })
+    }, []) // runs only once on mount
 
     // ── Delete hero video ──────────────────────────────────────────────────
     const deleteHeroVideo = async () => {
@@ -147,7 +172,13 @@ const AdminPage = () => {
             const files = [...carouselFiles]; files[idx] = null; setCarouselFiles(files)
             if (carouselRefs[idx].current) carouselRefs[idx].current.value = ''
             setMsg('✅ Imagen subida')
-        } catch { setMsg('❌ Error subiendo imagen') }
+        } catch (err) {
+            const detail = err?.response?.status === 401
+                ? 'Sesión expirada — volvé a iniciar sesión'
+                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+            setMsg(`❌ ${detail}`)
+            console.error(err?.response?.data || err)
+        }
         setLoading(false)
         setTimeout(() => setMsg(''), 3000)
     }
@@ -182,7 +213,12 @@ const AdminPage = () => {
             const res = await axios.post(`${API}/admin/login`, loginData)
             localStorage.setItem('adminToken', res.data.token)
             setToken(res.data.token)
-        } catch {
+        } catch (err) {
+            const detail = err?.response?.status === 401
+                ? 'Sesión expirada — volvé a iniciar sesión'
+                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+            setMsg(`❌ ${detail}`)
+            console.error(err?.response?.data || err)
             setLoginError('Credenciales incorrectas o sin acceso admin.')
         }
         setLoading(false)
@@ -213,8 +249,12 @@ const AdminPage = () => {
             setEditingId(null)
             setTab('products')
             fetchProducts()
-        } catch {
-            setMsg('❌ Error al guardar')
+        } catch (err) {
+            const detail = err?.response?.status === 401
+                ? 'Sesión expirada — volvé a iniciar sesión'
+                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+            setMsg(`❌ ${detail}`)
+            console.error(err?.response?.data || err)
         }
         setLoading(false)
         setTimeout(() => setMsg(''), 3000)
@@ -234,8 +274,12 @@ const AdminPage = () => {
             setMsg('✅ Producto eliminado')
             fetchProducts()
             setTimeout(() => setMsg(''), 3000)
-        } catch {
-            setMsg('❌ Error al eliminar')
+        } catch (err) {
+            const detail = err?.response?.status === 401
+                ? 'Sesión expirada — volvé a iniciar sesión'
+                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+            setMsg(`❌ ${detail}`)
+            console.error(err?.response?.data || err)
         }
     }
 
@@ -595,7 +639,13 @@ const AdminPage = () => {
                                     try {
                                         await axios.put(`${API}/settings/carousel-texts`, body, { headers })
                                         setMsg('✅ Textos del carrusel guardados')
-                                    } catch { setMsg('❌ Error al guardar') }
+                                    } catch (err) {
+                                        const detail = err?.response?.status === 401
+                                            ? 'Sesión expirada — volvé a iniciar sesión'
+                                            : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+                                        setMsg(`❌ ${detail}`)
+                                        console.error(err?.response?.data || err)
+                                    }
                                     setLoading(false)
                                     setTimeout(() => setMsg(''), 3000)
                                 }}>
@@ -641,7 +691,13 @@ const AdminPage = () => {
                                                 })
                                                 set(res.data.url)
                                                 setMsg(`✅ Imagen ${n} subida`)
-                                            } catch { setMsg('❌ Error subiendo imagen') }
+                                            } catch (err) {
+                                                const detail = err?.response?.status === 401
+                                                    ? 'Sesión expirada — volvé a iniciar sesión'
+                                                    : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+                                                setMsg(`❌ ${detail}`)
+                                                console.error(err?.response?.data || err)
+                                            }
                                             setImgProgress(p => ({ ...p, [n]: 0 }))
                                             setTimeout(() => setMsg(''), 3000)
                                         }} />
@@ -694,7 +750,13 @@ const AdminPage = () => {
                                         try {
                                             await axios.put(`${API}/settings/editorial`, editorial, { headers })
                                             setMsg('✅ Editorial guardada')
-                                        } catch { setMsg('❌ Error al guardar') }
+                                        } catch (err) {
+                                            const detail = err?.response?.status === 401
+                                                ? 'Sesión expirada — volvé a iniciar sesión'
+                                                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+                                            setMsg(`❌ ${detail}`)
+                                            console.error(err?.response?.data || err)
+                                        }
                                         setLoading(false)
                                         setTimeout(() => setMsg(''), 3000)
                                     }}
@@ -788,7 +850,13 @@ const AdminPage = () => {
                                         try {
                                             await axios.put(`${API}/settings/banner`, banner, { headers })
                                             setMsg('✅ Banner guardado')
-                                        } catch { setMsg('❌ Error al guardar') }
+                                        } catch (err) {
+                                            const detail = err?.response?.status === 401
+                                                ? 'Sesión expirada — volvé a iniciar sesión'
+                                                : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+                                            setMsg(`❌ ${detail}`)
+                                            console.error(err?.response?.data || err)
+                                        }
                                         setLoading(false)
                                         setTimeout(() => setMsg(''), 3000)
                                     }}
@@ -854,7 +922,13 @@ const AdminPage = () => {
                                     try {
                                         await axios.put(`${API}/settings/mission`, mission, { headers })
                                         setMsg('✅ Misión guardada')
-                                    } catch { setMsg('❌ Error al guardar') }
+                                    } catch (err) {
+                                        const detail = err?.response?.status === 401
+                                            ? 'Sesión expirada — volvé a iniciar sesión'
+                                            : (err?.response?.data?.msg || err?.message || 'Error desconocido')
+                                        setMsg(`❌ ${detail}`)
+                                        console.error(err?.response?.data || err)
+                                    }
                                     setLoading(false)
                                     setTimeout(() => setMsg(''), 3000)
                                 }}>
