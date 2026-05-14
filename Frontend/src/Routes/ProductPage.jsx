@@ -151,8 +151,8 @@ export default function ProductPage() {
             <PageHeader>
                 <HeaderInner>
                     <HeaderLeft>
-                        <PageEyebrow>— La Casita del Hornero</PageEyebrow>
                         <PageTitle>Tienda</PageTitle>
+                        <PageEyebrow>— La Casita del Hornero</PageEyebrow>
                     </HeaderLeft>
                     <HeaderRight>
                         <SearchInput
@@ -293,40 +293,45 @@ const PageWrap = styled.div`
 `
 
 const PageHeader = styled.div`
-    background: #fafaf8;
+    background: rgba(250,250,248,0.97);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid #e8e8e4;
-    padding: 110px 40px 28px;
+    padding: 72px 40px 12px;
     position: sticky;
     top: 0;
     z-index: 50;
-    @media (max-width: 768px) { padding: 80px 16px 20px; }
+    @media (max-width: 768px) { padding: 68px 16px 10px; }
 `
 
 const HeaderInner = styled.div`
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
     @media (max-width: 600px) {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 10px;
     }
 `
 
-const HeaderLeft = styled.div``
+const HeaderLeft = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 14px;
+`
 
 const PageEyebrow = styled.p`
-    font-size: 9px;
-    letter-spacing: 0.45em;
+    font-size: 8px;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #bbb;
-    margin: 0 0 6px;
+    color: #ccc;
+    margin: 0;
 `
 
 const PageTitle = styled.h1`
     font-family: 'Times New Roman', Georgia, serif;
-    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    font-size: clamp(1rem, 2vw, 1.35rem);
     font-weight: 300;
     font-style: italic;
     color: #0a0a0a;
@@ -399,7 +404,7 @@ const Sidebar = styled.aside`
     padding-top: 36px;
     padding-right: 36px;
     position: sticky;
-    top: 140px;
+    top: 108px;
 
     @media (max-width: 900px) {
         width: 100%;
