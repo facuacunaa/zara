@@ -225,6 +225,21 @@ const Navbar = ({ activeIndexs }) => {
                         </SidebarNavItem>
                     </SidebarNav>
 
+                    {/* Lista de artistas */}
+                    {artists.length > 0 && (
+                        <>
+                            <SidebarDivider />
+                            <ArtistsSection>
+                                <SidebarNavLabel>Artistas</SidebarNavLabel>
+                                {artists.map(a => (
+                                    <ArtistItem key={a.slug}>
+                                        <Link to={`/${a.slug}`}>{a.name}</Link>
+                                    </ArtistItem>
+                                ))}
+                            </ArtistsSection>
+                        </>
+                    )}
+
                     <SidebarDivider />
 
                     {/* Acceso portales */}
@@ -518,6 +533,33 @@ const PortalLinkSub = styled.p`
     letter-spacing: 0.03em;
     color: #aaa;
     margin: 0;
+`
+
+/* ── Artistas ── */
+const ArtistsSection = styled.div`
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+`
+
+const ArtistItem = styled.div`
+    a {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.15rem;
+        font-style: italic;
+        font-weight: 300;
+        color: #1a1a1a;
+        text-decoration: none;
+        display: block;
+        padding: 9px 0;
+        border-bottom: 1px solid #edeae3;
+        transition: color 0.2s, padding-left 0.2s;
+
+        &:hover {
+            color: #8B9640;
+            padding-left: 10px;
+        }
+    }
 `
 
 /* ── Footer ── */
