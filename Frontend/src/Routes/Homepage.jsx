@@ -219,9 +219,10 @@ const Homepage = () => {
                         <ArtistsShowcaseLink to="/explorar">Explorar artistas →</ArtistsShowcaseLink>
                     </ArtistsShowcaseHeader>
                     <ArtistsGrid count={artists.length}>
-                        {artists.map(a => (
+                        {artists.map((a, i) => (
                             <ArtistProfileCard key={a._id || a.slug}>
                                 <Link to={`/${a.slug}`}>
+                                    <ArtistCardIndex>0{i + 1}</ArtistCardIndex>
                                     <ArtistCardMedia>
                                         {(a.profileImage || a.images?.[0])
                                             ? <img src={a.profileImage || a.images[0]} alt={a.name} loading="lazy" />
@@ -232,8 +233,9 @@ const Homepage = () => {
                                         <ArtistCardGradient />
                                     </ArtistCardMedia>
                                     <ArtistCardInfo>
+                                        <ArtistCardDivider />
                                         <ArtistCardName>{a.name}</ArtistCardName>
-                                        <ArtistCardCta>Ver perfil &nbsp;→</ArtistCardCta>
+                                        <ArtistCardCta>Ver perfil</ArtistCardCta>
                                     </ArtistCardInfo>
                                 </Link>
                             </ArtistProfileCard>
@@ -1216,7 +1218,7 @@ const ArtistsShowcaseLink = styled(Link)`
 const ArtistsGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(${p => Math.min(p.count, 3)}, 1fr);
-    gap: 3px;
+    gap: 16px;
     max-width: 1200px;
     margin: 0 auto;
 
@@ -1227,86 +1229,125 @@ const ArtistsGrid = styled.div`
 const ArtistProfileCard = styled.div`
     position: relative;
     overflow: hidden;
-    border-radius: 16px;
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
-        ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+    border-radius: 4px;
+    background: #111;
+    transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.45s ease;
 
     a { display: block; text-decoration: none; color: inherit; }
 
-    &:hover img { transform: scale(1.06); }
-    &:hover div[data-cta] { letter-spacing: 0.5em; }
+    &:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    }
+    &:hover img { transform: scale(1.07); }
 `
 
 const ArtistCardMedia = styled.div`
     position: relative;
-    padding-bottom: 125%;
+    padding-bottom: 130%;
     overflow: hidden;
-    background: #1a1a1a;
+    background: #111;
 
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        filter: brightness(0.92) saturate(1.05);
     }
 `
 
 const ArtistCardPlaceholder = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    background: linear-gradient(160deg, #0C1E14 0%, #183525 100%);
 
     span {
         font-family: 'Playfair Display', Georgia, serif;
-        font-size: clamp(4rem, 12vw, 8rem);
+        font-size: clamp(5rem, 14vw, 10rem);
         font-weight: 300;
         font-style: italic;
-        color: rgba(255,255,255,0.15);
+        color: rgba(255,255,255,0.10);
     }
 `
 
 const ArtistCardGradient = styled.div`
     position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 100%);
+    background:
+        linear-gradient(to bottom,
+            transparent 35%,
+            rgba(10,20,14,0.55) 65%,
+            rgba(6,14,10,0.95) 100%
+        );
+`
+
+const ArtistCardIndex = styled.span`
+    position: absolute;
+    top: 20px;
+    left: 22px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.35);
+    z-index: 3;
 `
 
 const ArtistCardInfo = styled.div`
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    padding: 28px 24px;
+    padding: 0 26px 28px;
     z-index: 2;
+`
+
+const ArtistCardDivider = styled.div`
+    width: 32px;
+    height: 1px;
+    background: rgba(196,154,38,0.6);
+    margin-bottom: 14px;
+    transition: width 0.4s ease;
+
+    ${ArtistProfileCard}:hover & { width: 56px; }
 `
 
 const ArtistCardName = styled.p`
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
-    font-weight: 300;
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    font-weight: 400;
     font-style: italic;
     color: #fff;
     margin: 0 0 10px;
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
 `
 
 const ArtistCardCta = styled.p`
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     font-size: 9px;
-    letter-spacing: 0.38em;
+    letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.5);
     margin: 0;
-    transition: letter-spacing 0.35s ease, color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s, letter-spacing 0.35s ease;
 
-    ${ArtistProfileCard}:hover & { color: #fff; }
+    &::after {
+        content: '';
+        display: inline-block;
+        width: 18px;
+        height: 1px;
+        background: currentColor;
+        transition: width 0.35s ease;
+    }
+
+    ${ArtistProfileCard}:hover & {
+        color: rgba(196,154,38,0.9);
+        letter-spacing: 0.5em;
+        &::after { width: 28px; }
+    }
 `
 
 /* ═══════════════════════════════════════════════════════════════
