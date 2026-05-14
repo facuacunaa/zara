@@ -660,17 +660,26 @@ const MissionStatDivider = styled.div`
 const BannerWrap = styled.div`
     display: block;
     width: 100%;
-    background: ${p => p.$bg || 'rgba(58,122,84,0.06)'};
+    /* Fondo sólido arriba, se desvanece hacia abajo */
+    background: linear-gradient(
+        to bottom,
+        ${p => p.$bg || 'rgba(58,122,84,0.13)'} 0%,
+        ${p => p.$bg || 'rgba(58,122,84,0.13)'} 45%,
+        transparent 100%
+    );
     color: ${p => p.$color || '#3A7A54'};
     text-align: center;
-    padding: 7px 20px;
+    /* padding-bottom generoso para que el fade tenga espacio */
+    padding: 9px 20px 28px;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.68rem;
     font-weight: 400;
     letter-spacing: 0.08em;
-    text-transform: none;
     text-decoration: none;
-    border-bottom: 1px solid rgba(58,122,84,0.12);
+    /* Sombra que da profundidad / efecto 3D */
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.55) inset,
+        0 8px 28px -6px rgba(0,0,0,0.09);
     cursor: ${p => p.as === 'a' ? 'pointer' : 'default'};
     &:hover { opacity: ${p => p.as === 'a' ? 0.7 : 1}; }
     transition: opacity 0.2s;
