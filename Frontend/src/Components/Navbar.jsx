@@ -137,7 +137,7 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    const iconColor = ((onArtistPage || onExplorePage) && !scrolled) ? 'white' : '#8B9640'
+    const iconColor = (needsTransparency && !scrolled) ? 'white' : '#3A7A54'
     const navBg     = needsTransparency ? 'transparent' : 'white'
     const navPos    = 'fixed'
 
@@ -367,7 +367,7 @@ const Sidebar = styled.aside`
     top: 0; left: 0; bottom: 0;
     width: 300px;
     max-width: 88vw;
-    background: #faf9f6;
+    background: #F5EDE0;
     z-index: 100;
     transform: ${p => p.open ? 'translateX(0)' : 'translateX(-100%)'};
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -417,7 +417,7 @@ const SidebarLogoWrap = styled.div`
 
 const SidebarDivider = styled.hr`
     border: none;
-    border-top: 1px solid #e8e6e0;
+    border-top: 1px solid #D8C8B0;
     margin: 0 24px;
 `
 
@@ -433,7 +433,7 @@ const SidebarNavLabel = styled.p`
     font-size: 7.5px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: #8B9640;
+    color: #3A7A54;
     margin: 0 0 18px;
 `
 
@@ -449,11 +449,11 @@ const SidebarNavItem = styled.div`
         align-items: center;
         gap: 10px;
         padding: 10px 0;
-        border-bottom: 1px solid #edeae3;
+        border-bottom: 1px solid #D8C8B0;
         transition: color 0.2s, padding-left 0.2s;
 
         &:hover {
-            color: #8B9640;
+            color: #3A7A54;
             padding-left: 10px;
         }
     }
@@ -465,7 +465,7 @@ const SidebarCartBadge = styled.span`
     justify-content: center;
     width: 20px;
     height: 20px;
-    background: #8B9640;
+    background: #3A7A54;
     color: #fff;
     border-radius: 50%;
     font-family: 'DM Sans', sans-serif;
@@ -489,14 +489,14 @@ const PortalLink = styled(Link)`
     gap: 14px;
     padding: 14px 16px;
     background: #fff;
-    border: 1px solid #e8e6e0;
+    border: 1px solid #D8C8B0;
     border-radius: 4px;
     text-decoration: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-        border-color: #8B9640;
-        box-shadow: 0 2px 12px rgba(139,150,64,0.12);
+        border-color: #3A7A54;
+        box-shadow: 0 2px 12px rgba(58,122,84,0.15);
     }
 `
 
@@ -524,7 +524,7 @@ const PortalLinkSub = styled.p`
 const SidebarFooterLinks = styled.div`
     margin-top: auto;
     padding: 24px 24px 0;
-    border-top: 1px solid #e8e6e0;
+    border-top: 1px solid #D8C8B0;
 
     a, button {
         font-family: 'DM Sans', sans-serif;
@@ -540,7 +540,7 @@ const SidebarFooterLinks = styled.div`
         text-align: left;
         transition: color 0.2s;
 
-        &:hover { color: #8B9640; }
+        &:hover { color: #3A7A54; }
     }
 `
 

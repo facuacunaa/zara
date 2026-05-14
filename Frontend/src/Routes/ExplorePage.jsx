@@ -364,21 +364,24 @@ const ImgSkeleton = styled.div`
 `
 
 const PageWrap = styled.div`
-    background: #fafaf8;
+    background: #F5EDE0;
     min-height: 100vh;
 `
 
 /* ── HERO ──────────────────────────────────────────────────────────────────── */
 const ExploreHero = styled.section`
     position: relative;
-    background: #0a0a0a;
-    min-height: 100vh;
+    background: #1A3D2B;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 120px 60px 80px;
+    padding: 100px 60px 60px;
     overflow: hidden;
-    @media (max-width: 640px) { padding: 100px 28px 72px; }
+    @media (max-width: 640px) {
+        min-height: auto;
+        padding: 90px 28px 44px;
+    }
 `
 const HeroDecor = styled.span`
     position: absolute;
@@ -470,7 +473,7 @@ const HeroScrollLine = styled.div`
 /* ── CARRUSEL HORIZONTAL ─────────────────────────────────────────────────────── */
 const HorizontalSection = styled.div`
     position: relative;
-    background: #fafaf8;
+    background: #F5EDE0;
 `
 
 const HorizontalTrack = styled.div`
@@ -497,8 +500,8 @@ const NavArrowBtn = styled.button`
     transform: translateY(-50%);
     ${p => p.side === 'left' ? 'left: 20px;' : 'right: 20px;'}
     z-index: 10;
-    background: rgba(255,255,255,0.92);
-    border: 1px solid #e8e8e4;
+    background: rgba(245,237,224,0.95);
+    border: 1px solid #D8C8B0;
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -582,14 +585,14 @@ const NavDots = styled.div`
     justify-content: center;
     gap: 8px;
     padding: 20px 0 28px;
-    background: #fafaf8;
+    background: #F5EDE0;
 `
 
 const NavDot = styled.button`
     width: ${p => p.$active ? '24px' : '6px'};
     height: 6px;
     border-radius: 3px;
-    background: ${p => p.$active ? '#0a0a0a' : '#ccc'};
+    background: ${p => p.$active ? '#1A3D2B' : '#C4956A'};
     border: none;
     cursor: pointer;
     padding: 0;
@@ -620,7 +623,7 @@ const PanelWorkCard = styled.div`
 const PanelWorkImg = styled.div`
     position: relative;
     overflow: hidden;
-    background: #e8e8e6;
+    background: #E8DCC8;
     padding-bottom: 125%;
     margin-bottom: 8px;
     img {
@@ -653,7 +656,7 @@ const EmptyWrap = styled.div`
 
 /* ── ARTIST PANEL LAYOUT ──────────────────────────────────────────────────────── */
 const ArtistsWrap = styled.div`
-    background: #fafaf8;
+    background: #F5EDE0;
 `
 const ArtistCover = styled.div`
     display: grid;
@@ -668,7 +671,7 @@ const ArtistCover = styled.div`
 const ArtistImgWrap = styled.div`
     position: relative;
     overflow: hidden;
-    background: #111;
+    background: #1A3D2B;
     min-height: 60vh;
 
     img {
@@ -707,7 +710,7 @@ const ArtistInfo = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: #fafaf8;
+    background: #F5EDE0;
     overflow-y: auto;
     @media (max-width: 768px) { padding: 32px 24px 40px; }
 `
@@ -741,7 +744,7 @@ const ArtistStatsRow = styled.div`
     gap: 32px;
     margin-bottom: 2.5rem;
     padding-top: 24px;
-    border-top: 1px solid #e8e8e4;
+    border-top: 1px solid #D8C8B0;
 `
 const ArtistStatBox = styled.div`
     display: flex;
@@ -829,7 +832,7 @@ const WorkCard = styled.div`
 const WorkCardImg = styled.div`
     position: relative;
     overflow: hidden;
-    background: #e8e8e6;
+    background: #E8DCC8;
     padding-bottom: 125%;
     img {
         position: absolute; inset: 0;
@@ -891,13 +894,13 @@ const BlockDivider = styled.div`
     gap: 24px;
     padding: 0 40px;
     height: 80px;
-    background: #fafaf8;
+    background: #F5EDE0;
     @media (max-width: 640px) { padding: 0 20px; }
 `
 const DivLine = styled.div`
     flex: 1;
     height: 1px;
-    background: #e8e8e4;
+    background: #D8C8B0;
 `
 const DivTag = styled.span`
     font-family: 'Times New Roman', Georgia, serif;
@@ -909,7 +912,7 @@ const DivTag = styled.span`
 
 /* ── CTA STRIP ───────────────────────────────────────────────────────────────── */
 const CtaStrip = styled.section`
-    background: #111;
+    background: #1A3D2B;
     padding: 100px 60px 120px;
     @media (max-width: 900px) { padding: 72px 28px 96px; }
 `
@@ -953,14 +956,14 @@ const CtaBtn = styled.a`
     display: inline-flex;
     align-items: center;
     padding: 14px 32px;
-    background: #fff;
-    color: #111;
+    background: #F5EDE0;
+    color: #1A3D2B;
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
     transition: background 0.2s;
-    &:hover { background: #e8e8e8; }
+    &:hover { background: #EDE3D5; }
 `
 
 /* ── MODAL ───────────────────────────────────────────────────────────────────── */
@@ -974,7 +977,7 @@ const ModalOverlay = styled.div`
 const ModalPanel = styled.div`
     position: fixed; top: 0; right: 0; bottom: 0;
     z-index: 101;
-    background: #fafaf8;
+    background: #F5EDE0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
     box-shadow: -4px 0 60px rgba(0,0,0,0.12);

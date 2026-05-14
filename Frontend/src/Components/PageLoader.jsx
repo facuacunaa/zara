@@ -22,7 +22,7 @@ const Wrap = styled.div`
     position: fixed;
     inset: 0;
     z-index: 200;
-    background: #0a0a0a;
+    background: #1A3D2B;
     display: flex;
     flex-direction: column;
     align-items: center;

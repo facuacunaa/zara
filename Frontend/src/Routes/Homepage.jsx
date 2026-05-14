@@ -430,7 +430,7 @@ function ArtistsSlider({ artists }) {
 
 const SliderSection = styled.section`
     padding: 40px 0 44px;
-    background: #fafaf8;
+    background: #F5EDE0;
     border-top: 1px solid #efefed;
     border-bottom: 1px solid #efefed;
     overflow: hidden;
@@ -442,14 +442,14 @@ const SliderHeader = styled.div`
 const SliderEyebrow = styled.p`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: .4em;
-    text-transform: uppercase; color: #8B9640; margin: 0;
+    text-transform: uppercase; color: #3A7A54; margin: 0;
 `
 const SliderViewAll = styled(Link)`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: .2em;
-    text-transform: uppercase; color: #8B9640;
+    text-transform: uppercase; color: #3A7A54;
     text-decoration: none;
-    &:hover { color: #6B3030; }
+    &:hover { color: #7B4A2E; }
 `
 const SliderTrack = styled.div`
     display: flex;
@@ -470,7 +470,7 @@ const ArtistCard = styled(Link)`
 `
 const ArtistCardImg = styled.div`
     width: 140px; height: 180px;
-    background: #eeecea;
+    background: #E8DCC8;
     overflow: hidden; position: relative;
     img {
         width: 100%; height: 100%;
@@ -511,7 +511,7 @@ const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 `
 const MissionSection = styled.section`
-    background: #111;
+    background: #1A3D2B;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -566,7 +566,7 @@ const MissionBtnPrimary = styled.a`
     align-items: center;
     justify-content: center;
     padding: 13px 28px;
-    background: #8B9640;
+    background: #C4956A;
     color: #fff;
     font-size: 0.72rem;
     letter-spacing: 0.18em;
@@ -574,7 +574,7 @@ const MissionBtnPrimary = styled.a`
     text-decoration: none;
     font-weight: 500;
     transition: background 0.2s, color 0.2s;
-    &:hover { background: #6d7a32; }
+    &:hover { background: #A07048; }
 `
 const MissionBtnSecondary = styled.a`
     display: inline-flex;
@@ -937,7 +937,7 @@ const HeroCtaPrimary = styled(Link)`
     padding: 16px 40px;
     text-decoration: none;
     transition: background 0.25s, color 0.25s;
-    &:hover { background: #e8e8e4; }
+    &:hover { background: #D8C8B0; }
 `
 
 const HeroCtaSecondary = styled(Link)`
@@ -977,7 +977,7 @@ const HeroScrollHint = styled.div`
    FEATURED PRODUCTS GRID
 ═══════════════════════════════════════════════════════════════ */
 const FeaturedSection = styled.section`
-    background: #fafaf8;
+    background: #F5EDE0;
     padding: 100px 40px 120px;
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
@@ -989,7 +989,7 @@ const FeaturedSectionHeader = styled.div`
     flex-wrap: wrap;
     gap: 16px 32px;
     margin-bottom: 56px;
-    border-bottom: 1px solid #e8e8e4;
+    border-bottom: 1px solid #D8C8B0;
     padding-bottom: 24px;
 `
 
@@ -1009,12 +1009,12 @@ const FeaturedViewAll = styled(Link)`
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #8B9640;
+    color: #3A7A54;
     text-decoration: none;
     align-self: flex-end;
     flex-shrink: 0;
     transition: color 0.2s;
-    &:hover { color: #6B3030; }
+    &:hover { color: #7B4A2E; }
 `
 
 const FeaturedGrid = styled.div`
@@ -1036,7 +1036,7 @@ const FeaturedCard = styled.div`
 const FeaturedCardMedia = styled.div`
     position: relative;
     overflow: hidden;
-    background: #ededeb;
+    background: #E8DCC8;
     padding-bottom: 130%;
 
     img {
@@ -1064,7 +1064,7 @@ const FeaturedArtistBadge = styled.span`
 
 const FeaturedCardBody = styled.div`
     padding: 14px 12px 20px;
-    border-bottom: 1px solid #f0f0ee;
+    border-bottom: 1px solid #E8DCC8;
 `
 
 const FeaturedCardName = styled.p`
@@ -1090,7 +1090,7 @@ const FeaturedCardPrice = styled.p`
    ARTISTAS: PERFILES
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsShowcase = styled.section`
-    background: #0a0a0a;
+    background: #1A3D2B;
     padding: 100px 40px 120px;
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
@@ -1149,7 +1149,7 @@ const ArtistsGrid = styled.div`
 const ArtistProfileCard = styled.div`
     position: relative;
     overflow: hidden;
-    background: #111;
+    background: #1A3D2B;
 
     a { display: block; text-decoration: none; color: inherit; }
 
@@ -1223,7 +1223,7 @@ const ArtistCardCta = styled.p`
    TICKER DE ARTISTAS
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsTicker = styled.div`
-    background: #0a0a0a;
+    background: #1A3D2B;
     overflow: hidden;
     padding: 18px 0;
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -1318,7 +1318,7 @@ const CarouselWrap = styled.div`
     height: 75vh;
     min-height: 380px;
     overflow: hidden;
-    background: #111;
+    background: #1A3D2B;
     @media (max-width: 600px) { height: 55vh; min-height: 220px; }
 `
 const CarouselSlide = styled.div`
@@ -1453,7 +1453,7 @@ const EditorialSectionWord = styled.span`
    EDITORIAL
 ═══════════════════════════════════════════════════════════════ */
 const EditorialSection = styled.section`
-    background: #fff;
+    background: #FAF6F0;
     padding: 100px 0 140px;
     overflow: hidden;
 `
@@ -1561,7 +1561,7 @@ const ShopEyebrow = styled.p`
     font-size: 9px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: #8B9640;
+    color: #3A7A54;
     margin: 0 0 20px;
     flex: 0 0 100%;
 `
@@ -1581,7 +1581,7 @@ const ShopTitle = styled.h2`
    CARRUSELES POR ARTISTA
 ═══════════════════════════════════════════════════════════════ */
 const CarouselsSection = styled.section`
-    background: #f7f7f5;
+    background: #EDE3D5;
     padding: 100px 0 120px;
 `
 
@@ -1601,7 +1601,7 @@ const ArtistCarouselHeader = styled.div`
     align-items: baseline;
     justify-content: space-between;
     padding: 0 40px 24px;
-    border-bottom: 1px solid #e8e8e4;
+    border-bottom: 1px solid #D8C8B0;
     margin-bottom: 3px;
 
     @media (max-width: 640px) { padding: 0 20px 20px; }
@@ -1662,7 +1662,7 @@ const ShopCard = styled.div`
 const ShopCardMedia = styled.div`
     position: relative;
     overflow: hidden;
-    background: #ececea;
+    background: #E8DCC8;
     padding-bottom: 125%;
 
     img {
@@ -1707,7 +1707,7 @@ const ShopCardOverlayBtn = styled.span`
 
 const ShopCardBody = styled.div`
     padding: 16px 14px 20px;
-    border-bottom: 1px solid #f0f0ee;
+    border-bottom: 1px solid #E8DCC8;
 `
 
 const ShopCardName = styled.p`
@@ -1733,9 +1733,9 @@ const ShopCardPrice = styled.p`
    JOIN SECTION — VENDÉ TU ARTE
 ═══════════════════════════════════════════════════════════════ */
 const JoinSection = styled.section`
-    background: #fafaf8;
+    background: #F5EDE0;
     padding: 100px 40px 120px;
-    border-top: 1px solid #e8e8e4;
+    border-top: 1px solid #D8C8B0;
     @media (max-width: 640px) { padding: 72px 24px 96px; }
 `
 const JoinInner = styled.div`
@@ -1785,11 +1785,11 @@ const JoinCta = styled.a`
     &:hover { border-color: #0a0a0a; }
 `
 const JoinSteps = styled.div`
-    border-top: 1px solid #e8e8e4;
+    border-top: 1px solid #D8C8B0;
 `
 const JoinStep = styled.div`
     padding: 28px 0;
-    border-bottom: 1px solid #e8e8e4;
+    border-bottom: 1px solid #D8C8B0;
     display: grid;
     grid-template-columns: 48px 1fr;
     grid-template-rows: auto auto;
@@ -1824,7 +1824,7 @@ const JoinStepBody = styled.p`
    FOOTER
 ═══════════════════════════════════════════════════════════════ */
 const SiteFooter = styled.footer`
-    background: #0a0a0a;
+    background: #1A3D2B;
 `
 const FooterInner = styled.div`
     display: grid;
@@ -1992,7 +1992,7 @@ const ModalOverlay = styled.div`
 const ModalPanel = styled.div`
     position: fixed; top: 0; right: 0; bottom: 0;
     z-index: 101;
-    background: #fafaf8;
+    background: #F5EDE0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
     box-shadow: -4px 0 60px rgba(0,0,0,0.12);

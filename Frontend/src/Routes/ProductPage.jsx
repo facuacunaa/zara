@@ -289,13 +289,13 @@ export default function ProductPage() {
 /* ── STYLES ─────────────────────────────────────────────────────────────────── */
 const PageWrap = styled.div`
     min-height: 100vh;
-    background: #fafaf8;
+    background: #F5EDE0;
 `
 
 const PageHeader = styled.div`
-    background: rgba(250,250,248,0.97);
+    background: rgba(245,237,224,0.97);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid #e8e8e4;
+    border-bottom: 1px solid #D8C8B0;
     padding: 72px 40px 12px;
     position: sticky;
     top: 0;
@@ -370,9 +370,9 @@ const MobileFilterBtn = styled.button`
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    background: ${p => p.$active ? '#0a0a0a' : 'transparent'};
+    background: ${p => p.$active ? '#1A3D2B' : 'transparent'};
     color: ${p => p.$active ? '#fff' : '#555'};
-    border: 1px solid ${p => p.$active ? '#0a0a0a' : '#ccc'};
+    border: 1px solid ${p => p.$active ? '#1A3D2B' : '#D8C8B0'};
     padding: 8px 14px;
     cursor: pointer;
     white-space: nowrap;
@@ -414,7 +414,7 @@ const Sidebar = styled.aside`
         overflow: hidden;
         max-height: ${p => p.open ? '600px' : '0'};
         transition: max-height 0.35s ease;
-        border-bottom: ${p => p.open ? '1px solid #e8e8e4' : 'none'};
+        border-bottom: ${p => p.open ? '1px solid #D8C8B0' : 'none'};
         margin-bottom: ${p => p.open ? '8px' : '0'};
         padding-bottom: ${p => p.open ? '20px' : '0'};
     }
@@ -439,7 +439,7 @@ const FilterOption = styled.div`
     cursor: pointer;
     padding: 7px 0 7px 10px;
     transition: color 0.15s;
-    border-left: 2px solid ${p => p.active ? '#0a0a0a' : 'transparent'};
+    border-left: 2px solid ${p => p.active ? '#3A7A54' : 'transparent'};
     &:hover { color: #0a0a0a; }
     @media (max-width: 900px) { padding: 10px 0 10px 10px; }
 `
@@ -459,10 +459,10 @@ const FilterCheckbox = styled.div`
 
 const CheckboxBox = styled.span`
     width: 15px; height: 15px;
-    border: 1px solid ${p => p.active ? '#0a0a0a' : '#ccc'};
+    border: 1px solid ${p => p.active ? '#3A7A54' : '#D8C8B0'};
     display: flex; align-items: center; justify-content: center;
     font-size: 9px;
-    background: ${p => p.active ? '#0a0a0a' : 'transparent'};
+    background: ${p => p.active ? '#3A7A54' : 'transparent'};
     color: #fff;
     flex-shrink: 0;
     transition: all 0.15s;
@@ -499,7 +499,7 @@ const GridMeta = styled.div`
     justify-content: space-between;
     margin-bottom: 24px;
     padding-bottom: 14px;
-    border-bottom: 1px solid #e8e8e4;
+    border-bottom: 1px solid #D8C8B0;
     @media (max-width: 600px) { padding: 14px 16px; margin-bottom: 0; }
 `
 
@@ -535,14 +535,14 @@ const ProductGrid = styled.div`
 
 const ProductCard = styled.div`
     cursor: pointer;
-    background: #fff;
+    background: #FAF6F0;
     &:hover img { transform: scale(1.04); }
 `
 
 const CardMedia = styled.div`
     position: relative;
     overflow: hidden;
-    background: #ededeb;
+    background: #E8DCC8;
     aspect-ratio: 3/4;
 
     img {
@@ -600,7 +600,7 @@ const ArtistBadge = styled.span`
 
 const CardBody = styled.div`
     padding: 10px 10px 14px;
-    border-bottom: 1px solid #f0f0ee;
+    border-bottom: 1px solid #E8DCC8;
     @media (max-width: 600px) { padding: 14px 12px 18px; }
 `
 
@@ -643,7 +643,7 @@ const SkeletonGrid = styled.div`
 `
 
 const SkeletonCard = styled.div`
-    background: #fafaf8;
+    background: #F5EDE0;
     padding-bottom: 8px;
 `
 
@@ -652,11 +652,11 @@ const SkeletonImg = styled.div`
     padding-bottom: 133%;
     background: linear-gradient(
         90deg,
-        #f0f0ee 0%,
-        #e8e8e6 40%,
-        #ebebea 50%,
-        #e8e8e6 60%,
-        #f0f0ee 100%
+        #E8DCC8 0%,
+        #E8DCC8 40%,
+        #E8DCC8 50%,
+        #E8DCC8 60%,
+        #E8DCC8 100%
     );
     background-size: 200% 100%;
     animation: skeletonShimmer 1.6s ease-in-out infinite;
@@ -668,7 +668,7 @@ const SkeletonLine = styled.div`
     width: ${p => p.w || '80%'};
     background: linear-gradient(
         90deg,
-        #f0f0ee 0%, #e8e8e6 40%, #ebebea 50%, #e8e8e6 60%, #f0f0ee 100%
+        #E8DCC8 0%, #E8DCC8 40%, #E8DCC8 50%, #E8DCC8 60%, #E8DCC8 100%
     );
     background-size: 200% 100%;
     animation: skeletonShimmer 1.6s ease-in-out infinite;
@@ -696,7 +696,7 @@ const Empty = styled.div`
 /* ── MODAL ─────────────────────────────────────────────────────────────────── */
 const Overlay = styled.div`
     position: fixed; inset: 0;
-    background: rgba(10,10,10,0.55);
+    background: rgba(10,30,20,0.6);
     z-index: 100;
     opacity: ${p => p.visible ? 1 : 0};
     transition: opacity 0.4s;
@@ -705,7 +705,7 @@ const Overlay = styled.div`
 const ModalPanel = styled.div`
     position: fixed; top: 0; right: 0; bottom: 0;
     z-index: 101;
-    background: #fafaf8;
+    background: #F5EDE0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
     box-shadow: -4px 0 60px rgba(0,0,0,0.12);
@@ -716,7 +716,7 @@ const ModalPanel = styled.div`
 const ModalHead = styled.div`
     display: flex; align-items: center; justify-content: space-between;
     padding: 22px 28px;
-    border-bottom: 1px solid #efefef;
+    border-bottom: 1px solid #D8C8B0;
     flex-shrink: 0;
 `
 
@@ -740,7 +740,7 @@ const CloseBtn = styled.button`
 
 const ModalImg = styled.div`
     position: relative;
-    background: #f5f5f0;
+    background: #E8DCC8;
     padding-bottom: 110%;
 
     img {
@@ -751,7 +751,7 @@ const ModalImg = styled.div`
 
     .skeleton {
         position: absolute; inset: 0;
-        background: #f5f5f0;
+        background: #E8DCC8;
     }
 `
 
