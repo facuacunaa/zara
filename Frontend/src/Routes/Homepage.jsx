@@ -83,40 +83,40 @@ const Homepage = () => {
                       </BannerWrap>
             )}
 
-            {/* ── SLIDER DE ARTISTAS ──────────────────────────────────── */}
-            {artists.length > 0 && <ArtistsSlider artists={artists} />}
-
-            {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
-            {artistProducts.length > 0 && (
-                <FeaturedSection id="coleccion">
-                    <FeaturedSectionHeader>
-                        <FeaturedTitle>Productos de nuestros artistas</FeaturedTitle>
-                        <FeaturedViewAll to="/products">Ver todo →</FeaturedViewAll>
-                    </FeaturedSectionHeader>
-                    <FeaturedGrid>
-                        {artistProducts.slice(0, 8).map((p, i) => (
-                            <FeaturedCard key={p._id || i} onClick={() => setSelectedProd(p)}>
-                                <FeaturedCardMedia>
-                                    {p.image
-                                        ? <img src={p.image} alt={p.name} loading="lazy" />
-                                        : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
-                                    }
-                                    <ShopCardOverlay>
-                                        <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
-                                    </ShopCardOverlay>
-                                    {p.artistName && (
-                                        <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>
-                                    )}
-                                </FeaturedCardMedia>
-                                <FeaturedCardBody>
-                                    <FeaturedCardName>{p.name}</FeaturedCardName>
-                                    <FeaturedCardPrice>{p.price}</FeaturedCardPrice>
-                                </FeaturedCardBody>
-                            </FeaturedCard>
-                        ))}
-                    </FeaturedGrid>
-                </FeaturedSection>
-            )}
+            {/* ── SLIDER + PRODUCTOS (tarjeta unificada) ──────────────── */}
+            <SliderFeaturedCard>
+                {artists.length > 0 && <ArtistsSlider artists={artists} />}
+                {artistProducts.length > 0 && (
+                    <FeaturedSection id="coleccion">
+                        <FeaturedSectionHeader>
+                            <FeaturedTitle>Productos de nuestros artistas</FeaturedTitle>
+                            <FeaturedViewAll to="/products">Ver todo →</FeaturedViewAll>
+                        </FeaturedSectionHeader>
+                        <FeaturedGrid>
+                            {artistProducts.slice(0, 8).map((p, i) => (
+                                <FeaturedCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                                    <FeaturedCardMedia>
+                                        {p.image
+                                            ? <img src={p.image} alt={p.name} loading="lazy" />
+                                            : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
+                                        }
+                                        <ShopCardOverlay>
+                                            <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
+                                        </ShopCardOverlay>
+                                        {p.artistName && (
+                                            <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>
+                                        )}
+                                    </FeaturedCardMedia>
+                                    <FeaturedCardBody>
+                                        <FeaturedCardName>{p.name}</FeaturedCardName>
+                                        <FeaturedCardPrice>{p.price}</FeaturedCardPrice>
+                                    </FeaturedCardBody>
+                                </FeaturedCard>
+                            ))}
+                        </FeaturedGrid>
+                    </FeaturedSection>
+                )}
+            </SliderFeaturedCard>
 
             {/* ── MISIÓN ──────────────────────────────────────────────── */}
             <MissionSection>
@@ -432,8 +432,6 @@ const SliderSection = styled.section`
     padding: 40px 0 0;
     background: #F5EDE0;
     overflow: hidden;
-    border-radius: 0;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
 `
 const SliderHeader = styled.div`
     display: flex; align-items: center; justify-content: space-between;
@@ -534,7 +532,7 @@ const MissionSection = styled.section`
     display: grid;
     grid-template-columns: 1fr 1fr;
     min-height: 420px;
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 28px rgba(0,0,0,0.18);
     @media (max-width: 768px) {
@@ -670,7 +668,7 @@ const MissionStatDivider = styled.div`
 const BannerWrap = styled.div`
     display: block;
     width: 100%;
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
     /* Fondo sólido arriba, se desvanece hacia abajo */
     background: linear-gradient(
@@ -1026,14 +1024,20 @@ const HeroScrollHint = styled.div`
 `
 
 /* ═══════════════════════════════════════════════════════════════
+   SLIDER + FEATURED — tarjeta unificada
+═══════════════════════════════════════════════════════════════ */
+const SliderFeaturedCard = styled.div`
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+`
+
+/* ═══════════════════════════════════════════════════════════════
    FEATURED PRODUCTS GRID
 ═══════════════════════════════════════════════════════════════ */
 const FeaturedSection = styled.section`
     background: #F5EDE0;
     padding: 52px 40px 80px;
-    border-radius: 0;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
-    overflow: hidden;
 
     @media (max-width: 640px) { padding: 36px 20px 64px; }
 `
@@ -1318,7 +1322,7 @@ const ArtistsTicker = styled.div`
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     overflow: hidden;
     padding: 18px 0;
-    border-radius: 0;
+    border-radius: 20px;
     box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
 
@@ -1574,7 +1578,7 @@ const EditorialSection = styled.section`
     background: #FAF6F0;
     padding: 100px 0 140px;
     overflow: hidden;
-    border-radius: 0;
+    border-radius: 20px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.09);
 `
 
@@ -1701,7 +1705,7 @@ const ShopTitle = styled.h2`
    ARTISTAS — tarjeta unificada (carruseles + perfiles)
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsFullCard = styled.div`
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
@@ -1874,7 +1878,7 @@ const ShopCardPrice = styled.p`
 const JoinSection = styled.section`
     background: #F5EDE0;
     padding: 100px 40px 120px;
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0,0,0,0.09);
     @media (max-width: 640px) { padding: 72px 24px 96px; }
@@ -1977,7 +1981,7 @@ const SiteFooter = styled.footer`
             rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
         ),
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 28px rgba(0,0,0,0.2);
 `
