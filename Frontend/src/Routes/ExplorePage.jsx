@@ -426,15 +426,10 @@ const HeroTitle = styled.h1`
     font-family: 'Times New Roman', Georgia, serif;
     font-size: clamp(4rem, 12vw, 10rem);
     font-weight: 300;
-    color: #F5EDE0;
+    color: #fff;
     line-height: 0.95;
     margin: 0 0 2.5rem;
     letter-spacing: -0.02em;
-    text-shadow:
-        1px 2px 0 rgba(196,154,38,0.65),
-        2px 4px 0 rgba(170,130,20,0.45),
-        3px 6px 0 rgba(145,108,15,0.3),
-        4px 8px 14px rgba(0,0,0,0.45);
     em { font-style: italic; color: rgba(255,255,255,0.65); }
 `
 const HeroLine = styled.div`
@@ -756,14 +751,10 @@ const ArtistName = styled.h2`
     font-size: clamp(2.2rem, 5vw, 4.5rem);
     font-weight: 300;
     font-style: italic;
-    color: #1A3D2B;
+    color: #0a0a0a;
     margin: 0 0 2rem;
     line-height: 1.08;
     letter-spacing: -0.01em;
-    text-shadow:
-        1px 2px 0 rgba(26,61,43,0.3),
-        2px 4px 0 rgba(18,46,32,0.2),
-        3px 6px 10px rgba(0,0,0,0.1);
 `
 const ArtistBio = styled.p`
     font-size: clamp(0.88rem, 1.4vw, 1rem);
@@ -984,14 +975,9 @@ const CtaTitle = styled.h2`
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 300;
     font-style: italic;
-    color: #F5EDE0;
+    color: #fff;
     margin: 0;
     line-height: 1.1;
-    text-shadow:
-        1px 2px 0 rgba(196,154,38,0.65),
-        2px 4px 0 rgba(170,130,20,0.45),
-        3px 6px 0 rgba(145,108,15,0.3),
-        4px 8px 14px rgba(0,0,0,0.45);
 `
 const CtaRight = styled.div`
     padding-top: 12px;
