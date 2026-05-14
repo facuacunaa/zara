@@ -21,30 +21,35 @@ const blink = keyframes`
 
 /*
   Pájaro hace DOS viajes:
-  Viaje 1 → 0% – 44%   : entra desde izquierda, llega a casita, desaparece
-  Pausa   → 44% – 50%  : invisible, vuelve a posición inicial
-  Viaje 2 → 50% – 94%  : mismo recorrido de nuevo
-  Final   → 94% – 100% : desaparecido
-  Duración total: 5s
+  - Entra desde la izquierda volando ALTO (por arriba del logo)
+  - Pasa sobre el logo y luego baja en picada hacia la casita
+  - Desaparece al llegar, se reinicia y repite
+  Duración total: 5.5s
 */
 const flyIn = keyframes`
-    /* — Viaje 1 — */
-    0%   { transform: translate(-60vw,  14vh) scale(0.6)  rotate(-4deg); opacity: 0; }
-    6%   { transform: translate(-48vw,  10vh) scale(0.75) rotate(-6deg); opacity: 1; }
-    28%  { transform: translate(-12vw,   6vh) scale(1.05) rotate(-8deg); opacity: 1; }
-    38%  { transform: translate(  3vw,  10vh) scale(0.7)  rotate( 4deg); opacity: 1; }
-    44%  { transform: translate(  5vw,  12vh) scale(0)    rotate( 6deg); opacity: 0; }
+    /* — Viaje 1: entra alto desde la izquierda — */
+    0%   { transform: translate(-62vw, -22vh) scale(0.55) rotate(-5deg); opacity: 0; }
+    6%   { transform: translate(-46vw, -20vh) scale(0.7)  rotate(-6deg); opacity: 1; }
+    25%  { transform: translate(-16vw, -18vh) scale(0.95) rotate(-5deg); opacity: 1; }
+    /* — pasa por encima del logo — */
+    34%  { transform: translate(  2vw, -14vh) scale(1.0)  rotate(-3deg); opacity: 1; }
+    /* — gira y baja en picada hacia la casita — */
+    40%  { transform: translate(  4vw,  -4vh) scale(0.85) rotate(20deg); opacity: 1; }
+    44%  { transform: translate(  4vw,   9vh) scale(0.45) rotate(35deg); opacity: 1; }
+    46%  { transform: translate(  4vw,  11vh) scale(0)    rotate(40deg); opacity: 0; }
 
     /* — Reset invisible — */
-    44.1% { transform: translate(-60vw, 14vh) scale(0) rotate(-4deg); opacity: 0; }
-    50%   { transform: translate(-60vw, 14vh) scale(0) rotate(-4deg); opacity: 0; }
+    46.1% { transform: translate(-62vw, -22vh) scale(0) rotate(-5deg); opacity: 0; }
+    52%   { transform: translate(-62vw, -22vh) scale(0) rotate(-5deg); opacity: 0; }
 
-    /* — Viaje 2 — */
-    56%  { transform: translate(-48vw,  10vh) scale(0.75) rotate(-6deg); opacity: 1; }
-    78%  { transform: translate(-12vw,   6vh) scale(1.05) rotate(-8deg); opacity: 1; }
-    88%  { transform: translate(  3vw,  10vh) scale(0.7)  rotate( 4deg); opacity: 1; }
-    94%  { transform: translate(  5vw,  12vh) scale(0)    rotate( 6deg); opacity: 0; }
-    100% { transform: translate(  5vw,  12vh) scale(0)    rotate( 6deg); opacity: 0; }
+    /* — Viaje 2: igual — */
+    58%  { transform: translate(-46vw, -20vh) scale(0.7)  rotate(-6deg); opacity: 1; }
+    76%  { transform: translate(-16vw, -18vh) scale(0.95) rotate(-5deg); opacity: 1; }
+    84%  { transform: translate(  2vw, -14vh) scale(1.0)  rotate(-3deg); opacity: 1; }
+    90%  { transform: translate(  4vw,  -4vh) scale(0.85) rotate(20deg); opacity: 1; }
+    94%  { transform: translate(  4vw,   9vh) scale(0.45) rotate(35deg); opacity: 1; }
+    97%  { transform: translate(  4vw,  11vh) scale(0)    rotate(40deg); opacity: 0; }
+    100% { transform: translate(  4vw,  11vh) scale(0)    rotate(40deg); opacity: 0; }
 `
 
 /* ── Fondo del logo: forma orgánica (no círculo) ── */
@@ -85,7 +90,7 @@ const BirdWrap = styled.div`
     top: 50%; left: 50%;
     width: 0; height: 0;
     pointer-events: none;
-    animation: ${flyIn} 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
+    animation: ${flyIn} 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
 `
 
 const BirdSvg = styled.svg`
