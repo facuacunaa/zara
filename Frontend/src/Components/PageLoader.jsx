@@ -40,35 +40,22 @@ const flyIn = keyframes`
     100% { transform: translate(  6vw, 12vh)  scale(0)    rotate(48deg); opacity: 0; }
 `
 
-/* ── Fondo orgánico blanco detrás del logo ── */
-const LogoBg = styled.div`
+const LogoImg = styled.img`
     position: relative;
     z-index: 1;
-    padding: 32px 28px 36px;
-    background: rgba(255, 255, 255, 0.97);
-    border-radius: 62% 38% 46% 54% / 56% 44% 60% 44%;
-    box-shadow:
-        0 0 0 5px rgba(255,255,255,0.18),
-        0 16px 56px rgba(0,0,0,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation:
-        ${fadeIn}  0.5s ease both,
-        ${floatUp} 3.5s ease-in-out 0.5s infinite;
-`
-
-const LogoImg = styled.img`
     width: clamp(160px, 28vw, 260px);
     height: auto;
     display: block;
+    animation:
+        ${fadeIn}  0.5s ease both,
+        ${floatUp} 3.5s ease-in-out 0.5s infinite;
 `
 
 const Sub = styled.p`
     font-size: 0.55rem;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.18);
+    color: rgba(0,0,0,0.25);
     margin: 0;
     animation: ${blink} 1.8s ease-in-out infinite;
 `
@@ -95,18 +82,7 @@ const Wrap = styled.div`
     position: fixed;
     inset: 0;
     z-index: 200;
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
-        ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+    background: #fff;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -175,9 +151,7 @@ export default function PageLoader({ ready = false, onDone }) {
                 <Bird />
             </BirdWrap>
 
-            <LogoBg>
-                <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
-            </LogoBg>
+            <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
 
             <Sub>Cargando</Sub>
         </Wrap>
