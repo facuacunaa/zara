@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -99,10 +99,9 @@ const HorneroTree = () => (
 
 const Navbar = ({ activeIndexs }) => {
     const dispatch = useDispatch();
-    const [open,    setOpen]    = useState(false)
-    const [theme,   setTheme]   = useState("black");
-    const [artists, setArtists] = useState([])
-    const [scrolled, setScrolled] = useState(false)
+    const [open,     setOpen]    = useState(false)
+    const [artists,  setArtists] = useState([])
+    const navRef = useRef(null)
     const location = useLocation();
     const { cart }   = useSelector((store) => store.AppReducer);
     const { isAuth } = useSelector((store) => store.AuthReducer);
@@ -112,17 +111,47 @@ const Navbar = ({ activeIndexs }) => {
     const onExplorePage      = location.pathname === '/explorar'
     const needsTransparency  = onArtistPage || onHomePage || onExplorePage
 
-    useEffect(() => {
-        if (!needsTransparency) { setScrolled(false); return }
-        const handleScroll = () => setScrolled(window.scrollY > 60)
-        window.addEventListener('scroll', handleScroll, { passive: true })
-        handleScroll()
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [needsTransparency])
+    // 'dark' = fondo oscuro debajo → íconos blancos
+    // 'light' = fondo claro debajo  → íconos oscuros
+    const [navTheme, setNavTheme] = useState(needsTransparency ? 'dark' : 'light')
 
+    /* ── Detección automática del color de fondo bajo el navbar ── */
     useEffect(() => {
-        setTheme(location.pathname !== '/' ? "black" : "white")
-    }, [location]);
+        const detect = () => {
+            if (!navRef.current) return
+            // Temporalmente sacamos el navbar del hit-test para ver qué hay debajo
+            navRef.current.style.pointerEvents = 'none'
+            const el = document.elementFromPoint(window.innerWidth / 2, 32)
+            navRef.current.style.pointerEvents = ''
+            if (!el) return
+
+            // Subimos el DOM buscando un background significativo
+            let node = el
+            while (node && node !== document.documentElement) {
+                const bg = window.getComputedStyle(node).backgroundColor
+                if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+                    const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+                    if (m) {
+                        const lum = (0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3]) / 255
+                        setNavTheme(lum < 0.5 ? 'dark' : 'light')
+                        return
+                    }
+                }
+                node = node.parentElement
+            }
+            setNavTheme('light')
+        }
+
+        detect()
+        const t = setTimeout(detect, 200)
+        window.addEventListener('scroll', detect, { passive: true })
+        window.addEventListener('resize', detect, { passive: true })
+        return () => {
+            window.removeEventListener('scroll', detect)
+            window.removeEventListener('resize', detect)
+            clearTimeout(t)
+        }
+    }, [location.pathname])
 
     useEffect(() => {
         if (cart.length === 0) dispatch(getCart())
@@ -137,16 +166,20 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    const iconColor = (needsTransparency && !scrolled) ? 'white' : '#3A7A54'
-    const navBg     = needsTransparency ? 'transparent' : 'white'
-    const navPos    = 'fixed'
+    // Color de íconos y texto según el fondo detectado
+    const iconColor = navTheme === 'dark' ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
 
     return (
         <>
             {/* ── Overlay oscuro cuando el sidebar está abierto ─────── */}
             {open && <Overlay onClick={() => setOpen(false)} />}
 
-            <NavBar iconColor={iconColor} $pos={navPos} style={{ backgroundColor: navBg }}>
+            <NavBar
+                ref={navRef}
+                iconColor={iconColor}
+                $frosted={needsTransparency && navTheme === 'light'}
+                $solid={!needsTransparency}
+            >
                 {/* Hamburger */}
                 <HamburgerBtn onClick={() => setOpen(true)} iconColor={iconColor} aria-label="Abrir menú">
                     <span /><span /><span />
@@ -273,7 +306,7 @@ const Overlay = styled.div`
 `
 
 const NavBar = styled.nav`
-    position: ${({ $pos }) => $pos || 'fixed'};
+    position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 99;
     height: 64px;
@@ -281,7 +314,20 @@ const NavBar = styled.nav`
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
-    transition: background-color 0.3s ease;
+
+    /* ── Fondo dinámico según contexto ── */
+    background: ${p =>
+        p.$solid   ? '#F5EDE0' :
+        p.$frosted ? 'rgba(245,237,224,0.88)' :
+        'transparent'
+    };
+    backdrop-filter: ${p => p.$frosted ? 'blur(12px)' : 'none'};
+    border-bottom: ${p => (p.$solid || p.$frosted) ? '1px solid rgba(216,200,176,0.35)' : 'none'};
+
+    transition:
+        background 0.35s ease,
+        backdrop-filter 0.35s ease,
+        border-color 0.35s ease;
 `
 
 const HamburgerBtn = styled.button`
