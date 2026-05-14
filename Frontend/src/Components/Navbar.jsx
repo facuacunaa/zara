@@ -114,6 +114,16 @@ const Navbar = ({ activeIndexs }) => {
     // 'dark' = fondo oscuro debajo → íconos blancos
     // 'light' = fondo claro debajo  → íconos oscuros
     const [navTheme, setNavTheme] = useState(needsTransparency ? 'dark' : 'light')
+    // true = usuario está en el tope de la página (hero visible)
+    const [atTop, setAtTop] = useState(true)
+
+    /* ── Rastrear si el usuario está arriba del todo (hero) ── */
+    useEffect(() => {
+        const checkTop = () => setAtTop(window.scrollY < 80)
+        window.addEventListener('scroll', checkTop, { passive: true })
+        checkTop()
+        return () => window.removeEventListener('scroll', checkTop)
+    }, [location.pathname])
 
     /* ── Detección automática del color de fondo bajo el navbar ── */
     useEffect(() => {
@@ -153,6 +163,9 @@ const Navbar = ({ activeIndexs }) => {
         }
     }, [location.pathname])
 
+    // En el tope del hero (páginas transparentes) → forzar invisibilidad total
+    const heroVisible = needsTransparency && atTop
+
     useEffect(() => {
         if (cart.length === 0) dispatch(getCart())
     }, [])
@@ -166,8 +179,10 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    // Color de íconos y texto según el fondo detectado
-    const iconColor = navTheme === 'dark' ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
+    // Color de íconos: invisible en hero, blanco en oscuro, oscuro en claro
+    const iconColor = heroVisible
+        ? 'transparent'
+        : navTheme === 'dark' ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
 
     return (
         <>
@@ -177,7 +192,8 @@ const Navbar = ({ activeIndexs }) => {
             <NavBar
                 ref={navRef}
                 iconColor={iconColor}
-                $frosted={needsTransparency && navTheme === 'light'}
+                $heroVisible={heroVisible}
+                $frosted={!heroVisible && needsTransparency && navTheme === 'light'}
                 $solid={!needsTransparency}
             >
                 {/* Hamburger */}
@@ -317,17 +333,20 @@ const NavBar = styled.nav`
 
     /* ── Fondo dinámico según contexto ── */
     background: ${p =>
-        p.$solid   ? '#F5EDE0' :
-        p.$frosted ? 'rgba(245,237,224,0.88)' :
+        p.$solid        ? '#F5EDE0' :
+        p.$frosted      ? 'rgba(245,237,224,0.88)' :
         'transparent'
     };
     backdrop-filter: ${p => p.$frosted ? 'blur(12px)' : 'none'};
     border-bottom: ${p => (p.$solid || p.$frosted) ? '1px solid rgba(216,200,176,0.35)' : 'none'};
+    opacity: ${p => p.$heroVisible ? 0 : 1};
+    pointer-events: ${p => p.$heroVisible ? 'none' : 'all'};
 
     transition:
         background 0.35s ease,
         backdrop-filter 0.35s ease,
-        border-color 0.35s ease;
+        border-color 0.35s ease,
+        opacity 0.4s ease;
 `
 
 const HamburgerBtn = styled.button`
