@@ -23,7 +23,9 @@ const Homepage = () => {
     const [paintDone,      setPaintDone]      = useState(false)
     const [settingsLoaded, setSettingsLoaded] = useState(false)
     const [productsLoaded, setProductsLoaded] = useState(false)
+    const [loaderDone,     setLoaderDone]     = useState(false)
     const allReady = paintDone && settingsLoaded && productsLoaded
+    const dataReady = settingsLoaded && productsLoaded
 
     useEffect(() => {
         axios.get(`${API}/artist`)
@@ -63,11 +65,16 @@ const Homepage = () => {
             {/* ── PAINT INTRO ─────────────────────────────────────────── */}
             <PaintIntro onDone={() => setPaintDone(true)} />
 
-            {/* ── LOADING BRIDGE: paint done but data not yet ready ────── */}
-            {paintDone && !allReady && <PageLoader />}
+            {/* ── LOADING BRIDGE: paint done pero loader no terminó ───── */}
+            {paintDone && !loaderDone && (
+                <PageLoader
+                    ready={dataReady}
+                    onDone={() => setLoaderDone(true)}
+                />
+            )}
 
-            {/* ── MAIN CONTENT — only mounts once hero + products ready ── */}
-            {allReady && <>
+            {/* ── MAIN CONTENT — solo cuando loader terminó ───────────── */}
+            {loaderDone && <>
 
             {/* ── CARRUSEL DE BANNERS — ancho completo, fuera del ContentReveal ── */}
             {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}

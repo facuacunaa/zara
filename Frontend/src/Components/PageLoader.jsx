@@ -20,43 +20,29 @@ const blink = keyframes`
 `
 
 /*
-  Pájaro hace DOS viajes:
-  - Entra desde la izquierda volando ALTO (por arriba del logo)
-  - Pasa sobre el logo y luego baja en picada hacia la casita
-  - Desaparece al llegar, se reinicia y repite
-  Duración total: 5.5s
+  Pájaro hace UN viaje:
+  - Entra desde la izquierda volando alto
+  - Pasa por encima del logo
+  - Baja en picada hacia la casita y desaparece al entrar
+  Duración: 3s
 */
 const flyIn = keyframes`
-    /* — Viaje 1: entra alto desde la izquierda — */
     0%   { transform: translate(-62vw, -22vh) scale(0.55) rotate(-5deg); opacity: 0; }
-    6%   { transform: translate(-46vw, -20vh) scale(0.7)  rotate(-6deg); opacity: 1; }
-    25%  { transform: translate(-16vw, -18vh) scale(0.95) rotate(-5deg); opacity: 1; }
-    /* — pasa por encima del logo — */
-    34%  { transform: translate(  2vw, -14vh) scale(1.0)  rotate(-3deg); opacity: 1; }
-    /* — gira y baja en picada hacia la casita — */
-    40%  { transform: translate(  4vw,  -4vh) scale(0.85) rotate(20deg); opacity: 1; }
-    44%  { transform: translate(  4vw,   9vh) scale(0.45) rotate(35deg); opacity: 1; }
-    46%  { transform: translate(  4vw,  11vh) scale(0)    rotate(40deg); opacity: 0; }
-
-    /* — Reset invisible — */
-    46.1% { transform: translate(-62vw, -22vh) scale(0) rotate(-5deg); opacity: 0; }
-    52%   { transform: translate(-62vw, -22vh) scale(0) rotate(-5deg); opacity: 0; }
-
-    /* — Viaje 2: igual — */
-    58%  { transform: translate(-46vw, -20vh) scale(0.7)  rotate(-6deg); opacity: 1; }
-    76%  { transform: translate(-16vw, -18vh) scale(0.95) rotate(-5deg); opacity: 1; }
-    84%  { transform: translate(  2vw, -14vh) scale(1.0)  rotate(-3deg); opacity: 1; }
-    90%  { transform: translate(  4vw,  -4vh) scale(0.85) rotate(20deg); opacity: 1; }
-    94%  { transform: translate(  4vw,   9vh) scale(0.45) rotate(35deg); opacity: 1; }
-    97%  { transform: translate(  4vw,  11vh) scale(0)    rotate(40deg); opacity: 0; }
-    100% { transform: translate(  4vw,  11vh) scale(0)    rotate(40deg); opacity: 0; }
+    8%   { transform: translate(-46vw, -20vh) scale(0.72) rotate(-6deg); opacity: 1; }
+    30%  { transform: translate(-14vw, -18vh) scale(0.98) rotate(-5deg); opacity: 1; }
+    /* pasa sobre el logo */
+    44%  { transform: translate(  3vw, -14vh) scale(1.02) rotate(-3deg); opacity: 1; }
+    /* gira y baja en picada */
+    58%  { transform: translate(  5vw,  -3vh) scale(0.85) rotate(22deg); opacity: 1; }
+    76%  { transform: translate(  5vw,   8vh) scale(0.42) rotate(38deg); opacity: 1; }
+    88%  { transform: translate(  5vw,  11vh) scale(0.15) rotate(42deg); opacity: 0.6; }
+    100% { transform: translate(  5vw,  12vh) scale(0)    rotate(45deg); opacity: 0; }
 `
 
-/* ── Fondo del logo: forma orgánica (no círculo) ── */
+/* ── Fondo orgánico blanco detrás del logo ── */
 const LogoBg = styled.div`
     padding: 32px 28px 36px;
     background: rgba(255, 255, 255, 0.97);
-    /* forma orgánica asimétrica — similar a hoja o mancha de pintura */
     border-radius: 62% 38% 46% 54% / 56% 44% 60% 44%;
     box-shadow:
         0 0 0 5px rgba(255,255,255,0.18),
@@ -84,13 +70,13 @@ const Sub = styled.p`
     animation: ${blink} 1.8s ease-in-out infinite;
 `
 
-/* Pájaro anclado al centro de la pantalla */
+/* Pájaro anclado al centro */
 const BirdWrap = styled.div`
     position: absolute;
     top: 50%; left: 50%;
     width: 0; height: 0;
     pointer-events: none;
-    animation: ${flyIn} 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
+    animation: ${flyIn} 3s cubic-bezier(0.33, 0.1, 0.5, 1) 0.5s both;
 `
 
 const BirdSvg = styled.svg`
@@ -122,38 +108,54 @@ const Wrap = styled.div`
     align-items: center;
     justify-content: center;
     gap: 28px;
-    animation: ${p => p.$out ? fadeOut : 'none'} 0.5s ease forwards;
+    animation: ${p => p.$out ? fadeOut : 'none'} 0.55s ease forwards;
     pointer-events: ${p => p.$out ? 'none' : 'all'};
 `
 
 function Bird() {
     return (
         <BirdSvg viewBox="0 0 24 16" fill="none">
-            {/* Ala izquierda */}
             <path
                 d="M12 8 Q6 2 0 5"
                 stroke="#111" strokeWidth="2.2" strokeLinecap="round"
                 style={{ animation: 'flapL 0.36s ease-in-out infinite alternate', transformOrigin: '12px 8px' }}
             />
-            {/* Ala derecha */}
             <path
                 d="M12 8 Q18 2 24 5"
                 stroke="#111" strokeWidth="2.2" strokeLinecap="round"
                 style={{ animation: 'flapR 0.36s ease-in-out infinite alternate-reverse', transformOrigin: '12px 8px' }}
             />
-            {/* Cuerpo */}
             <ellipse cx="12" cy="9" rx="3" ry="2" fill="#111" />
-            {/* Pico */}
             <path d="M15 8.5 L17.5 8 L15 9" fill="#666" />
-            {/* Cola */}
             <path d="M9 10 Q7 13 5 12 Q7 11 9 10Z" fill="#111" />
         </BirdSvg>
     )
 }
 
-export default function PageLoader() {
+/*
+  Props:
+    ready   — los datos ya cargaron (viene del padre)
+    onDone  — callback cuando el loader termina de desvanecerse
+*/
+export default function PageLoader({ ready = false, onDone }) {
+    const [birdLanded, setBirdLanded] = useState(false)
+    const [closing,    setClosing]    = useState(false)
+
+    // Cuando el pájaro aterriza Y los datos están listos → cerrar
+    useEffect(() => {
+        if (birdLanded && ready) setClosing(true)
+    }, [birdLanded, ready])
+
+    // Si los datos cargan DESPUÉS que el pájaro, cerrar igual
+    // Si los datos cargan ANTES, el cierre queda pendiente hasta que el pájaro llegue
+
     return (
-        <Wrap>
+        <Wrap
+            $out={closing}
+            onAnimationEnd={(e) => {
+                if (closing) onDone?.()
+            }}
+        >
             <style>{`
                 @keyframes flapL {
                     from { transform: rotate(0deg);   }
@@ -165,7 +167,9 @@ export default function PageLoader() {
                 }
             `}</style>
 
-            <BirdWrap><Bird /></BirdWrap>
+            <BirdWrap onAnimationEnd={() => setBirdLanded(true)}>
+                <Bird />
+            </BirdWrap>
 
             <LogoBg>
                 <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
