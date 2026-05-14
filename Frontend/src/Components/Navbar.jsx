@@ -194,25 +194,42 @@ const Navbar = ({ activeIndexs }) => {
             {/* ── Sidebar ──────────────────────────────────────────────── */}
             <Sidebar open={open}>
                 <SidebarInner>
-                    {/* Cerrar */}
-                    <CloseBtn onClick={() => setOpen(false)} aria-label="Cerrar menú">✕</CloseBtn>
 
-                    {/* Logo de la tienda */}
-                    <SidebarLogoWrap>
-                        <img src="/logo-hornero.png" alt="La Casita del Hornero" />
-                    </SidebarLogoWrap>
+                    {/* Cabecera: logo + cerrar */}
+                    <SidebarHeader>
+                        <SidebarLogoWrap>
+                            <img src="/logo-hornero.png" alt="La Casita del Hornero" />
+                        </SidebarLogoWrap>
+                        <CloseBtn onClick={() => setOpen(false)} aria-label="Cerrar menú">✕</CloseBtn>
+                    </SidebarHeader>
 
-                    {/* Artistas */}
-                    <ArtistList>
-                        <ArtistListLabel>— Artistas</ArtistListLabel>
-                        <ArtistItem>
-                            <Link to="/explorar">Conocer a los artistas</Link>
-                        </ArtistItem>
-                    </ArtistList>
+                    <SidebarDivider />
+
+                    {/* Navegación principal */}
+                    <SidebarNav>
+                        <SidebarNavLabel>Navegar</SidebarNavLabel>
+                        <SidebarNavItem>
+                            <Link to="/">Inicio</Link>
+                        </SidebarNavItem>
+                        <SidebarNavItem>
+                            <Link to="/products">Tienda</Link>
+                        </SidebarNavItem>
+                        <SidebarNavItem>
+                            <Link to="/explorar">Artistas</Link>
+                        </SidebarNavItem>
+                        <SidebarNavItem>
+                            <Link to="/cart">
+                                Carrito
+                                {cart && cart.length > 0 && <SidebarCartBadge>{cart.length}</SidebarCartBadge>}
+                            </Link>
+                        </SidebarNavItem>
+                    </SidebarNav>
+
+                    <SidebarDivider />
 
                     {/* Acceso portales */}
                     <PortalSection>
-                        <PortalLabel>— Acceso</PortalLabel>
+                        <SidebarNavLabel>Portales</SidebarNavLabel>
                         <PortalLink to="/artist-portal">
                             <PortalIcon>🎨</PortalIcon>
                             <div>
@@ -229,15 +246,14 @@ const Navbar = ({ activeIndexs }) => {
                         </PortalLink>
                     </PortalSection>
 
-                    {/* Links secundarios */}
+                    {/* Footer */}
                     <SidebarFooterLinks>
-                        <Link to="/products">Tienda</Link>
-                        <Link to="/cart">Carrito {cart && cart.length > 0 ? `(${cart.length})` : ''}</Link>
                         {!isAuth
                             ? <Link to="/login" state={{ path: '/' }}>Iniciar sesión</Link>
                             : <Signout />
                         }
                     </SidebarFooterLinks>
+
                 </SidebarInner>
             </Sidebar>
         </>
@@ -349,103 +365,122 @@ const CartBadge = styled.span`
 const Sidebar = styled.aside`
     position: fixed;
     top: 0; left: 0; bottom: 0;
-    width: 320px;
-    max-width: 85vw;
-    background: #fff;
+    width: 300px;
+    max-width: 88vw;
+    background: #faf9f6;
     z-index: 100;
     transform: ${p => p.open ? 'translateX(0)' : 'translateX(-100%)'};
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
-    box-shadow: 4px 0 40px rgba(0,0,0,0.12);
+    box-shadow: 6px 0 48px rgba(0,0,0,0.13);
 `
 
 const SidebarInner = styled.div`
-    padding: 24px 32px 48px;
+    padding: 0 0 48px;
     display: flex;
     flex-direction: column;
     min-height: 100%;
 `
 
+const SidebarHeader = styled.div`
+    position: relative;
+    padding: 20px 24px 0;
+    display: flex;
+    justify-content: center;
+`
+
 const CloseBtn = styled.button`
+    position: absolute;
+    top: 20px;
+    right: 20px;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    color: #888;
-    align-self: flex-end;
-    padding: 4px 8px;
-    margin-bottom: 8px;
+    font-size: 14px;
+    color: #999;
+    padding: 4px;
+    line-height: 1;
     transition: color 0.2s;
 
-    &:hover { color: #000; }
+    &:hover { color: #0a0a0a; }
 `
 
 const SidebarLogoWrap = styled.div`
-    width: 100%;
     display: flex;
     justify-content: center;
-    margin: 0 0 36px;
 
     img {
-        width: 80%;
-        max-width: 220px;
+        width: 160px;
         height: auto;
     }
 `
 
-const ArtistList = styled.nav`
+const SidebarDivider = styled.hr`
+    border: none;
+    border-top: 1px solid #e8e6e0;
+    margin: 0 24px;
+`
+
+/* ── Nav principal ── */
+const SidebarNav = styled.nav`
+    padding: 28px 24px 24px;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    margin-bottom: 40px;
 `
 
-const ArtistListLabel = styled.p`
+const SidebarNavLabel = styled.p`
     font-family: 'DM Sans', sans-serif;
-    font-size: 8px;
-    letter-spacing: 0.45em;
+    font-size: 7.5px;
+    letter-spacing: 0.5em;
     text-transform: uppercase;
     color: #8B9640;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
 `
 
-const ArtistItem = styled.div`
-    border-top: 1px solid #f0f0ee;
-    padding: 14px 0;
-
-    &:last-child { border-bottom: 1px solid #f0f0ee; }
-
+const SidebarNavItem = styled.div`
     a {
         font-family: 'Playfair Display', Georgia, serif;
-        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        font-size: 1.55rem;
         font-style: italic;
         font-weight: 300;
-        color: #0a0a0a;
+        color: #1a1a1a;
         text-decoration: none;
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #edeae3;
         transition: color 0.2s, padding-left 0.2s;
 
         &:hover {
             color: #8B9640;
-            padding-left: 8px;
+            padding-left: 10px;
         }
     }
 `
 
-const PortalSection = styled.div`
-    margin-bottom: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+const SidebarCartBadge = styled.span`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #8B9640;
+    color: #fff;
+    border-radius: 50%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 600;
+    flex-shrink: 0;
 `
 
-const PortalLabel = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 8px;
-    letter-spacing: 0.45em;
-    text-transform: uppercase;
-    color: #8B9640;
-    margin: 0 0 14px;
+/* ── Portales ── */
+const PortalSection = styled.div`
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 `
 
 const PortalLink = styled(Link)`
@@ -453,43 +488,43 @@ const PortalLink = styled(Link)`
     align-items: center;
     gap: 14px;
     padding: 14px 16px;
-    border: 1px solid #f0f0ee;
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 4px;
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
         border-color: #8B9640;
-        background: #fafaf8;
+        box-shadow: 0 2px 12px rgba(139,150,64,0.12);
     }
 `
 
 const PortalIcon = styled.span`
-    font-size: 20px;
+    font-size: 22px;
     flex-shrink: 0;
 `
 
 const PortalLinkTitle = styled.p`
     font-family: 'Schoolbell', cursive;
     font-size: 15px;
-    color: #0a0a0a;
+    color: #1a1a1a;
     margin: 0 0 2px;
 `
 
 const PortalLinkSub = styled.p`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     color: #aaa;
     margin: 0;
 `
 
+/* ── Footer ── */
 const SidebarFooterLinks = styled.div`
     margin-top: auto;
-    padding-top: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    border-top: 1px solid #f0f0ee;
+    padding: 24px 24px 0;
+    border-top: 1px solid #e8e6e0;
 
     a, button {
         font-family: 'DM Sans', sans-serif;
