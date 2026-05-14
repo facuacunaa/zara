@@ -10,45 +10,70 @@ const fadeOut = keyframes`
     from { opacity: 1; }
     to   { opacity: 0; }
 `
-const floatUp = keyframes`
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-5px); }
-`
 const blink = keyframes`
-    0%, 100% { opacity: 0.18; }
+    0%, 100% { opacity: 0.2; }
     50%       { opacity: 0.5; }
 `
 
-/*
-  Pájaro hace UN viaje:
-  - Entra desde la izquierda volando alto
-  - Pasa por encima del logo
-  - Baja en picada hacia la casita y desaparece al entrar
-  Duración: 3s
-*/
+/* ── Logo 3D: flota y rota suavemente en el espacio ── */
+const float3d = keyframes`
+    0%   { transform: perspective(700px) rotateX(6deg)  rotateY(-8deg)  translateY(0px);   }
+    25%  { transform: perspective(700px) rotateX(2deg)  rotateY( 4deg)  translateY(-8px);  }
+    50%  { transform: perspective(700px) rotateX(-4deg) rotateY( 9deg)  translateY(-12px); }
+    75%  { transform: perspective(700px) rotateX( 2deg) rotateY(-2deg)  translateY(-6px);  }
+    100% { transform: perspective(700px) rotateX(6deg)  rotateY(-8deg)  translateY(0px);   }
+`
+const logoFadeIn = keyframes`
+    from { opacity: 0; transform: perspective(700px) rotateX(20deg) rotateY(-20deg) scale(0.85); }
+    to   { opacity: 1; transform: perspective(700px) rotateX(6deg)  rotateY(-8deg)  scale(1); }
+`
+
+/* ── Pájaro: UN viaje — entra desde izquierda, cruza sobre logo, pica a casita ── */
 const flyIn = keyframes`
-    /* entra desde la izquierda, un poco por encima del logo */
     0%   { transform: translate(-62vw, -8vh)  scale(0.5)  rotate(-4deg); opacity: 0; }
     8%   { transform: translate(-46vw, -7vh)  scale(0.7)  rotate(-5deg); opacity: 1; }
-    /* cruza por el área blanca del logo (y entre -4vh y 2vh = centro del logo) */
     36%  { transform: translate(-12vw, -3vh)  scale(1.0)  rotate(-4deg); opacity: 1; }
     52%  { transform: translate(  2vw,  0vh)  scale(1.05) rotate(-2deg); opacity: 1; }
-    /* ya pasó el logo, gira hacia abajo a la casita */
     64%  { transform: translate(  6vw,  4vh)  scale(0.85) rotate(18deg); opacity: 1; }
     78%  { transform: translate(  6vw,  9vh)  scale(0.45) rotate(36deg); opacity: 1; }
     90%  { transform: translate(  6vw, 11vh)  scale(0.15) rotate(44deg); opacity: 0.5; }
     100% { transform: translate(  6vw, 12vh)  scale(0)    rotate(48deg); opacity: 0; }
 `
 
-const LogoImg = styled.img`
+/* ── Sombra del logo en el suelo ── */
+const shadowPulse = keyframes`
+    0%, 100% { transform: scaleX(1)   translateY(0);   opacity: 0.12; }
+    50%       { transform: scaleX(0.8) translateY(-6px); opacity: 0.07; }
+`
+
+/* ── Wrapper del logo con perspectiva 3D ── */
+const LogoScene = styled.div`
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
+const LogoImg = styled.img`
     width: clamp(160px, 28vw, 260px);
     height: auto;
     display: block;
     animation:
-        ${fadeIn}  0.5s ease both,
-        ${floatUp} 3.5s ease-in-out 0.5s infinite;
+        ${logoFadeIn} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both,
+        ${float3d}    5s ease-in-out 0.7s infinite;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 18px 32px rgba(0,0,0,0.18)) drop-shadow(0 4px 8px rgba(0,0,0,0.10));
+`
+
+/* Sombra elíptica debajo del logo */
+const LogoShadow = styled.div`
+    width: clamp(100px, 18vw, 160px);
+    height: 14px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    margin-top: -8px;
+    animation: ${shadowPulse} 5s ease-in-out 0.7s infinite;
 `
 
 const Sub = styled.p`
@@ -60,7 +85,7 @@ const Sub = styled.p`
     animation: ${blink} 1.8s ease-in-out infinite;
 `
 
-/* Pájaro anclado al centro — z-index alto para pasar por DELANTE del logo */
+/* Pájaro anclado al centro, siempre por delante */
 const BirdWrap = styled.div`
     position: absolute;
     top: 50%; left: 50%;
@@ -73,9 +98,12 @@ const BirdWrap = styled.div`
 const BirdSvg = styled.svg`
     position: absolute;
     transform: translate(-50%, -50%);
-    width: 54px; height: 34px;
+    width: 58px; height: 36px;
     overflow: visible;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
+    /* sombra 3D debajo del pájaro */
+    filter:
+        drop-shadow(0 6px 10px rgba(0,0,0,0.28))
+        drop-shadow(0 2px 3px rgba(0,0,0,0.18));
 `
 
 const Wrap = styled.div`
@@ -87,7 +115,7 @@ const Wrap = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 28px;
+    gap: 20px;
     animation: ${p => p.$out ? fadeOut : 'none'} 0.55s ease forwards;
     pointer-events: ${p => p.$out ? 'none' : 'all'};
 `
@@ -95,55 +123,49 @@ const Wrap = styled.div`
 function Bird() {
     return (
         <BirdSvg viewBox="0 0 24 16" fill="none">
+            {/* Ala izquierda */}
             <path
                 d="M12 8 Q6 2 0 5"
-                stroke="#111" strokeWidth="2.2" strokeLinecap="round"
+                stroke="#1a1a1a" strokeWidth="2.4" strokeLinecap="round"
                 style={{ animation: 'flapL 0.36s ease-in-out infinite alternate', transformOrigin: '12px 8px' }}
             />
+            {/* Ala derecha */}
             <path
                 d="M12 8 Q18 2 24 5"
-                stroke="#111" strokeWidth="2.2" strokeLinecap="round"
+                stroke="#1a1a1a" strokeWidth="2.4" strokeLinecap="round"
                 style={{ animation: 'flapR 0.36s ease-in-out infinite alternate-reverse', transformOrigin: '12px 8px' }}
             />
-            <ellipse cx="12" cy="9" rx="3" ry="2" fill="#111" />
-            <path d="M15 8.5 L17.5 8 L15 9" fill="#666" />
-            <path d="M9 10 Q7 13 5 12 Q7 11 9 10Z" fill="#111" />
+            {/* Cuerpo */}
+            <ellipse cx="12" cy="9" rx="3.2" ry="2.1" fill="#1a1a1a" />
+            {/* Pico */}
+            <path d="M15 8.5 L18 8 L15 9.2Z" fill="#555" />
+            {/* Cola */}
+            <path d="M9 10 Q6.5 13.5 4.5 12 Q7 11 9 10Z" fill="#1a1a1a" />
         </BirdSvg>
     )
 }
 
-/*
-  Props:
-    ready   — los datos ya cargaron (viene del padre)
-    onDone  — callback cuando el loader termina de desvanecerse
-*/
 export default function PageLoader({ ready = false, onDone }) {
     const [birdLanded, setBirdLanded] = useState(false)
     const [closing,    setClosing]    = useState(false)
 
-    // Cuando el pájaro aterriza Y los datos están listos → cerrar
     useEffect(() => {
         if (birdLanded && ready) setClosing(true)
     }, [birdLanded, ready])
 
-    // Si los datos cargan DESPUÉS que el pájaro, cerrar igual
-    // Si los datos cargan ANTES, el cierre queda pendiente hasta que el pájaro llegue
-
     return (
         <Wrap
             $out={closing}
-            onAnimationEnd={(e) => {
-                if (closing) onDone?.()
-            }}
+            onAnimationEnd={() => { if (closing) onDone?.() }}
         >
             <style>{`
                 @keyframes flapL {
                     from { transform: rotate(0deg);   }
-                    to   { transform: rotate(-24deg); }
+                    to   { transform: rotate(-26deg); }
                 }
                 @keyframes flapR {
                     from { transform: rotate(0deg);  }
-                    to   { transform: rotate(24deg); }
+                    to   { transform: rotate(26deg); }
                 }
             `}</style>
 
@@ -151,7 +173,10 @@ export default function PageLoader({ ready = false, onDone }) {
                 <Bird />
             </BirdWrap>
 
-            <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
+            <LogoScene>
+                <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
+                <LogoShadow />
+            </LogoScene>
 
             <Sub>Cargando</Sub>
         </Wrap>
