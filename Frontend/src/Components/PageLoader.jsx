@@ -27,20 +27,23 @@ const blink = keyframes`
   Duración: 3s
 */
 const flyIn = keyframes`
-    0%   { transform: translate(-62vw, -22vh) scale(0.55) rotate(-5deg); opacity: 0; }
-    8%   { transform: translate(-46vw, -20vh) scale(0.72) rotate(-6deg); opacity: 1; }
-    30%  { transform: translate(-14vw, -18vh) scale(0.98) rotate(-5deg); opacity: 1; }
-    /* pasa sobre el logo */
-    44%  { transform: translate(  3vw, -14vh) scale(1.02) rotate(-3deg); opacity: 1; }
-    /* gira y baja en picada */
-    58%  { transform: translate(  5vw,  -3vh) scale(0.85) rotate(22deg); opacity: 1; }
-    76%  { transform: translate(  5vw,   8vh) scale(0.42) rotate(38deg); opacity: 1; }
-    88%  { transform: translate(  5vw,  11vh) scale(0.15) rotate(42deg); opacity: 0.6; }
-    100% { transform: translate(  5vw,  12vh) scale(0)    rotate(45deg); opacity: 0; }
+    /* entra desde la izquierda, un poco por encima del logo */
+    0%   { transform: translate(-62vw, -8vh)  scale(0.5)  rotate(-4deg); opacity: 0; }
+    8%   { transform: translate(-46vw, -7vh)  scale(0.7)  rotate(-5deg); opacity: 1; }
+    /* cruza por el área blanca del logo (y entre -4vh y 2vh = centro del logo) */
+    36%  { transform: translate(-12vw, -3vh)  scale(1.0)  rotate(-4deg); opacity: 1; }
+    52%  { transform: translate(  2vw,  0vh)  scale(1.05) rotate(-2deg); opacity: 1; }
+    /* ya pasó el logo, gira hacia abajo a la casita */
+    64%  { transform: translate(  6vw,  4vh)  scale(0.85) rotate(18deg); opacity: 1; }
+    78%  { transform: translate(  6vw,  9vh)  scale(0.45) rotate(36deg); opacity: 1; }
+    90%  { transform: translate(  6vw, 11vh)  scale(0.15) rotate(44deg); opacity: 0.5; }
+    100% { transform: translate(  6vw, 12vh)  scale(0)    rotate(48deg); opacity: 0; }
 `
 
 /* ── Fondo orgánico blanco detrás del logo ── */
 const LogoBg = styled.div`
+    position: relative;
+    z-index: 1;
     padding: 32px 28px 36px;
     background: rgba(255, 255, 255, 0.97);
     border-radius: 62% 38% 46% 54% / 56% 44% 60% 44%;
