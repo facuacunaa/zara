@@ -25,7 +25,9 @@ const AdminPage = () => {
     const [artists, setArtists] = useState([])
     const [pwdMap, setPwdMap] = useState({})       // { artistId: newPassword }
     const [pwdLoading, setPwdLoading] = useState({})
-    const [deletingIdx, setDeletingIdx] = useState(null)   // índice del banner que se está eliminando
+    const [deletingIdx, setDeletingIdx] = useState(null)
+    const [heroVideo, setHeroVideo] = useState('')
+    const [heroVideoLoading, setHeroVideoLoading] = useState(false)
     const [carouselImgs, setCarouselImgs] = useState(['','','',''])
     const [carouselFiles, setCarouselFiles] = useState([null,null,null,null])
     const [carouselProgress, setCarouselProgress] = useState([0,0,0,0])
@@ -66,6 +68,7 @@ const AdminPage = () => {
     const fetchSettings = async () => {
         try {
             const res = await axios.get(`${API}/settings`)
+            setHeroVideo(res.data.heroVideo || '')
             setCarouselImgs([
                 res.data.carouselImage1 || '',
                 res.data.carouselImage2 || '',
@@ -104,6 +107,24 @@ const AdminPage = () => {
     useEffect(() => {
         if (token) { fetchProducts(); fetchSettings(); fetchArtists() }
     }, [token])
+
+    // ── Delete hero video ──────────────────────────────────────────────────
+    const deleteHeroVideo = async () => {
+        if (!window.confirm('¿Eliminar el video del hero?')) return
+        setHeroVideoLoading(true)
+        try {
+            await axios.delete(`${API}/settings/home-video`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            setHeroVideo('')
+            setMsg('✅ Video del hero eliminado')
+        } catch (err) {
+            const detail = err?.response?.data?.msg || err?.message || 'Error desconocido'
+            setMsg(`❌ Error: ${detail}`)
+        }
+        setHeroVideoLoading(false)
+        setTimeout(() => setMsg(''), 4000)
+    }
 
     // ── Upload carousel image ─────────────────────────────────────────────
     const uploadCarouselImg = async (idx) => {
@@ -430,7 +451,52 @@ const AdminPage = () => {
                 {/* ── HOME ── */}
                 {tab === 'home' && (
                     <>
-                        <PageTitle>Carrusel de inicio</PageTitle>
+                        {/* ── Hero del home ── */}
+                        <PageTitle>Hero del Home</PageTitle>
+                        <Form as="div" style={{ marginBottom: '40px' }}>
+                            <SectionLabel>Video de fondo del hero</SectionLabel>
+                            <p style={{ fontSize:'11px', color:'#888', letterSpacing:'0.1em', marginBottom:'20px' }}>
+                                Aparece como fondo en la primera pantalla del inicio. Si no hay video, el hero no se muestra.
+                            </p>
+                            {heroVideo ? (
+                                <div style={{ position:'relative', marginBottom:'16px' }}>
+                                    <video
+                                        src={heroVideo}
+                                        style={{ width:'100%', maxHeight:'220px', objectFit:'cover', display:'block', background:'#000' }}
+                                        muted autoPlay loop playsInline
+                                    />
+                                    <p style={{ fontSize:'10px', color:'#aaa', margin:'8px 0', wordBreak:'break-all' }}>
+                                        {heroVideo}
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={deleteHeroVideo}
+                                        disabled={heroVideoLoading}
+                                        style={{
+                                            background:'none', border:'1px solid #c00',
+                                            padding:'8px 20px', fontSize:'10px',
+                                            letterSpacing:'0.15em', textTransform:'uppercase',
+                                            cursor: heroVideoLoading ? 'not-allowed' : 'pointer',
+                                            color:'#c00', opacity: heroVideoLoading ? 0.5 : 1,
+                                            width:'100%'
+                                        }}
+                                    >
+                                        {heroVideoLoading ? 'Eliminando...' : '🗑 Eliminar video del hero'}
+                                    </button>
+                                </div>
+                            ) : (
+                                <div style={{
+                                    background:'#f5f5f5', padding:'32px',
+                                    textAlign:'center', fontSize:'12px',
+                                    color:'#bbb', letterSpacing:'0.1em',
+                                    textTransform:'uppercase', marginBottom:'16px'
+                                }}>
+                                    Sin video — para subir uno, usá el Portal Artista (sección hero)
+                                </div>
+                            )}
+                        </Form>
+
+                        <PageTitle>Carrusel de inicio (banners del hero)</PageTitle>
                         <Form as="div">
                             <p style={{ fontSize: '11px', color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '28px' }}>
                                 Subí hasta 4 imágenes. Aparecen en carrusel automático en el inicio, debajo de los productos destacados.
