@@ -349,10 +349,10 @@ const HeaderRight = styled.div`
 `
 
 const SearchInput = styled.input`
-    border: none;
-    border-bottom: 1px solid #ccc;
-    background: transparent;
-    padding: 8px 4px;
+    border: 1px solid #D8C8B0;
+    background: rgba(255,255,255,0.6);
+    padding: 8px 14px;
+    border-radius: 100px;
     font-size: 12px;
     letter-spacing: 0.05em;
     color: #0a0a0a;
@@ -373,7 +373,8 @@ const MobileFilterBtn = styled.button`
     background: ${p => p.$active ? '#1A3D2B' : 'transparent'};
     color: ${p => p.$active ? '#fff' : '#555'};
     border: 1px solid ${p => p.$active ? '#1A3D2B' : '#D8C8B0'};
-    padding: 8px 14px;
+    padding: 8px 18px;
+    border-radius: 100px;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
@@ -462,6 +463,7 @@ const CheckboxBox = styled.span`
     border: 1px solid ${p => p.active ? '#3A7A54' : '#D8C8B0'};
     display: flex; align-items: center; justify-content: center;
     font-size: 9px;
+    border-radius: 4px;
     background: ${p => p.active ? '#3A7A54' : 'transparent'};
     color: #fff;
     flex-shrink: 0;
@@ -515,10 +517,10 @@ const SortSelect = styled.select`
     font-size: 10px;
     letter-spacing: 0.1em;
     color: #555;
-    border: none;
-    border-bottom: 1px solid #ccc;
-    background: transparent;
-    padding: 4px 2px;
+    border: 1px solid #D8C8B0;
+    background: rgba(255,255,255,0.6);
+    padding: 6px 12px;
+    border-radius: 100px;
     outline: none;
     cursor: pointer;
     max-width: 160px;
@@ -536,6 +538,8 @@ const ProductGrid = styled.div`
 const ProductCard = styled.div`
     cursor: pointer;
     background: #FAF6F0;
+    border-radius: 14px;
+    overflow: hidden;
     &:hover img { transform: scale(1.04); }
 `
 
@@ -708,6 +712,7 @@ const ModalPanel = styled.div`
     background: #F5EDE0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
+    border-radius: 24px 0 0 24px;
     box-shadow: -4px 0 60px rgba(0,0,0,0.12);
     transform: ${p => p.visible ? 'translateX(0)' : 'translateX(100%)'};
     transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);

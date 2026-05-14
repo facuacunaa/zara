@@ -369,6 +369,7 @@ const Sidebar = styled.aside`
     max-width: 88vw;
     background: #F5EDE0;
     z-index: 100;
+    border-radius: 0 24px 24px 0;
     transform: ${p => p.open ? 'translateX(0)' : 'translateX(-100%)'};
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
@@ -466,6 +467,7 @@ const SidebarCartBadge = styled.span`
     width: 20px;
     height: 20px;
     background: #3A7A54;
+    border-radius: 50%;
     color: #fff;
     border-radius: 50%;
     font-family: 'DM Sans', sans-serif;
@@ -490,6 +492,7 @@ const PortalLink = styled(Link)`
     padding: 14px 16px;
     background: #fff;
     border: 1px solid #D8C8B0;
+    border-radius: 14px;
     border-radius: 4px;
     text-decoration: none;
     transition: border-color 0.2s, box-shadow 0.2s;

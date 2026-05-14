@@ -466,6 +466,8 @@ const ArtistCard = styled(Link)`
     width: 140px;
     display: flex; flex-direction: column; gap: 8px;
     text-decoration: none;
+    border-radius: 12px;
+    overflow: hidden;
     &:hover img { transform: scale(1.05); }
 `
 const ArtistCardImg = styled.div`
@@ -597,6 +599,7 @@ const MissionBtnPrimary = styled.a`
     text-transform: uppercase;
     text-decoration: none;
     font-weight: 500;
+    border-radius: 100px;
     transition: filter 0.25s;
     &:hover { filter: brightness(0.85); }
 `
@@ -612,6 +615,7 @@ const MissionBtnSecondary = styled.a`
     text-transform: uppercase;
     text-decoration: none;
     border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px;
     transition: border-color 0.2s, color 0.2s;
     &:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
 `
@@ -959,6 +963,7 @@ const HeroCtaPrimary = styled(Link)`
     color: #0a0a0a;
     background: #fff;
     padding: 16px 40px;
+    border-radius: 100px;
     text-decoration: none;
     transition: background 0.25s, color 0.25s;
     &:hover { background: #D8C8B0; }
@@ -972,6 +977,7 @@ const HeroCtaSecondary = styled(Link)`
     color: rgba(255,255,255,0.75);
     border: 1px solid rgba(255,255,255,0.3);
     padding: 16px 40px;
+    border-radius: 100px;
     text-decoration: none;
     transition: border-color 0.25s, color 0.25s;
     &:hover { border-color: #fff; color: #fff; }
@@ -1053,6 +1059,8 @@ const FeaturedGrid = styled.div`
 const FeaturedCard = styled.div`
     cursor: pointer;
     background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
 
     &:hover img { transform: scale(1.05); }
 `
@@ -1184,6 +1192,7 @@ const ArtistsGrid = styled.div`
 const ArtistProfileCard = styled.div`
     position: relative;
     overflow: hidden;
+    border-radius: 16px;
     background:
         repeating-linear-gradient(
             65deg,
@@ -1721,6 +1730,8 @@ const ShopCard = styled.div`
     scroll-snap-align: start;
     cursor: pointer;
     background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
 
     &:hover img { transform: scale(1.05); }
 
@@ -2074,6 +2085,7 @@ const ModalPanel = styled.div`
     background: #F5EDE0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
+    border-radius: 24px 0 0 24px;
     box-shadow: -4px 0 60px rgba(0,0,0,0.12);
     transform: ${p => p.visible ? 'translateX(0)' : 'translateX(100%)'};
     transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);

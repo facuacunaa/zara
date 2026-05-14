@@ -628,6 +628,8 @@ const PanelWorksTrack = styled.div`
 const PanelWorkCard = styled.div`
     flex: 0 0 180px;
     cursor: pointer;
+    border-radius: 12px;
+    overflow: hidden;
     &:hover img { transform: scale(1.04); }
     @media (max-width: 640px) { flex: 0 0 150px; }
 `
@@ -792,13 +794,14 @@ const ArtistProfileBtn = styled(Link)`
     font-size: 0.7rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #0a0a0a;
+    color: #fff;
+    background: #3A7A54;
     text-decoration: none;
-    border-bottom: 1px solid rgba(10,10,10,0.25);
-    padding-bottom: 4px;
+    padding: 10px 20px;
+    border-radius: 100px;
     align-self: flex-start;
-    transition: border-color 0.2s;
-    &:hover { border-color: #0a0a0a; }
+    transition: filter 0.2s;
+    &:hover { filter: brightness(0.88); }
 `
 
 /* ── WORKS STRIP ─────────────────────────────────────────────────────────────── */
@@ -1009,6 +1012,7 @@ const CtaBtn = styled.a`
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
+    border-radius: 100px;
     transition: filter 0.25s;
     &:hover { filter: brightness(0.85); }
 `
@@ -1027,6 +1031,7 @@ const ModalPanel = styled.div`
     background: #F5EDE0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
+    border-radius: 24px 0 0 24px;
     box-shadow: -4px 0 60px rgba(0,0,0,0.12);
     transform: ${p => p.$visible ? 'translateX(0)' : 'translateX(100%)'};
     transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
