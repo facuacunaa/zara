@@ -67,11 +67,12 @@ const Homepage = () => {
             {paintDone && !allReady && <PageLoader />}
 
             {/* ── MAIN CONTENT — only mounts once hero + products ready ── */}
-            {allReady && <ContentReveal>
+            {allReady && <>
 
-            {/* ── CARRUSEL DE BANNERS ─────────────────────────────────── */}
+            {/* ── CARRUSEL DE BANNERS — ancho completo, fuera del ContentReveal ── */}
             {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
 
+            <ContentReveal>
             {/* ── BANNER ──────────────────────────────────────────────── */}
             {banner && (
                 banner.bannerLink
@@ -362,7 +363,8 @@ const Homepage = () => {
                 />
             )}
 
-            </ContentReveal>}
+            </ContentReveal>
+            </>}
         </HomeWrap>
     );
 }
