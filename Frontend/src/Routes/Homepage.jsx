@@ -1462,7 +1462,6 @@ const CarouselWrap = styled.div`
     height: 75vh;
     min-height: 380px;
     overflow: hidden;
-    /* Sin card-style — hero full-bleed que se funde con el fondo */
     background:
         repeating-linear-gradient(
             65deg,
@@ -1475,21 +1474,9 @@ const CarouselWrap = styled.div`
             rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
         ),
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
-    /* Degradado inferior que se funde con el fondo de la página */
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        height: 42%;
-        background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(61,43,26,0.55) 55%,
-            #3d2b1a 100%
-        );
-        z-index: 1;
-        pointer-events: none;
-    }
+    /* Mask: hero se funde hacia el fondo de madera */
+    -webkit-mask-image: linear-gradient(to bottom, black 52%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 52%, transparent 100%);
     @media (max-width: 600px) { height: 55vh; min-height: 220px; }
 `
 const CarouselSlide = styled.div`
