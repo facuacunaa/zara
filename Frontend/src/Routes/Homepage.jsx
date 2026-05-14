@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
+import PageLoader from "../Components/PageLoader";
 import AddCart from "../Components/Product-Page-Component/AddCart";
 import RelatedSections from "../Components/Product-Page-Component/RelatedSections";
 import ProductDetailModal from "../Components/Product-Page-Component/ProductDetailModal";
@@ -20,6 +21,8 @@ const Homepage = () => {
 
     const [settingsLoaded, setSettingsLoaded] = useState(false)
     const [productsLoaded, setProductsLoaded] = useState(false)
+    const [loaderDone,     setLoaderDone]     = useState(false)
+    const dataReady = settingsLoaded && productsLoaded
 
     useEffect(() => {
         axios.get(`${API}/artist`)
@@ -56,8 +59,16 @@ const Homepage = () => {
         <HomeWrap>
             <Navbar />
 
-            {/* ── MAIN CONTENT ────────────────────────────────────────── */}
-            {<>
+            {/* ── LOADER: pájaro vuela al logo, luego aparece el home ─── */}
+            {!loaderDone && (
+                <PageLoader
+                    ready={dataReady}
+                    onDone={() => setLoaderDone(true)}
+                />
+            )}
+
+            {/* ── MAIN CONTENT — solo cuando el loader terminó ────────── */}
+            {loaderDone && <>
 
             {/* ── CARRUSEL DE BANNERS — ancho completo, fuera del ContentReveal ── */}
             {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
