@@ -209,20 +209,6 @@ const Homepage = () => {
                 </ArtistsShowcase>
             )}
 
-            {/* ── TICKER DE ARTISTAS ─────────────────────────────────── */}
-            {artists.length > 0 && (
-                <ArtistsTicker>
-                    <ArtistsTrack>
-                        {[...artists, ...artists, ...artists].map((a, i) => (
-                            <ArtistsTickerItem key={i}>
-                                <Link to={`/${a.slug}`}>{a.name.toUpperCase()}</Link>
-                                <ArtistsTickerDot>·</ArtistsTickerDot>
-                            </ArtistsTickerItem>
-                        ))}
-                    </ArtistsTrack>
-                </ArtistsTicker>
-            )}
-
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
                 <FeaturedSection id="coleccion">
@@ -254,6 +240,20 @@ const Homepage = () => {
                         ))}
                     </FeaturedGrid>
                 </FeaturedSection>
+            )}
+
+            {/* ── TICKER DE ARTISTAS ─────────────────────────────────── */}
+            {artists.length > 0 && (
+                <ArtistsTicker>
+                    <ArtistsTrack>
+                        {[...artists, ...artists, ...artists].map((a, i) => (
+                            <ArtistsTickerItem key={i}>
+                                <Link to={`/${a.slug}`}>{a.name.toUpperCase()}</Link>
+                                <ArtistsTickerDot>·</ArtistsTickerDot>
+                            </ArtistsTickerItem>
+                        ))}
+                    </ArtistsTrack>
+                </ArtistsTicker>
             )}
 
             {/* ── ¿SOS ARTISTA? VENDÉ TU ARTE ────────────────────────── */}
