@@ -93,7 +93,7 @@ export default function ExplorePage() {
     const [selectedProd, setSelectedProd] = useState(null)
     const [activeSlug,  setActiveSlug]  = useState(null)
     const sectionRefs = useRef({})
-    const navRef      = useRef(null)
+    const trackRef    = useRef(null)
 
     useEffect(() => {
         Promise.all([
@@ -117,23 +117,26 @@ export default function ExplorePage() {
         return map
     }, [products])
 
-    // Track active artist on scroll
+    // Track active artist via horizontal scroll position
     useEffect(() => {
-        if (!artists.length) return
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(e => {
-                if (e.isIntersecting) setActiveSlug(e.target.dataset.slug)
-            })
-        }, { rootMargin: '-40% 0px -55% 0px' })
-
-        Object.values(sectionRefs.current).forEach(el => { if (el) observer.observe(el) })
-        return () => observer.disconnect()
+        const track = trackRef.current
+        if (!track || !artists.length) return
+        const handleScroll = () => {
+            const idx = Math.round(track.scrollLeft / track.clientWidth)
+            if (artists[idx]) setActiveSlug(artists[idx].slug)
+        }
+        track.addEventListener('scroll', handleScroll, { passive: true })
+        return () => track.removeEventListener('scroll', handleScroll)
     }, [artists])
 
     const scrollTo = (slug) => {
         const el = sectionRefs.current[slug]
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
     }
+
+    const activeIdx = artists.findIndex(a => a.slug === activeSlug)
+    const goNext = () => { if (activeIdx < artists.length - 1) scrollTo(artists[activeIdx + 1].slug) }
+    const goPrev = () => { if (activeIdx > 0) scrollTo(artists[activeIdx - 1].slug) }
 
     if (loading) return <PageLoader />
 
@@ -165,147 +168,127 @@ export default function ExplorePage() {
                 </HeroScroll>
             </ExploreHero>
 
-            {/* ── LAYOUT: SIDEBAR + CONTENIDO ─────────────────────────────── */}
-            <ExploreLayout>
+            {/* ── CARRUSEL HORIZONTAL ──────────────────────────────────────── */}
+            <HorizontalSection>
 
-                {/* Sidebar izquierdo */}
-                {artists.length > 0 && (
-                    <ArtistSidebar>
-                        <SidebarInnerNav>
-                            <SidebarNavLabel>Artistas</SidebarNavLabel>
-                            {artists.map(a => (
-                                <SidebarArtistBtn
-                                    key={a._id}
-                                    $active={activeSlug === a.slug}
-                                    onClick={() => scrollTo(a.slug)}
+                {/* Flecha izquierda */}
+                <NavArrowBtn side="left" onClick={goPrev} disabled={activeIdx <= 0}>
+                    ←
+                </NavArrowBtn>
+
+                {/* Track horizontal */}
+                {loading ? (
+                    <LoadingWrap>
+                        {[1,2,3].map(i => <LoadingBlock key={i} />)}
+                    </LoadingWrap>
+                ) : artists.length === 0 ? (
+                    <EmptyWrap>
+                        <p>Próximamente los artistas estarán disponibles aquí.</p>
+                        <Link to="/products">Ver tienda →</Link>
+                    </EmptyWrap>
+                ) : (
+                    <HorizontalTrack ref={trackRef}>
+                        {artists.map((artist, idx) => {
+                            const key   = artist.slug || artist.name
+                            const prods = productsByArtist[key] || productsByArtist[artist.name] || []
+                            const img   = artist.profileImage || artist.images?.[0]
+                            const bio   = artist.bio || artist.description || null
+
+                            return (
+                                <ArtistPanel
+                                    key={artist._id || idx}
+                                    data-slug={artist.slug}
+                                    ref={el => sectionRefs.current[artist.slug] = el}
                                 >
-                                    <SidebarActiveLine $active={activeSlug === a.slug} />
-                                    {a.name}
-                                </SidebarArtistBtn>
-                            ))}
-                            <SidebarDivider />
-                            <SidebarStoreLink to="/products">Ver tienda →</SidebarStoreLink>
-                        </SidebarInnerNav>
-                    </ArtistSidebar>
+                                    {/* ─ PORTADA ──────────────────────────── */}
+                                    <ArtistCover>
+                                        <ArtistImgWrap>
+                                            {img ? (
+                                                <FadeImg src={img} alt={artist.name} />
+                                            ) : (
+                                                <ArtistImgPlaceholder>
+                                                    <span>{artist.name?.charAt(0)?.toUpperCase()}</span>
+                                                </ArtistImgPlaceholder>
+                                            )}
+                                            <ArtistImgNum>
+                                                {String(idx + 1).padStart(2, '0')} / {String(artists.length).padStart(2, '0')}
+                                            </ArtistImgNum>
+                                        </ArtistImgWrap>
+
+                                        <ArtistInfo>
+                                            <ArtistEyebrow>— Artista</ArtistEyebrow>
+                                            <ArtistName>{artist.name}</ArtistName>
+
+                                            {bio
+                                                ? <ArtistBio>{bio}</ArtistBio>
+                                                : <ArtistBio>
+                                                    Artista local con {prods.length > 0
+                                                        ? `${prods.length} obra${prods.length !== 1 ? 's' : ''} disponible${prods.length !== 1 ? 's' : ''}`
+                                                        : 'obras únicas'
+                                                    }. Cada pieza refleja una visión personal del arte.
+                                                  </ArtistBio>
+                                            }
+
+                                            <ArtistStatsRow>
+                                                <ArtistStatBox>
+                                                    <ArtistStatNum>{prods.length}</ArtistStatNum>
+                                                    <ArtistStatLabel>obras</ArtistStatLabel>
+                                                </ArtistStatBox>
+                                                <ArtistStatBox>
+                                                    <ArtistStatNum>Local</ArtistStatNum>
+                                                    <ArtistStatLabel>artista</ArtistStatLabel>
+                                                </ArtistStatBox>
+                                            </ArtistStatsRow>
+
+                                            <ArtistProfileBtn to={`/${artist.slug}`}>
+                                                Ver perfil completo
+                                            </ArtistProfileBtn>
+
+                                            {/* Obras dentro del panel */}
+                                            {prods.length > 0 && (
+                                                <PanelWorksTrack>
+                                                    {prods.map((p, i) => (
+                                                        <PanelWorkCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                                                            <PanelWorkImg>
+                                                                {p.image
+                                                                    ? <FadeImg src={p.image} alt={p.name} />
+                                                                    : <WorkCardNoImg>{p.name?.charAt(0)}</WorkCardNoImg>
+                                                                }
+                                                                <WorkCardOverlay>
+                                                                    <span>Ver</span>
+                                                                </WorkCardOverlay>
+                                                            </PanelWorkImg>
+                                                            <WorkCardBody>
+                                                                <WorkCardName>{p.name}</WorkCardName>
+                                                                <WorkCardPrice>{p.price}</WorkCardPrice>
+                                                            </WorkCardBody>
+                                                        </PanelWorkCard>
+                                                    ))}
+                                                </PanelWorksTrack>
+                                            )}
+                                        </ArtistInfo>
+                                    </ArtistCover>
+                                </ArtistPanel>
+                            )
+                        })}
+                    </HorizontalTrack>
                 )}
 
-                {/* Contenido principal */}
-                <ExploreMain>
-            {loading ? (
-                <LoadingWrap>
-                    {[1,2,3].map(i => <LoadingBlock key={i} />)}
-                </LoadingWrap>
-            ) : artists.length === 0 ? (
-                <EmptyWrap>
-                    <p>Próximamente los artistas estarán disponibles aquí.</p>
-                    <Link to="/products">Ver tienda →</Link>
-                </EmptyWrap>
-            ) : (
-                <ArtistsWrap>
-                    {artists.map((artist, idx) => {
-                        const key        = artist.slug || artist.name
-                        const prods      = productsByArtist[key] || productsByArtist[artist.name] || []
-                        const isEven     = idx % 2 === 0
-                        const img        = artist.profileImage || artist.images?.[0]
-                        const bio        = artist.bio || artist.description || null
+                {/* Flecha derecha */}
+                <NavArrowBtn side="right" onClick={goNext} disabled={activeIdx >= artists.length - 1}>
+                    →
+                </NavArrowBtn>
 
-                        return (
-                            <ArtistBlock
-                                key={artist._id || idx}
-                                data-slug={artist.slug}
-                                ref={el => sectionRefs.current[artist.slug] = el}
-                            >
-                                {/* ─ PORTADA ─────────────────────────────── */}
-                                <ArtistCover $reverse={!isEven}>
-                                    <ArtistImgWrap $reverse={!isEven}>
-                                        {img ? (
-                                            <FadeImg src={img} alt={artist.name} />
-                                        ) : (
-                                            <ArtistImgPlaceholder>
-                                                <span>{artist.name?.charAt(0)?.toUpperCase()}</span>
-                                            </ArtistImgPlaceholder>
-                                        )}
-                                        <ArtistImgNum>
-                                            {String(idx + 1).padStart(2, '0')}
-                                        </ArtistImgNum>
-                                    </ArtistImgWrap>
+                {/* Dots */}
+                {artists.length > 0 && (
+                    <NavDots>
+                        {artists.map((a, i) => (
+                            <NavDot key={a._id} $active={activeSlug === a.slug} onClick={() => scrollTo(a.slug)} title={a.name} />
+                        ))}
+                    </NavDots>
+                )}
 
-                                    <ArtistInfo $reverse={!isEven}>
-                                        <ArtistEyebrow>— Artista</ArtistEyebrow>
-                                        <ArtistName>{artist.name}</ArtistName>
-
-                                        {bio && <ArtistBio>{bio}</ArtistBio>}
-
-                                        {!bio && (
-                                            <ArtistBio>
-                                                Artista local con {prods.length > 0
-                                                    ? `${prods.length} obra${prods.length !== 1 ? 's' : ''} disponible${prods.length !== 1 ? 's' : ''} en la plataforma`
-                                                    : 'obras únicas'
-                                                }. Cada pieza refleja una visión personal del arte y el entorno local.
-                                            </ArtistBio>
-                                        )}
-
-                                        <ArtistStatsRow>
-                                            <ArtistStatBox>
-                                                <ArtistStatNum>{prods.length}</ArtistStatNum>
-                                                <ArtistStatLabel>obras</ArtistStatLabel>
-                                            </ArtistStatBox>
-                                            <ArtistStatBox>
-                                                <ArtistStatNum>Local</ArtistStatNum>
-                                                <ArtistStatLabel>artista</ArtistStatLabel>
-                                            </ArtistStatBox>
-                                        </ArtistStatsRow>
-
-                                        <ArtistProfileBtn to={`/${artist.slug}`}>
-                                            Ver perfil completo
-                                        </ArtistProfileBtn>
-                                    </ArtistInfo>
-                                </ArtistCover>
-
-                                {/* ─ OBRAS ───────────────────────────────── */}
-                                {prods.length > 0 && (
-                                    <WorksSection>
-                                        <WorksHeader>
-                                            <WorksLabel>Obras de {artist.name}</WorksLabel>
-                                            <WorksCount>{prods.length} piezas</WorksCount>
-                                        </WorksHeader>
-                                        <WorksTrack>
-                                            {prods.map((p, i) => (
-                                                <WorkCard key={p._id || i} onClick={() => setSelectedProd(p)}>
-                                                    <WorkCardImg>
-                                                        {p.image
-                                                            ? <FadeImg src={p.image} alt={p.name} />
-                                                            : <WorkCardNoImg>{p.name?.charAt(0)}</WorkCardNoImg>
-                                                        }
-                                                        <WorkCardOverlay>
-                                                            <span>Ver detalle</span>
-                                                        </WorkCardOverlay>
-                                                    </WorkCardImg>
-                                                    <WorkCardBody>
-                                                        <WorkCardName>{p.name}</WorkCardName>
-                                                        <WorkCardPrice>{p.price}</WorkCardPrice>
-                                                    </WorkCardBody>
-                                                </WorkCard>
-                                            ))}
-                                        </WorksTrack>
-                                    </WorksSection>
-                                )}
-
-                                {/* ─ DIVISOR ─────────────────────────────── */}
-                                {idx < artists.length - 1 && (
-                                    <BlockDivider>
-                                        <DivLine />
-                                        <DivTag>{String(idx + 2).padStart(2, '0')}</DivTag>
-                                        <DivLine />
-                                    </BlockDivider>
-                                )}
-                            </ArtistBlock>
-                        )
-                    })}
-                </ArtistsWrap>
-            )}
-                </ExploreMain>
-            </ExploreLayout>
+            </HorizontalSection>
 
             {/* ── CTA FINAL ────────────────────────────────────────────────── */}
             <CtaStrip>
@@ -462,96 +445,105 @@ const HeroScrollLine = styled.div`
     background: rgba(255,255,255,0.15);
 `
 
-/* ── LAYOUT SIDEBAR + MAIN ───────────────────────────────────────────────────── */
-const ExploreLayout = styled.div`
-    display: flex;
-    align-items: flex-start;
+/* ── CARRUSEL HORIZONTAL ─────────────────────────────────────────────────────── */
+const HorizontalSection = styled.div`
     position: relative;
+    background: #fafaf8;
 `
 
-const ArtistSidebar = styled.aside`
-    width: 220px;
-    flex-shrink: 0;
-    position: sticky;
-    top: 64px;
-    height: calc(100vh - 64px);
-    overflow-y: auto;
-    background: #fff;
-    border-right: 1px solid #e8e8e4;
+const HorizontalTrack = styled.div`
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
-
-    @media (max-width: 900px) {
-        display: none;
-    }
 `
 
-const SidebarInnerNav = styled.div`
-    padding: 36px 0 48px;
+const ArtistPanel = styled.article`
+    flex: 0 0 100vw;
+    width: 100vw;
+    min-height: calc(100vh - 64px);
+    scroll-snap-align: start;
     display: flex;
     flex-direction: column;
 `
 
-const SidebarNavLabel = styled.p`
-    font-size: 0.58rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: #ccc;
-    margin: 0 0 20px;
-    padding: 0 28px;
-`
-
-const SidebarArtistBtn = styled.button`
+const NavArrowBtn = styled.button`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    ${p => p.side === 'left' ? 'left: 20px;' : 'right: 20px;'}
+    z-index: 10;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid #e8e8e4;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: none;
+    justify-content: center;
+    transition: all 0.2s;
+    opacity: ${p => p.disabled ? 0.2 : 1};
+    pointer-events: ${p => p.disabled ? 'none' : 'all'};
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    &:hover { background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+    @media (max-width: 640px) { display: none; }
+`
+
+const NavDots = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 0 28px;
+    background: #fafaf8;
+`
+
+const NavDot = styled.button`
+    width: ${p => p.$active ? '24px' : '6px'};
+    height: 6px;
+    border-radius: 3px;
+    background: ${p => p.$active ? '#0a0a0a' : '#ccc'};
     border: none;
     cursor: pointer;
-    text-align: left;
-    padding: 11px 28px;
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: ${p => p.$active ? '1.05rem' : '0.95rem'};
-    font-style: italic;
-    font-weight: 300;
-    color: ${p => p.$active ? '#0a0a0a' : '#bbb'};
-    transition: color 0.2s, font-size 0.2s;
+    padding: 0;
+    transition: all 0.3s ease;
+    &:hover { background: #888; }
+`
+
+/* Obras dentro del panel info */
+const PanelWorksTrack = styled.div`
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin-top: 28px;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+`
+
+const PanelWorkCard = styled.div`
+    flex: 0 0 120px;
+    cursor: pointer;
+    &:hover img { transform: scale(1.05); }
+    @media (max-width: 640px) { flex: 0 0 100px; }
+`
+
+const PanelWorkImg = styled.div`
     position: relative;
-    width: 100%;
-
-    &:hover { color: #0a0a0a; }
-`
-
-const SidebarActiveLine = styled.span`
-    display: block;
-    width: 2px;
-    height: ${p => p.$active ? '18px' : '0px'};
-    background: #0a0a0a;
-    flex-shrink: 0;
-    transition: height 0.25s ease;
-    border-radius: 1px;
-`
-
-const SidebarDivider = styled.div`
-    height: 1px;
-    background: #e8e8e4;
-    margin: 20px 28px;
-`
-
-const SidebarStoreLink = styled(Link)`
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #bbb;
-    text-decoration: none;
-    padding: 0 28px;
-    transition: color 0.2s;
-    &:hover { color: #0a0a0a; }
-`
-
-const ExploreMain = styled.div`
-    flex: 1;
-    min-width: 0;
+    overflow: hidden;
+    background: #e8e8e6;
+    padding-bottom: 125%;
+    margin-bottom: 6px;
+    img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.7s ease;
+    }
 `
 
 /* ── LOADING ─────────────────────────────────────────────────────────────────── */
@@ -574,18 +566,16 @@ const EmptyWrap = styled.div`
     a { font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: #aaa; text-decoration: none; &:hover { color: #0a0a0a; } }
 `
 
-/* ── ARTIST BLOCK ─────────────────────────────────────────────────────────────── */
+/* ── ARTIST PANEL LAYOUT ──────────────────────────────────────────────────────── */
 const ArtistsWrap = styled.div`
     background: #fafaf8;
 `
-const ArtistBlock = styled.article`
-    scroll-margin-top: 114px;
-`
 const ArtistCover = styled.div`
     display: grid;
-    grid-template-columns: ${p => p.$reverse ? '1fr 1fr' : '1fr 1fr'};
-    min-height: 80vh;
-    @media (max-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    flex: 1;
+    min-height: calc(100vh - 64px);
+    @media (max-width: 768px) {
         grid-template-columns: 1fr;
         min-height: auto;
     }
@@ -594,7 +584,6 @@ const ArtistImgWrap = styled.div`
     position: relative;
     overflow: hidden;
     background: #111;
-    order: ${p => p.$reverse ? 2 : 0};
     min-height: 60vh;
 
     img {
@@ -605,10 +594,7 @@ const ArtistImgWrap = styled.div`
     }
     &:hover img { transform: scale(1.04); }
 
-    @media (max-width: 900px) {
-        order: 0;
-        min-height: 55vw;
-    }
+    @media (max-width: 768px) { min-height: 55vw; }
 `
 const ArtistImgPlaceholder = styled.div`
     position: absolute; inset: 0;
@@ -632,13 +618,13 @@ const ArtistImgNum = styled.span`
     color: rgba(255,255,255,0.3);
 `
 const ArtistInfo = styled.div`
-    padding: clamp(48px, 8vw, 100px) clamp(28px, 6vw, 80px);
+    padding: clamp(48px, 6vw, 80px) clamp(28px, 5vw, 64px);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: ${p => p.$reverse ? '#fff' : '#fafaf8'};
-    order: ${p => p.$reverse ? 0 : 2};
-    @media (max-width: 900px) { order: 2; }
+    background: #fafaf8;
+    overflow-y: auto;
+    @media (max-width: 768px) { padding: 32px 24px 40px; }
 `
 const ArtistEyebrow = styled.p`
     font-size: 0.62rem;
