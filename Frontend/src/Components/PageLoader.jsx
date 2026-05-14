@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 
 /* ── Generales ── */
@@ -148,18 +148,36 @@ function Bird() {
 export default function PageLoader({ ready = false, onDone }) {
     const [birdLanded, setBirdLanded] = useState(false)
     const [closing,    setClosing]    = useState(false)
+    const onDoneRef = useRef(onDone)
+    useEffect(() => { onDoneRef.current = onDone }, [onDone])
 
     // Cerrar cuando el pájaro aterriza Y los datos están listos
     useEffect(() => {
         if (birdLanded && ready) setClosing(true)
     }, [birdLanded, ready])
 
-    // Safety: si onAnimationEnd no dispara, forzar cierre a los 4.5s
+    // Safety 1: si bird animation no dispara onAnimationEnd, forzar birdLanded
     useEffect(() => {
         if (!ready) return
         const t = setTimeout(() => setBirdLanded(true), 3600)
         return () => clearTimeout(t)
     }, [ready])
+
+    // Safety 2: si closing=true pero onAnimationEnd no dispara, forzar onDone
+    useEffect(() => {
+        if (!closing) return
+        const t = setTimeout(() => onDoneRef.current?.(), 800)
+        return () => clearTimeout(t)
+    }, [closing])
+
+    // Safety 3: máximo absoluto — 5s sin importar nada
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setClosing(true)
+            setTimeout(() => onDoneRef.current?.(), 600)
+        }, 5000)
+        return () => clearTimeout(t)
+    }, [])
 
     return (
         <Wrap
