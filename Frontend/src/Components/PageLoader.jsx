@@ -44,7 +44,7 @@ const Wrap = styled.div`
 `
 
 const LogoImg = styled.img`
-    width: clamp(100px, 18vw, 160px);
+    width: clamp(200px, 35vw, 320px);
     height: auto;
     animation:
         ${fadeIn}  0.6s ease both,
