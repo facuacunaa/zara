@@ -138,6 +138,16 @@ export default function ExplorePage() {
     const goNext = () => { if (activeIdx < artists.length - 1) scrollTo(artists[activeIdx + 1].slug) }
     const goPrev = () => { if (activeIdx > 0) scrollTo(artists[activeIdx - 1].slug) }
 
+    // Hint desaparece al primer scroll horizontal
+    const [showHint, setShowHint] = useState(true)
+    useEffect(() => {
+        const track = trackRef.current
+        if (!track) return
+        const hide = () => setShowHint(false)
+        track.addEventListener('scroll', hide, { once: true, passive: true })
+        return () => track.removeEventListener('scroll', hide)
+    }, [artists])
+
     if (loading) return <PageLoader />
 
     return (
@@ -278,6 +288,18 @@ export default function ExplorePage() {
                 <NavArrowBtn side="right" onClick={goNext} disabled={activeIdx >= artists.length - 1}>
                     →
                 </NavArrowBtn>
+
+                {/* Hint mobile */}
+                {showHint && artists.length > 1 && (
+                    <SwipeHint>
+                        <SwipeHintText>Para ver artistas y sus diseños</SwipeHintText>
+                        <SwipeArrow>
+                            <span>deslizá</span>
+                            <SwipeArrowLine />
+                            <SwipeArrowHead>›</SwipeArrowHead>
+                        </SwipeArrow>
+                    </SwipeHint>
+                )}
 
                 {/* Dots */}
                 {artists.length > 0 && (
@@ -491,6 +513,67 @@ const NavArrowBtn = styled.button`
     box-shadow: 0 2px 16px rgba(0,0,0,0.08);
     &:hover { background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
     @media (max-width: 640px) { display: none; }
+`
+
+/* ── SWIPE HINT (mobile) ─────────────────────────────────────────────────────── */
+const hintBlink = keyframes`
+    0%, 100% { opacity: 0.9; }
+    50%       { opacity: 0.35; }
+`
+const arrowSlide = keyframes`
+    0%, 100% { transform: translateX(0); }
+    50%       { transform: translateX(6px); }
+`
+
+const SwipeHint = styled.div`
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 0 6px;
+    animation: ${hintBlink} 2s ease-in-out infinite;
+
+    @media (max-width: 900px) {
+        display: flex;
+    }
+`
+
+const SwipeHintText = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin: 0;
+    text-align: center;
+`
+
+const SwipeArrow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: ${arrowSlide} 1.4s ease-in-out infinite;
+
+    span {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 8px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #ccc;
+    }
+`
+
+const SwipeArrowLine = styled.div`
+    width: 28px;
+    height: 1px;
+    background: #ccc;
+`
+
+const SwipeArrowHead = styled.span`
+    font-size: 16px;
+    color: #aaa;
+    line-height: 1;
+    letter-spacing: 0 !important;
 `
 
 const NavDots = styled.div`
