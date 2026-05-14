@@ -293,6 +293,22 @@ const Navbar = ({ activeIndexs }) => {
                         </PortalLink>
                     </PortalSection>
 
+                    <SidebarDivider />
+
+                    {/* ¿Querés vender? */}
+                    <SellSection>
+                        <SellEyebrow>— Para artistas</SellEyebrow>
+                        <SellTitle>¿Querés vender<br/>tu arte?</SellTitle>
+                        <SellBody>
+                            Unite a nuestra comunidad de artistas locales y empezá a vender tus obras sin complicaciones.
+                        </SellBody>
+                        <SellCta href="mailto:lacasitadelhornero@gmail.com">
+                            Quiero vender →
+                        </SellCta>
+                    </SellSection>
+
+                    <SidebarDivider />
+
                     {/* Footer */}
                     <SidebarFooterLinks>
                         {!isAuth
@@ -580,6 +596,61 @@ const PortalLinkSub = styled.p`
     letter-spacing: 0.03em;
     color: #aaa;
     margin: 0;
+`
+
+/* ── ¿Querés vender? ── */
+const SellSection = styled.div`
+    margin: 0 16px;
+    padding: 22px 20px 24px;
+    background: linear-gradient(135deg, #0C1E14 0%, #1a3a24 100%);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+`
+
+const SellEyebrow = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 7.5px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: rgba(196,154,38,0.85);
+    margin: 0;
+`
+
+const SellTitle = styled.h3`
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    font-style: italic;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+`
+
+const SellBody = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.55);
+    margin: 0;
+`
+
+const SellCta = styled.a`
+    display: inline-block;
+    margin-top: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(196,154,38,0.9);
+    text-decoration: none;
+    transition: color 0.2s, letter-spacing 0.2s;
+
+    &:hover {
+        color: #c49a26;
+        letter-spacing: 0.45em;
+    }
 `
 
 /* ── Footer ── */
