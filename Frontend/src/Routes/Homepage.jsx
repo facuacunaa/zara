@@ -510,9 +510,7 @@ const revealAnim = keyframes`
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
-    background:
-        url('/wood-bg.jpg') center center / cover fixed;
-    background-color: #3d2b1a;
+    background: #B8A890;
 `
 const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -1474,9 +1472,21 @@ const CarouselWrap = styled.div`
             rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
         ),
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
-    /* Mask: hero se funde hacia el fondo de madera */
-    -webkit-mask-image: linear-gradient(to bottom, black 52%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 52%, transparent 100%);
+    /* Degradado inferior que se funde con el fondo de la página */
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 42%;
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(184,168,144,0.45) 55%,
+            #B8A890 100%
+        );
+        z-index: 1;
+        pointer-events: none;
+    }
     @media (max-width: 600px) { height: 55vh; min-height: 220px; }
 `
 const CarouselSlide = styled.div`
