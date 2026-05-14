@@ -69,6 +69,9 @@ const Homepage = () => {
             {/* ── MAIN CONTENT — only mounts once hero + products ready ── */}
             {allReady && <ContentReveal>
 
+            {/* ── CARRUSEL DE BANNERS ─────────────────────────────────── */}
+            {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
+
             {/* ── BANNER ──────────────────────────────────────────────── */}
             {banner && (
                 banner.bannerLink
@@ -79,9 +82,6 @@ const Homepage = () => {
                         {banner.bannerText}
                       </BannerWrap>
             )}
-
-            {/* ── CARRUSEL DE BANNERS ─────────────────────────────────── */}
-            {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
 
             {/* ── SLIDER DE ARTISTAS ──────────────────────────────────── */}
             {artists.length > 0 && <ArtistsSlider artists={artists} />}
