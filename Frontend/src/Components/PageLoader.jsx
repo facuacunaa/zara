@@ -149,14 +149,25 @@ export default function PageLoader({ ready = false, onDone }) {
     const [birdLanded, setBirdLanded] = useState(false)
     const [closing,    setClosing]    = useState(false)
 
+    // Cerrar cuando el pájaro aterriza Y los datos están listos
     useEffect(() => {
         if (birdLanded && ready) setClosing(true)
     }, [birdLanded, ready])
 
+    // Safety: si onAnimationEnd no dispara, forzar cierre a los 4.5s
+    useEffect(() => {
+        if (!ready) return
+        const t = setTimeout(() => setBirdLanded(true), 3600)
+        return () => clearTimeout(t)
+    }, [ready])
+
     return (
         <Wrap
             $out={closing}
-            onAnimationEnd={() => { if (closing) onDone?.() }}
+            onAnimationEnd={(e) => {
+                // Solo reaccionar al evento del Wrap mismo, no de hijos
+                if (closing && e.target === e.currentTarget) onDone?.()
+            }}
         >
             <style>{`
                 @keyframes flapL {
