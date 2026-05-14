@@ -1093,7 +1093,7 @@ const FeaturedGrid = styled.div`
 const FeaturedCard = styled.div`
     cursor: pointer;
     background: #fff;
-    border-radius: 14px;
+    border-radius: 4px;
     overflow: hidden;
 
     &:hover img { transform: scale(1.05); }
@@ -1798,7 +1798,7 @@ const ShopCard = styled.div`
     scroll-snap-align: start;
     cursor: pointer;
     background: #fff;
-    border-radius: 14px;
+    border-radius: 4px;
     overflow: hidden;
 
     &:hover img { transform: scale(1.05); }
