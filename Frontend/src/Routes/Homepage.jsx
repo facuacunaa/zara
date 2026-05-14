@@ -515,9 +515,10 @@ const ContentReveal = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 0 10px 10px;
+    padding: 0 32px 32px;
 
-    @media (max-width: 640px) { padding: 0 6px 6px; }
+    @media (max-width: 1024px) { padding: 0 18px 18px; }
+    @media (max-width: 640px)  { padding: 0 10px 10px; }
 `
 const MissionSection = styled.section`
     background:
@@ -538,7 +539,7 @@ const MissionSection = styled.section`
     min-height: 420px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 28px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.14);
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
     }
@@ -1033,7 +1034,7 @@ const HeroScrollHint = styled.div`
 const SliderFeaturedCard = styled.div`
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1327,7 +1328,7 @@ const ArtistsTicker = styled.div`
     overflow: hidden;
     padding: 18px 0;
     border-radius: 20px;
-    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
 `
 
 const ArtistsTrack = styled.div`
@@ -1583,7 +1584,7 @@ const EditorialSection = styled.section`
     padding: 100px 0 140px;
     overflow: hidden;
     border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
 `
 
 const EditorialLayout = styled.div`
@@ -1711,7 +1712,7 @@ const ShopTitle = styled.h2`
 const ArtistsFullCard = styled.div`
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
 `
 
 const CarouselsSection = styled.section`
@@ -1884,7 +1885,7 @@ const JoinSection = styled.section`
     padding: 100px 40px 120px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
     @media (max-width: 640px) { padding: 72px 24px 96px; }
 `
 const JoinInner = styled.div`
@@ -1987,7 +1988,7 @@ const SiteFooter = styled.footer`
         linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 28px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
 `
 const FooterInner = styled.div`
     display: grid;
