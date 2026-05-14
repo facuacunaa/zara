@@ -387,10 +387,9 @@ const SidebarLogoWrap = styled.div`
     margin: 0 0 36px;
 
     img {
-        width: 75%;
-        max-width: 200px;
+        width: 80%;
+        max-width: 220px;
         height: auto;
-        mix-blend-mode: multiply;
     }
 `
 
