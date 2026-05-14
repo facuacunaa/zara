@@ -179,10 +179,8 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    // Color de íconos: invisible en hero, blanco en oscuro, oscuro en claro
-    const iconColor = heroVisible
-        ? 'transparent'
-        : navTheme === 'dark' ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
+    // En hero → íconos blancos sobre fondo transparente; si no, adaptativo
+    const iconColor = (heroVisible || navTheme === 'dark') ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
 
     return (
         <>
@@ -339,14 +337,10 @@ const NavBar = styled.nav`
     };
     backdrop-filter: ${p => p.$frosted ? 'blur(12px)' : 'none'};
     border-bottom: ${p => (p.$solid || p.$frosted) ? '1px solid rgba(216,200,176,0.35)' : 'none'};
-    opacity: ${p => p.$heroVisible ? 0 : 1};
-    pointer-events: ${p => p.$heroVisible ? 'none' : 'all'};
-
     transition:
         background 0.35s ease,
         backdrop-filter 0.35s ease,
-        border-color 0.35s ease,
-        opacity 0.4s ease;
+        border-color 0.35s ease;
 `
 
 const HamburgerBtn = styled.button`
