@@ -25,6 +25,7 @@ const AdminPage = () => {
     const [artists, setArtists] = useState([])
     const [pwdMap, setPwdMap] = useState({})       // { artistId: newPassword }
     const [pwdLoading, setPwdLoading] = useState({})
+    const [deletingIdx, setDeletingIdx] = useState(null)   // índice del banner que se está eliminando
     const [carouselImgs, setCarouselImgs] = useState(['','','',''])
     const [carouselFiles, setCarouselFiles] = useState([null,null,null,null])
     const [carouselProgress, setCarouselProgress] = useState([0,0,0,0])
@@ -133,14 +134,21 @@ const AdminPage = () => {
     // ── Delete carousel image ───────────────────────────────────────────────
     const deleteCarouselImg = async (idx) => {
         if (!window.confirm('¿Eliminar esta imagen del carrusel?')) return
-        setLoading(true)
+        setDeletingIdx(idx)
         try {
-            await axios.delete(`${API}/settings/carousel-image/${idx+1}`, { headers })
-            const imgs = [...carouselImgs]; imgs[idx] = ''; setCarouselImgs(imgs)
+            await axios.delete(
+                `${API}/settings/carousel-image/${idx + 1}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            setCarouselImgs(prev => { const imgs = [...prev]; imgs[idx] = ''; return imgs })
             setMsg('✅ Imagen eliminada')
-        } catch { setMsg('❌ Error eliminando imagen') }
-        setLoading(false)
-        setTimeout(() => setMsg(''), 3000)
+        } catch (err) {
+            const detail = err?.response?.data?.msg || err?.message || 'Error desconocido'
+            setMsg(`❌ Error eliminando imagen: ${detail}`)
+            console.error('deleteCarouselImg error:', err?.response?.data || err)
+        }
+        setDeletingIdx(null)
+        setTimeout(() => setMsg(''), 4000)
     }
 
     // ── Login ───────────────────────────────────────────────────────────────
@@ -445,10 +453,10 @@ const AdminPage = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => deleteCarouselImg(idx)}
-                                                    disabled={loading}
-                                                    style={{ marginTop:'8px', background:'none', border:'1px solid #ccc', padding:'4px 12px', fontSize:'10px', letterSpacing:'0.15em', textTransform:'uppercase', cursor:'pointer', color:'#c00', width:'100%' }}
+                                                    disabled={deletingIdx === idx}
+                                                    style={{ marginTop:'8px', background:'none', border:'1px solid #ccc', padding:'4px 12px', fontSize:'10px', letterSpacing:'0.15em', textTransform:'uppercase', cursor: deletingIdx === idx ? 'not-allowed' : 'pointer', color:'#c00', width:'100%', opacity: deletingIdx === idx ? 0.5 : 1 }}
                                                 >
-                                                    Eliminar
+                                                    {deletingIdx === idx ? 'Eliminando...' : 'Eliminar foto'}
                                                 </button>
                                             </div>
                                         ) : (
