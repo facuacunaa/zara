@@ -153,8 +153,8 @@ const Navbar = ({ activeIndexs }) => {
                 </HamburgerBtn>
 
                 {/* Logo central */}
-                <BrandLink to="/" $dark={iconColor === 'white'}>
-                    <img src="/logo-hornero.png" alt="La Casita del Hornero" />
+                <BrandLink to="/" iconColor={iconColor}>
+                    La Casita del Hornero
                 </BrandLink>
 
                 {/* Acciones derecha */}
@@ -197,13 +197,10 @@ const Navbar = ({ activeIndexs }) => {
                     {/* Cerrar */}
                     <CloseBtn onClick={() => setOpen(false)} aria-label="Cerrar menú">✕</CloseBtn>
 
-                    {/* Ilustración árbol + hornero */}
-                    <TreeWrap>
-                        <HorneroTree />
-                    </TreeWrap>
-
-                    {/* Nombre de la tienda */}
-                    <SidebarBrand>La Casita<br/>del Hornero</SidebarBrand>
+                    {/* Logo de la tienda */}
+                    <SidebarLogoWrap>
+                        <img src="/logo-hornero.png" alt="La Casita del Hornero" />
+                    </SidebarLogoWrap>
 
                     {/* Artistas */}
                     <ArtistList>
@@ -293,25 +290,19 @@ const BrandLink = styled(Link)`
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    font-family: 'Schoolbell', cursive;
+    font-size: clamp(16px, 2.2vw, 22px);
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: ${p => p.iconColor};
     text-decoration: none;
-    display: flex;
-    align-items: center;
-
-    img {
-        height: 44px;
-        width: auto;
-        display: block;
-        /* En navbar blanco: fondo blanco del logo desaparece */
-        mix-blend-mode: ${p => p.$dark ? 'normal' : 'multiply'};
-        /* En páginas oscuras: pequeño fondo blanco redondeado como badge */
-        background: ${p => p.$dark ? 'rgba(255,255,255,0.92)' : 'transparent'};
-        border-radius: ${p => p.$dark ? '8px' : '0'};
-        padding: ${p => p.$dark ? '3px 8px' : '0'};
-        transition: background 0.3s, border-radius 0.3s, padding 0.3s;
-    }
+    white-space: nowrap;
+    transition: color 0.3s;
 
     @media (max-width: 480px) {
-        img { height: 36px; }
+        font-size: 13px;
+        letter-spacing: 0;
     }
 `
 
@@ -389,27 +380,18 @@ const CloseBtn = styled.button`
     &:hover { color: #000; }
 `
 
-const TreeWrap = styled.div`
+const SidebarLogoWrap = styled.div`
     width: 100%;
-    max-width: 200px;
-    margin: 0 auto 4px;
+    display: flex;
+    justify-content: center;
+    margin: 0 0 36px;
 
-    svg {
-        width: 100%;
+    img {
+        width: 75%;
+        max-width: 200px;
         height: auto;
+        mix-blend-mode: multiply;
     }
-`
-
-const SidebarBrand = styled.h2`
-    font-family: 'Schoolbell', cursive;
-    font-size: clamp(1.6rem, 5vw, 2rem);
-    font-weight: 400;
-    font-style: normal;
-    color: #0a0a0a;
-    text-align: center;
-    line-height: 1.3;
-    margin: 0 0 40px;
-    letter-spacing: 0.01em;
 `
 
 const ArtistList = styled.nav`
