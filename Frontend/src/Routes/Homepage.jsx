@@ -1023,13 +1023,13 @@ const FeaturedSectionHeader = styled.div`
 
 const FeaturedTitle = styled.h2`
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(2.5rem, 5.5vw, 5rem);
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
     font-weight: 300;
     font-style: italic;
     color: #0a0a0a;
     line-height: 1.1;
     margin: 0;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     flex: 1;
 `
 
