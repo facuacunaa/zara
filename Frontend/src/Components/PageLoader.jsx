@@ -28,20 +28,24 @@ const logoFadeIn = keyframes`
     to   { opacity: 1; transform: perspective(700px) rotateX(6deg)  rotateY(-8deg)  scale(1); }
 `
 
-/* ── Pájaro: entra desde izquierda, baja hacia la casita y entra ── */
+/*
+  Pájaro vuela desde la izquierda hacia la casita del hornero
+  (nido marrón en la rama superior-derecha del árbol del logo).
+  La casita está en el cuadrante superior-derecho del logo:
+  aprox. +7vw a la derecha y -7vh arriba del centro de pantalla.
+*/
 const flyIn = keyframes`
-    /* llega volando desde la izquierda a media altura */
-    0%   { transform: translate(-62vw,  2vh) scale(0.5)  rotate(-3deg); opacity: 0; }
-    7%   { transform: translate(-46vw,  1vh) scale(0.7)  rotate(-4deg); opacity: 1; }
-    /* se acerca al logo */
-    30%  { transform: translate(-16vw,  0vh) scale(0.95) rotate(-3deg); opacity: 1; }
-    /* empieza a bajar hacia la casita (centro-bajo del logo) */
-    50%  { transform: translate( -5vw,  4vh) scale(1.0)  rotate( 5deg); opacity: 1; }
-    /* apunta directo a la casita */
-    68%  { transform: translate( -1vw,  8vh) scale(0.75) rotate(12deg); opacity: 1; }
+    /* aparece lejos a la izquierda, a la misma altura que la casita */
+    0%   { transform: translate(-62vw, -6vh) scale(0.45) rotate(-3deg); opacity: 0; }
+    7%   { transform: translate(-48vw, -7vh) scale(0.65) rotate(-4deg); opacity: 1; }
+    /* cruza volando directo hacia la casita */
+    32%  { transform: translate(-18vw, -7vh) scale(0.9)  rotate(-3deg); opacity: 1; }
+    55%  { transform: translate(  0vw, -8vh) scale(1.0)  rotate(-2deg); opacity: 1; }
+    /* se acerca al nido — leve descenso final hacia la rama */
+    72%  { transform: translate(  5vw, -7vh) scale(0.8)  rotate( 3deg); opacity: 1; }
     /* entra en la casita — se achica y desaparece */
-    84%  { transform: translate(  1vw, 10vh) scale(0.35) rotate(18deg); opacity: 0.8; }
-    100% { transform: translate(  1vw, 11vh) scale(0)    rotate(22deg); opacity: 0; }
+    88%  { transform: translate(  7vw, -7vh) scale(0.35) rotate( 6deg); opacity: 0.7; }
+    100% { transform: translate(  8vw, -7vh) scale(0)    rotate( 8deg); opacity: 0; }
 `
 
 /* ── Sombra del logo en el suelo ── */
