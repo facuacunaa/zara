@@ -109,7 +109,8 @@ const Navbar = ({ activeIndexs }) => {
 
     const onArtistPage       = isArtistRoute(location.pathname)
     const onHomePage         = location.pathname === '/'
-    const needsTransparency  = onArtistPage || onHomePage
+    const onExplorePage      = location.pathname === '/explorar'
+    const needsTransparency  = onArtistPage || onHomePage || onExplorePage
 
     useEffect(() => {
         if (!needsTransparency) { setScrolled(false); return }
@@ -136,23 +137,24 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    const iconColor = (onArtistPage && !scrolled) ? 'white' : 'black'
+    const iconColor = ((onArtistPage || onExplorePage) && !scrolled) ? 'white' : 'black'
     const navBg     = needsTransparency ? 'transparent' : 'white'
+    const navPos    = onExplorePage ? 'absolute' : 'fixed'
 
     return (
         <>
             {/* ── Overlay oscuro cuando el sidebar está abierto ─────── */}
             {open && <Overlay onClick={() => setOpen(false)} />}
 
-            <NavBar iconColor={iconColor} style={{ backgroundColor: navBg }}>
+            <NavBar iconColor={iconColor} $pos={navPos} style={{ backgroundColor: navBg }}>
                 {/* Hamburger */}
                 <HamburgerBtn onClick={() => setOpen(true)} iconColor={iconColor} aria-label="Abrir menú">
                     <span /><span /><span />
                 </HamburgerBtn>
 
                 {/* Logo central */}
-                <BrandLink to="/" iconColor={iconColor}>
-                    La Casita del Hornero
+                <BrandLink to="/" $dark={iconColor === 'white'}>
+                    <img src="/logo-hornero.png" alt="La Casita del Hornero" />
                 </BrandLink>
 
                 {/* Acciones derecha */}
@@ -258,7 +260,7 @@ const Overlay = styled.div`
 `
 
 const NavBar = styled.nav`
-    position: fixed;
+    position: ${({ $pos }) => $pos || 'fixed'};
     top: 0; left: 0; right: 0;
     z-index: 99;
     height: 64px;
@@ -291,19 +293,25 @@ const BrandLink = styled(Link)`
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Schoolbell', cursive;
-    font-size: clamp(16px, 2.2vw, 22px);
-    font-style: normal;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    color: ${p => p.iconColor};
     text-decoration: none;
-    white-space: nowrap;
-    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+
+    img {
+        height: 44px;
+        width: auto;
+        display: block;
+        /* En navbar blanco: fondo blanco del logo desaparece */
+        mix-blend-mode: ${p => p.$dark ? 'normal' : 'multiply'};
+        /* En páginas oscuras: pequeño fondo blanco redondeado como badge */
+        background: ${p => p.$dark ? 'rgba(255,255,255,0.92)' : 'transparent'};
+        border-radius: ${p => p.$dark ? '8px' : '0'};
+        padding: ${p => p.$dark ? '3px 8px' : '0'};
+        transition: background 0.3s, border-radius 0.3s, padding 0.3s;
+    }
 
     @media (max-width: 480px) {
-        font-size: 13px;
-        letter-spacing: 0;
+        img { height: 36px; }
     }
 `
 
