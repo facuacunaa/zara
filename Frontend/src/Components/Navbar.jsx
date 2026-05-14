@@ -272,6 +272,18 @@ const Navbar = ({ activeIndexs }) => {
                         </SidebarNavItem>
                     </SidebarNav>
 
+                    {/* ¿Querés vender? — debajo del carrito */}
+                    <SellSection>
+                        <SellEyebrow>— Para artistas</SellEyebrow>
+                        <SellTitle>¿Querés vender<br/>tu arte?</SellTitle>
+                        <SellBody>
+                            Unite a nuestra comunidad de artistas locales y empezá a vender tus obras sin complicaciones.
+                        </SellBody>
+                        <SellCta href="mailto:lacasitadelhornero@gmail.com">
+                            Quiero vender →
+                        </SellCta>
+                    </SellSection>
+
                     <SidebarDivider />
 
                     {/* Acceso portales */}
@@ -292,20 +304,6 @@ const Navbar = ({ activeIndexs }) => {
                             </div>
                         </PortalLink>
                     </PortalSection>
-
-                    <SidebarDivider />
-
-                    {/* ¿Querés vender? */}
-                    <SellSection>
-                        <SellEyebrow>— Para artistas</SellEyebrow>
-                        <SellTitle>¿Querés vender<br/>tu arte?</SellTitle>
-                        <SellBody>
-                            Unite a nuestra comunidad de artistas locales y empezá a vender tus obras sin complicaciones.
-                        </SellBody>
-                        <SellCta href="mailto:lacasitadelhornero@gmail.com">
-                            Quiero vender →
-                        </SellCta>
-                    </SellSection>
 
                     <SidebarDivider />
 
