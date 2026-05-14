@@ -139,7 +139,7 @@ const Navbar = ({ activeIndexs }) => {
 
     const iconColor = ((onArtistPage || onExplorePage) && !scrolled) ? 'white' : '#8B9640'
     const navBg     = needsTransparency ? 'transparent' : 'white'
-    const navPos    = onExplorePage ? 'absolute' : 'fixed'
+    const navPos    = 'fixed'
 
     return (
         <>
