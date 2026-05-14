@@ -83,6 +83,9 @@ const Homepage = () => {
             {/* ── CARRUSEL DE BANNERS ─────────────────────────────────── */}
             {carouselImgs.length > 0 && <HomeCarousel images={carouselImgs} />}
 
+            {/* ── SLIDER DE ARTISTAS ──────────────────────────────────── */}
+            {artists.length > 0 && <ArtistsSlider artists={artists} />}
+
             {/* ── MISIÓN ──────────────────────────────────────────────── */}
             <MissionSection>
                 <MissionLeft>
@@ -124,9 +127,6 @@ const Homepage = () => {
                     </MissionStats>
                 </MissionRight>
             </MissionSection>
-
-            {/* ── SLIDER DE ARTISTAS ──────────────────────────────────── */}
-            {artists.length > 0 && <ArtistsSlider artists={artists} />}
 
             {/* ── GRID DE PRODUCTOS DESTACADOS ────────────────────────── */}
             {artistProducts.length > 0 && (
@@ -442,14 +442,14 @@ const SliderHeader = styled.div`
 const SliderEyebrow = styled.p`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: .4em;
-    text-transform: uppercase; color: #aaa; margin: 0;
+    text-transform: uppercase; color: #8B9640; margin: 0;
 `
 const SliderViewAll = styled(Link)`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: .2em;
-    text-transform: uppercase; color: #888;
+    text-transform: uppercase; color: #8B9640;
     text-decoration: none;
-    &:hover { color: #0a0a0a; }
+    &:hover { color: #6B3030; }
 `
 const SliderTrack = styled.div`
     display: flex;
@@ -566,15 +566,15 @@ const MissionBtnPrimary = styled.a`
     align-items: center;
     justify-content: center;
     padding: 13px 28px;
-    background: #fff;
-    color: #111;
+    background: #8B9640;
+    color: #fff;
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     text-decoration: none;
     font-weight: 500;
     transition: background 0.2s, color 0.2s;
-    &:hover { background: #e8e8e8; }
+    &:hover { background: #6d7a32; }
 `
 const MissionBtnSecondary = styled.a`
     display: inline-flex;
@@ -1009,12 +1009,12 @@ const FeaturedViewAll = styled(Link)`
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #aaa;
+    color: #8B9640;
     text-decoration: none;
     align-self: flex-end;
     flex-shrink: 0;
     transition: color 0.2s;
-    &:hover { color: #0a0a0a; }
+    &:hover { color: #6B3030; }
 `
 
 const FeaturedGrid = styled.div`
@@ -1561,7 +1561,7 @@ const ShopEyebrow = styled.p`
     font-size: 9px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: #bbb;
+    color: #8B9640;
     margin: 0 0 20px;
     flex: 0 0 100%;
 `

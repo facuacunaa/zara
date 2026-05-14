@@ -137,7 +137,7 @@ const Navbar = ({ activeIndexs }) => {
     // Cerrar sidebar al navegar
     useEffect(() => { setOpen(false) }, [location.pathname])
 
-    const iconColor = ((onArtistPage || onExplorePage) && !scrolled) ? 'white' : 'black'
+    const iconColor = ((onArtistPage || onExplorePage) && !scrolled) ? 'white' : '#8B9640'
     const navBg     = needsTransparency ? 'transparent' : 'white'
     const navPos    = onExplorePage ? 'absolute' : 'fixed'
 
@@ -406,7 +406,7 @@ const ArtistListLabel = styled.p`
     font-size: 8px;
     letter-spacing: 0.45em;
     text-transform: uppercase;
-    color: #bbb;
+    color: #8B9640;
     margin: 0 0 20px;
 `
 
@@ -427,7 +427,7 @@ const ArtistItem = styled.div`
         transition: color 0.2s, padding-left 0.2s;
 
         &:hover {
-            color: #666;
+            color: #8B9640;
             padding-left: 8px;
         }
     }
@@ -445,7 +445,7 @@ const PortalLabel = styled.p`
     font-size: 8px;
     letter-spacing: 0.45em;
     text-transform: uppercase;
-    color: #bbb;
+    color: #8B9640;
     margin: 0 0 14px;
 `
 
@@ -459,7 +459,7 @@ const PortalLink = styled(Link)`
     transition: border-color 0.2s, background 0.2s;
 
     &:hover {
-        border-color: #0a0a0a;
+        border-color: #8B9640;
         background: #fafaf8;
     }
 `
@@ -506,7 +506,7 @@ const SidebarFooterLinks = styled.div`
         text-align: left;
         transition: color 0.2s;
 
-        &:hover { color: #0a0a0a; }
+        &:hover { color: #8B9640; }
     }
 `
 
