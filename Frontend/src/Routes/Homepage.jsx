@@ -510,7 +510,9 @@ const revealAnim = keyframes`
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
-    background: #B8A890;
+    background:
+        url('/wood-bg.jpg') center center / cover fixed;
+    background-color: #3d2b1a;
 `
 const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -1482,8 +1484,8 @@ const CarouselWrap = styled.div`
         background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(184,168,144,0.45) 55%,
-            #B8A890 100%
+            rgba(61,43,26,0.55) 55%,
+            #3d2b1a 100%
         );
         z-index: 1;
         pointer-events: none;
