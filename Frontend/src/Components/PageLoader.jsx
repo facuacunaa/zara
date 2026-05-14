@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 
-/* ── Animaciones generales ── */
+/* ── Generales ── */
 const fadeIn = keyframes`
     from { opacity: 0; }
     to   { opacity: 1; }
@@ -19,35 +19,57 @@ const blink = keyframes`
     50%       { opacity: 0.5; }
 `
 
-/* ── Pájaro: aleteo ── */
-const flapTop = keyframes`
-    0%, 100% { d: path("M12 8 Q6 3 0 6");  }
-    50%       { d: path("M12 8 Q6 12 0 10"); }
-`
-const flapBottom = keyframes`
-    0%, 100% { d: path("M12 8 Q18 3 24 6"); }
-    50%       { d: path("M12 8 Q18 12 24 10"); }
+/*
+  Pájaro hace DOS viajes:
+  Viaje 1 → 0% – 44%   : entra desde izquierda, llega a casita, desaparece
+  Pausa   → 44% – 50%  : invisible, vuelve a posición inicial
+  Viaje 2 → 50% – 94%  : mismo recorrido de nuevo
+  Final   → 94% – 100% : desaparecido
+  Duración total: 5s
+*/
+const flyIn = keyframes`
+    /* — Viaje 1 — */
+    0%   { transform: translate(-60vw,  14vh) scale(0.6)  rotate(-4deg); opacity: 0; }
+    6%   { transform: translate(-48vw,  10vh) scale(0.75) rotate(-6deg); opacity: 1; }
+    28%  { transform: translate(-12vw,   6vh) scale(1.05) rotate(-8deg); opacity: 1; }
+    38%  { transform: translate(  3vw,  10vh) scale(0.7)  rotate( 4deg); opacity: 1; }
+    44%  { transform: translate(  5vw,  12vh) scale(0)    rotate( 6deg); opacity: 0; }
+
+    /* — Reset invisible — */
+    44.1% { transform: translate(-60vw, 14vh) scale(0) rotate(-4deg); opacity: 0; }
+    50%   { transform: translate(-60vw, 14vh) scale(0) rotate(-4deg); opacity: 0; }
+
+    /* — Viaje 2 — */
+    56%  { transform: translate(-48vw,  10vh) scale(0.75) rotate(-6deg); opacity: 1; }
+    78%  { transform: translate(-12vw,   6vh) scale(1.05) rotate(-8deg); opacity: 1; }
+    88%  { transform: translate(  3vw,  10vh) scale(0.7)  rotate( 4deg); opacity: 1; }
+    94%  { transform: translate(  5vw,  12vh) scale(0)    rotate( 6deg); opacity: 0; }
+    100% { transform: translate(  5vw,  12vh) scale(0)    rotate( 6deg); opacity: 0; }
 `
 
-/* ── Pájaro: vuelo desde la izquierda hacia la casita (centro-inferior del logo) ── */
-const flyIn = keyframes`
-    0%   { transform: translate(-58vw, 12vh) scale(0.65) rotate(-4deg); opacity: 0; }
-    8%   { opacity: 1; }
-    55%  { transform: translate(-10vw,  6vh) scale(1.05) rotate(-7deg); }
-    78%  { transform: translate(  2vw,  8vh) scale(0.9)  rotate(-2deg); }
-    90%  { transform: translate(  4vw, 10vh) scale(0.55) rotate(5deg);  opacity: 1; }
-    100% { transform: translate(  4vw, 11vh) scale(0)    rotate(5deg);  opacity: 0; }
+/* ── Fondo del logo: forma orgánica (no círculo) ── */
+const LogoBg = styled.div`
+    padding: 32px 28px 36px;
+    background: rgba(255, 255, 255, 0.97);
+    /* forma orgánica asimétrica — similar a hoja o mancha de pintura */
+    border-radius: 62% 38% 46% 54% / 56% 44% 60% 44%;
+    box-shadow:
+        0 0 0 5px rgba(255,255,255,0.18),
+        0 16px 56px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation:
+        ${fadeIn}  0.5s ease both,
+        ${floatUp} 3.5s ease-in-out 0.5s infinite;
 `
 
 const LogoImg = styled.img`
-    width: clamp(200px, 35vw, 320px);
+    width: clamp(160px, 28vw, 260px);
     height: auto;
-    animation:
-        ${fadeIn}  0.6s ease both,
-        ${floatUp} 3.5s ease-in-out 0.6s infinite;
+    display: block;
 `
 
-/* ── Texto ── */
 const Sub = styled.p`
     font-size: 0.55rem;
     letter-spacing: 0.5em;
@@ -57,24 +79,21 @@ const Sub = styled.p`
     animation: ${blink} 1.8s ease-in-out infinite;
 `
 
-/* ── Contenedor del pájaro (posicionado relativo al logo) ── */
+/* Pájaro anclado al centro de la pantalla */
 const BirdWrap = styled.div`
     position: absolute;
-    /* centrado sobre el logo */
     top: 50%; left: 50%;
     width: 0; height: 0;
     pointer-events: none;
-    animation: ${flyIn} 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+    animation: ${flyIn} 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
 `
 
-/* SVG del pájaro */
 const BirdSvg = styled.svg`
     position: absolute;
-    /* desplazado para que llegue al centro del logo */
     transform: translate(-50%, -50%);
-    width: 52px; height: 32px;
+    width: 54px; height: 34px;
     overflow: visible;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
 `
 
 const Wrap = styled.div`
@@ -102,34 +121,25 @@ const Wrap = styled.div`
     pointer-events: ${p => p.$out ? 'none' : 'all'};
 `
 
-/* Pájaro SVG sencillo con alas que aletean */
 function Bird() {
     return (
         <BirdSvg viewBox="0 0 24 16" fill="none">
             {/* Ala izquierda */}
             <path
                 d="M12 8 Q6 2 0 5"
-                stroke="#111" strokeWidth="2.2"
-                strokeLinecap="round"
-                style={{
-                    animation: 'flapL 0.38s ease-in-out infinite alternate',
-                    transformOrigin: '12px 8px'
-                }}
+                stroke="#111" strokeWidth="2.2" strokeLinecap="round"
+                style={{ animation: 'flapL 0.36s ease-in-out infinite alternate', transformOrigin: '12px 8px' }}
             />
             {/* Ala derecha */}
             <path
                 d="M12 8 Q18 2 24 5"
-                stroke="#111" strokeWidth="2.2"
-                strokeLinecap="round"
-                style={{
-                    animation: 'flapR 0.38s ease-in-out infinite alternate-reverse',
-                    transformOrigin: '12px 8px'
-                }}
+                stroke="#111" strokeWidth="2.2" strokeLinecap="round"
+                style={{ animation: 'flapR 0.36s ease-in-out infinite alternate-reverse', transformOrigin: '12px 8px' }}
             />
             {/* Cuerpo */}
             <ellipse cx="12" cy="9" rx="3" ry="2" fill="#111" />
             {/* Pico */}
-            <path d="M15 8.5 L17.5 8 L15 9" fill="#888" />
+            <path d="M15 8.5 L17.5 8 L15 9" fill="#666" />
             {/* Cola */}
             <path d="M9 10 Q7 13 5 12 Q7 11 9 10Z" fill="#111" />
         </BirdSvg>
@@ -142,20 +152,19 @@ export default function PageLoader() {
             <style>{`
                 @keyframes flapL {
                     from { transform: rotate(0deg);   }
-                    to   { transform: rotate(-22deg); }
+                    to   { transform: rotate(-24deg); }
                 }
                 @keyframes flapR {
                     from { transform: rotate(0deg);  }
-                    to   { transform: rotate(22deg); }
+                    to   { transform: rotate(24deg); }
                 }
             `}</style>
 
-            {/* Pájaro vuela desde la izquierda hacia el logo */}
-            <BirdWrap>
-                <Bird />
-            </BirdWrap>
+            <BirdWrap><Bird /></BirdWrap>
 
-            <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
+            <LogoBg>
+                <LogoImg src="/logo-hornero.png" alt="La Casita del Hornero" />
+            </LogoBg>
 
             <Sub>Cargando</Sub>
         </Wrap>
