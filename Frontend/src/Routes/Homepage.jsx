@@ -519,9 +519,12 @@ const ContentReveal = styled.div`
     flex-direction: column;
     gap: 24px;
     padding: 0 32px 40px;
+    margin-top: -72px;
+    position: relative;
+    z-index: 2;
 
-    @media (max-width: 1024px) { padding: 0 18px 28px; }
-    @media (max-width: 640px)  { padding: 0 10px 20px; }
+    @media (max-width: 1024px) { padding: 0 18px 28px; margin-top: -52px; }
+    @media (max-width: 640px)  { padding: 0 10px 20px; margin-top: -36px; }
 `
 const MissionSection = styled.section`
     background: #3c4021;
