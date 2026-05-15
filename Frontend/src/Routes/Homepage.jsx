@@ -435,7 +435,7 @@ function ArtistsSlider({ artists }) {
 
 const SliderSection = styled.section`
     padding: 40px 0 0;
-    background: #F5EDE0;
+    background: #ead1b0;
     overflow: hidden;
 `
 const SliderHeader = styled.div`
@@ -445,12 +445,12 @@ const SliderHeader = styled.div`
 const SliderEyebrow = styled.p`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: .4em;
-    text-transform: uppercase; color: #3A7A54; margin: 0;
+    text-transform: uppercase; color: #898635; margin: 0;
 `
 const SliderViewAll = styled(Link)`
     font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: .2em;
-    text-transform: uppercase; color: #3A7A54;
+    text-transform: uppercase; color: #898635;
     text-decoration: none;
     &:hover { color: #7B4A2E; }
 `
@@ -511,7 +511,7 @@ const revealAnim = keyframes`
 const HomeWrap = styled.div`
     display: flex;
     flex-direction: column;
-    background: #B8A890;
+    background: #ead1b0;
 `
 const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -528,14 +528,14 @@ const MissionSection = styled.section`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -681,12 +681,12 @@ const BannerWrap = styled.div`
     /* Fondo sólido arriba, se desvanece hacia abajo */
     background: linear-gradient(
         to bottom,
-        ${p => p.$bg || 'rgba(58,122,84,0.10)'} 0%,
-        ${p => p.$bg || 'rgba(58,122,84,0.07)'} 30%,
-        ${p => p.$bg || 'rgba(58,122,84,0.03)'} 65%,
+        ${p => p.$bg || 'rgba(137,134,53,0.10)'} 0%,
+        ${p => p.$bg || 'rgba(137,134,53,0.07)'} 30%,
+        ${p => p.$bg || 'rgba(137,134,53,0.03)'} 65%,
         transparent 100%
     );
-    color: ${p => p.$color || '#3A7A54'};
+    color: ${p => p.$color || '#898635'};
     text-align: center;
     /* padding-bottom generoso para que el fade tenga espacio */
     padding: 9px 20px 28px;
@@ -858,7 +858,7 @@ const SliderFeaturedCard = styled.div`
    FEATURED PRODUCTS GRID
 ═══════════════════════════════════════════════════════════════ */
 const FeaturedSection = styled.section`
-    background: #F5EDE0;
+    background: #ead1b0;
     padding: 52px 40px 80px;
 
     @media (max-width: 640px) { padding: 36px 20px 64px; }
@@ -891,7 +891,7 @@ const FeaturedViewAll = styled(Link)`
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #3A7A54;
+    color: #898635;
     text-decoration: none;
     align-self: flex-end;
     flex-shrink: 0;
@@ -978,14 +978,14 @@ const ArtistsShowcase = styled.section`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     padding: 100px 40px 120px;
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
@@ -1076,7 +1076,7 @@ const ArtistCardMedia = styled.div`
 const ArtistCardPlaceholder = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(160deg, #0C1E14 0%, #183525 100%);
+    background: linear-gradient(160deg, #3c4021 0%, #3c4021 100%);
 
     span {
         font-family: 'Playfair Display', Georgia, serif;
@@ -1118,7 +1118,7 @@ const ArtistCardInfo = styled.div`
 const ArtistCardDivider = styled.div`
     width: 32px;
     height: 1px;
-    background: rgba(196,154,38,0.6);
+    background: rgba(173,67,29,0.6);
     margin-bottom: 14px;
     transition: width 0.4s ease;
 
@@ -1159,7 +1159,7 @@ const ArtistCardCta = styled.p`
     }
 
     ${ArtistProfileCard}:hover & {
-        color: rgba(196,154,38,0.9);
+        color: rgba(173,67,29,0.9);
         letter-spacing: 0.5em;
         &::after { width: 28px; }
     }
@@ -1173,14 +1173,14 @@ const ArtistsTicker = styled.div`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     overflow: hidden;
     padding: 18px 0;
     border-radius: 20px;
@@ -1279,14 +1279,14 @@ const CarouselWrap = styled.div`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     /* Degradado inferior que se funde con el fondo de la página */
     &::after {
         content: '';
@@ -1296,8 +1296,8 @@ const CarouselWrap = styled.div`
         background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(184,168,144,0.45) 55%,
-            #B8A890 100%
+            rgba(234,209,176,0.45) 55%,
+            #ead1b0 100%
         );
         z-index: 1;
         pointer-events: none;
@@ -1435,7 +1435,7 @@ const EditorialSectionWord = styled.span`
    EDITORIAL
 ═══════════════════════════════════════════════════════════════ */
 const EditorialSection = styled.section`
-    background: #FAF6F0;
+    background: #ead1b0;
     padding: 100px 0 140px;
     overflow: hidden;
     border-radius: 20px;
@@ -1545,7 +1545,7 @@ const ShopEyebrow = styled.p`
     font-size: 9px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: #3A7A54;
+    color: #898635;
     margin: 0 0 20px;
     flex: 0 0 100%;
 `
@@ -1555,7 +1555,7 @@ const ShopTitle = styled.h2`
     font-size: clamp(2.5rem, 5.5vw, 5rem);
     font-weight: 300;
     font-style: italic;
-    color: #F5EDE0;
+    color: #ead1b0;
     line-height: 1.1;
     margin: 0 0 16px;
     letter-spacing: -0.02em;
@@ -1602,7 +1602,7 @@ const ArtistCarouselHeader = styled.div`
     align-items: baseline;
     justify-content: space-between;
     padding: 0 40px 24px;
-    border-bottom: 1px solid rgba(245,237,224,0.15);
+    border-bottom: 1px solid rgba(234,209,176,0.15);
     margin-bottom: 3px;
 
     @media (max-width: 640px) { padding: 0 20px 20px; }
@@ -1613,7 +1613,7 @@ const ArtistCarouselName = styled.h3`
     font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-weight: 300;
     font-style: italic;
-    color: #F5EDE0;
+    color: #ead1b0;
     margin: 0;
     letter-spacing: -0.01em;
 `
@@ -1623,11 +1623,11 @@ const ArtistCarouselLink = styled(Link)`
     font-size: 9px;
     letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: rgba(245,237,224,0.45);
+    color: rgba(234,209,176,0.45);
     text-decoration: none;
     flex-shrink: 0;
     transition: color 0.2s;
-    &:hover { color: #F5EDE0; }
+    &:hover { color: #ead1b0; }
 `
 
 const ArtistCarouselTrack = styled.div`
@@ -1736,7 +1736,7 @@ const ShopCardPrice = styled.p`
    JOIN SECTION — VENDÉ TU ARTE
 ═══════════════════════════════════════════════════════════════ */
 const JoinSection = styled.section`
-    background: #F5EDE0;
+    background: #ead1b0;
     padding: 100px 40px 120px;
     border-radius: 20px;
     overflow: hidden;
@@ -1833,14 +1833,14 @@ const SiteFooter = styled.footer`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
@@ -2011,7 +2011,7 @@ const ModalOverlay = styled.div`
 const ModalPanel = styled.div`
     position: fixed; top: 0; right: 0; bottom: 0;
     z-index: 101;
-    background: #F5EDE0;
+    background: #ead1b0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
     border-radius: 24px 0 0 24px;

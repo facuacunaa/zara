@@ -364,7 +364,7 @@ const ImgSkeleton = styled.div`
 `
 
 const PageWrap = styled.div`
-    background: #F5EDE0;
+    background: #ead1b0;
     min-height: 100vh;
 `
 
@@ -375,14 +375,14 @@ const ExploreHero = styled.section`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     min-height: 60vh;
     display: flex;
     flex-direction: column;
@@ -484,7 +484,7 @@ const HeroScrollLine = styled.div`
 /* ── CARRUSEL HORIZONTAL ─────────────────────────────────────────────────────── */
 const HorizontalSection = styled.div`
     position: relative;
-    background: #F5EDE0;
+    background: #ead1b0;
 `
 
 const HorizontalTrack = styled.div`
@@ -512,7 +512,7 @@ const NavArrowBtn = styled.button`
     transform: translateY(-50%);
     ${p => p.side === 'left' ? 'left: 20px;' : 'right: 20px;'}
     z-index: 10;
-    background: rgba(245,237,224,0.95);
+    background: rgba(234,209,176,0.95);
     border: 1px solid #D8C8B0;
     width: 44px;
     height: 44px;
@@ -597,7 +597,7 @@ const NavDots = styled.div`
     justify-content: center;
     gap: 8px;
     padding: 20px 0 28px;
-    background: #F5EDE0;
+    background: #ead1b0;
 `
 
 const NavDot = styled.button`
@@ -670,7 +670,7 @@ const EmptyWrap = styled.div`
 
 /* ── ARTIST PANEL LAYOUT ──────────────────────────────────────────────────────── */
 const ArtistsWrap = styled.div`
-    background: #F5EDE0;
+    background: #ead1b0;
 `
 const ArtistCover = styled.div`
     display: grid;
@@ -689,14 +689,14 @@ const ArtistImgWrap = styled.div`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     min-height: 45vh;
 
     img {
@@ -735,7 +735,7 @@ const ArtistInfo = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: #F5EDE0;
+    background: #ead1b0;
     overflow-y: auto;
     @media (max-width: 768px) { padding: 32px 24px 40px; }
 `
@@ -795,7 +795,7 @@ const ArtistProfileBtn = styled(Link)`
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #fff;
-    background: #3A7A54;
+    background: #898635;
     text-decoration: none;
     padding: 10px 20px;
     border-radius: 100px;
@@ -920,7 +920,7 @@ const BlockDivider = styled.div`
     gap: 24px;
     padding: 0 40px;
     height: 80px;
-    background: #F5EDE0;
+    background: #ead1b0;
     @media (max-width: 640px) { padding: 0 20px; }
 `
 const DivLine = styled.div`
@@ -942,14 +942,14 @@ const CtaStrip = styled.section`
         repeating-linear-gradient(
             65deg,
             transparent 0px, transparent 13px,
-            rgba(196,154,38,0.08) 13px, rgba(196,154,38,0.08) 14px
+            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
         ),
         repeating-linear-gradient(
             -25deg,
             transparent 0px, transparent 20px,
-            rgba(196,154,38,0.06) 20px, rgba(196,154,38,0.06) 21px
+            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
         ),
-        linear-gradient(145deg, #0C1E14 0%, #183525 40%, #122A1C 70%, #0E2018 100%);
+        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     padding: 100px 60px 120px;
     @media (max-width: 900px) { padding: 72px 28px 96px; }
 `
@@ -1028,7 +1028,7 @@ const ModalOverlay = styled.div`
 const ModalPanel = styled.div`
     position: fixed; top: 0; right: 0; bottom: 0;
     z-index: 101;
-    background: #F5EDE0;
+    background: #ead1b0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
     border-radius: 24px 0 0 24px;

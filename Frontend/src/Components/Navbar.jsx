@@ -345,8 +345,8 @@ const NavBar = styled.nav`
 
     /* ── Fondo dinámico según contexto ── */
     background: ${p =>
-        p.$solid        ? '#F5EDE0' :
-        p.$frosted      ? 'rgba(245,237,224,0.88)' :
+        p.$solid        ? '#ead1b0' :
+        p.$frosted      ? 'rgba(234,209,176,0.88)' :
         'transparent'
     };
     backdrop-filter: ${p => p.$frosted ? 'blur(12px)' : 'none'};
@@ -440,7 +440,7 @@ const Sidebar = styled.aside`
     top: 0; left: 0; bottom: 0;
     width: 300px;
     max-width: 88vw;
-    background: #F5EDE0;
+    background: #ead1b0;
     z-index: 100;
     border-radius: 0 24px 24px 0;
     transform: ${p => p.open ? 'translateX(0)' : 'translateX(-100%)'};
@@ -507,7 +507,7 @@ const SidebarNavLabel = styled.p`
     font-size: 7.5px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: #3A7A54;
+    color: #898635;
     margin: 0 0 18px;
 `
 
@@ -527,7 +527,7 @@ const SidebarNavItem = styled.div`
         transition: color 0.2s, padding-left 0.2s;
 
         &:hover {
-            color: #3A7A54;
+            color: #898635;
             padding-left: 10px;
         }
     }
@@ -539,7 +539,7 @@ const SidebarCartBadge = styled.span`
     justify-content: center;
     width: 20px;
     height: 20px;
-    background: #3A7A54;
+    background: #898635;
     border-radius: 50%;
     color: #fff;
     border-radius: 50%;
@@ -571,8 +571,8 @@ const PortalLink = styled(Link)`
     transition: border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-        border-color: #3A7A54;
-        box-shadow: 0 2px 12px rgba(58,122,84,0.15);
+        border-color: #898635;
+        box-shadow: 0 2px 12px rgba(137,134,53,0.15);
     }
 `
 
@@ -600,7 +600,7 @@ const PortalLinkSub = styled.p`
 const SellSection = styled.div`
     margin: 0 16px;
     padding: 22px 20px 24px;
-    background: linear-gradient(135deg, #0C1E14 0%, #1a3a24 100%);
+    background: linear-gradient(135deg, #3c4021 0%, #3c4021 100%);
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -612,7 +612,7 @@ const SellEyebrow = styled.p`
     font-size: 7.5px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: rgba(196,154,38,0.85);
+    color: rgba(173,67,29,0.85);
     margin: 0;
 `
 
@@ -641,12 +641,12 @@ const SellCta = styled.a`
     font-size: 9px;
     letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: rgba(196,154,38,0.9);
+    color: rgba(173,67,29,0.9);
     text-decoration: none;
     transition: color 0.2s, letter-spacing 0.2s;
 
     &:hover {
-        color: #c49a26;
+        color: #ad431d;
         letter-spacing: 0.45em;
     }
 `
@@ -671,7 +671,7 @@ const SidebarFooterLinks = styled.div`
         text-align: left;
         transition: color 0.2s;
 
-        &:hover { color: #3A7A54; }
+        &:hover { color: #898635; }
     }
 `
 

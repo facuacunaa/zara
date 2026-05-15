@@ -289,11 +289,11 @@ export default function ProductPage() {
 /* ── STYLES ─────────────────────────────────────────────────────────────────── */
 const PageWrap = styled.div`
     min-height: 100vh;
-    background: #F5EDE0;
+    background: #ead1b0;
 `
 
 const PageHeader = styled.div`
-    background: rgba(245,237,224,0.97);
+    background: rgba(234,209,176,0.97);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid #D8C8B0;
     padding: 72px 40px 12px;
@@ -440,7 +440,7 @@ const FilterOption = styled.div`
     cursor: pointer;
     padding: 7px 0 7px 10px;
     transition: color 0.15s;
-    border-left: 2px solid ${p => p.active ? '#3A7A54' : 'transparent'};
+    border-left: 2px solid ${p => p.active ? '#898635' : 'transparent'};
     &:hover { color: #0a0a0a; }
     @media (max-width: 900px) { padding: 10px 0 10px 10px; }
 `
@@ -460,11 +460,11 @@ const FilterCheckbox = styled.div`
 
 const CheckboxBox = styled.span`
     width: 15px; height: 15px;
-    border: 1px solid ${p => p.active ? '#3A7A54' : '#D8C8B0'};
+    border: 1px solid ${p => p.active ? '#898635' : '#D8C8B0'};
     display: flex; align-items: center; justify-content: center;
     font-size: 9px;
     border-radius: 4px;
-    background: ${p => p.active ? '#3A7A54' : 'transparent'};
+    background: ${p => p.active ? '#898635' : 'transparent'};
     color: #fff;
     flex-shrink: 0;
     transition: all 0.15s;
@@ -537,7 +537,7 @@ const ProductGrid = styled.div`
 
 const ProductCard = styled.div`
     cursor: pointer;
-    background: #FAF6F0;
+    background: #ead1b0;
     border-radius: 14px;
     overflow: hidden;
     &:hover img { transform: scale(1.04); }
@@ -647,7 +647,7 @@ const SkeletonGrid = styled.div`
 `
 
 const SkeletonCard = styled.div`
-    background: #F5EDE0;
+    background: #ead1b0;
     padding-bottom: 8px;
 `
 
@@ -709,7 +709,7 @@ const Overlay = styled.div`
 const ModalPanel = styled.div`
     position: fixed; top: 0; right: 0; bottom: 0;
     z-index: 101;
-    background: #F5EDE0;
+    background: #ead1b0;
     display: flex; flex-direction: column;
     width: 100%; max-width: 500px;
     border-radius: 24px 0 0 24px;
