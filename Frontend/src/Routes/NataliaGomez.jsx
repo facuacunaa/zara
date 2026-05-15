@@ -307,18 +307,16 @@ const HeroTitle = styled.h1`
 /* ── Products ── */
 const ProductsSection = styled.section`
   background: #f5ede0;
-  padding: 80px clamp(20px, 5vw, 80px) 100px;
-  margin: 24px;
-  border-radius: 20px;
-  box-shadow: 0 22px 70px rgba(0,0,0,0.28), 0 6px 20px rgba(0,0,0,0.12);
+  padding: 80px clamp(40px, 6vw, 100px) 100px;
   animation: ${fadeUp} 0.7s ease both;
 
-  @media (max-width: 640px) { margin: 12px; padding: 56px 16px 72px; }
+  @media (max-width: 640px) { padding: 48px 0 64px; }
 `
 const SectionHeader = styled.div`
   margin-bottom: 56px;
   border-bottom: 1px solid #d8c8b0;
   padding-bottom: 28px;
+  @media (max-width: 640px) { padding: 0 16px 24px; margin-bottom: 40px; }
 `
 const Eyebrow = styled.p`
   font-family: 'DM Sans', sans-serif;
@@ -342,8 +340,6 @@ const GalleryGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-
-  @media (max-width: 640px) { grid-template-columns: 1fr; gap: 4px; }
 `
 const GalleryItem = styled.div`
   cursor: pointer;
@@ -360,6 +356,10 @@ const GalleryImg = styled.div`
     position: absolute; inset: 0;
     width: 100%; height: 100%; object-fit: cover;
     transition: transform 1.1s cubic-bezier(.25,.46,.45,.94);
+  }
+
+  @media (max-width: 640px) {
+    padding-bottom: 130%;
   }
 `
 const GalleryNoImg = styled.div`
@@ -407,8 +407,9 @@ const GalleryOverlayBtn = styled.span`
   padding-bottom: 3px;
 `
 const GalleryCaption = styled.div`
-  display: flex; align-items: baseline; gap: 14px;
-  padding: 14px 4px 24px;
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 12px 4px 20px;
+  @media (max-width: 640px) { padding: 8px 6px 16px; gap: 6px; }
 `
 const GalleryCaptionNum = styled.span`
   font-family: 'DM Sans', sans-serif;
@@ -418,9 +419,10 @@ const GalleryCaptionNum = styled.span`
 const GalleryCaptionText = styled.div``
 const GalleryCaptionName = styled.p`
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  font-size: clamp(0.78rem, 1.6vw, 1.2rem);
   font-weight: 300; font-style: italic;
   color: #1a1a1a; margin: 0 0 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 `
 const GalleryCaptionPrice = styled.p`
   font-family: 'DM Sans', sans-serif;
