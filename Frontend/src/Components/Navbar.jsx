@@ -190,9 +190,7 @@ const Navbar = ({ activeIndexs }) => {
             <NavBar
                 ref={navRef}
                 iconColor={iconColor}
-                $heroVisible={heroVisible}
-                $frosted={!heroVisible && needsTransparency && navTheme === 'light'}
-                $solid={!needsTransparency}
+                $hidden={heroVisible}
             >
                 {/* Hamburger */}
                 <HamburgerBtn onClick={() => setOpen(true)} iconColor={iconColor} aria-label="Abrir menú">
@@ -335,20 +333,38 @@ const Overlay = styled.div`
 
 const NavBar = styled.nav`
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(${p => p.$hidden ? '-16px' : '0'});
+    opacity: ${p => p.$hidden ? 0 : 1};
+    pointer-events: ${p => p.$hidden ? 'none' : 'all'};
+
     z-index: 99;
-    height: 64px;
+    width: min(calc(100vw - 48px), 980px);
+    height: 56px;
+    border-radius: 100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
 
-    /* ── Vidrio esmerilado siempre activo ── */
-    background: rgba(255,255,255,0.18);
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
-    border-bottom: 1px solid rgba(255,255,255,0.22);
-    transition: background 0.35s ease;
+    /* ── Vidrio esmerilado ── */
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.28);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+
+    transition:
+        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    @media (max-width: 640px) {
+        width: calc(100vw - 24px);
+        top: 12px;
+        height: 52px;
+        border-radius: 100px;
+    }
 `
 
 const HamburgerBtn = styled.button`
