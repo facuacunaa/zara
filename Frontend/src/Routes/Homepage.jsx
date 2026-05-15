@@ -517,11 +517,11 @@ const ContentReveal = styled.div`
     animation: ${revealAnim} 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 0 32px 32px;
+    gap: 24px;
+    padding: 0 32px 40px;
 
-    @media (max-width: 1024px) { padding: 0 18px 18px; }
-    @media (max-width: 640px)  { padding: 0 10px 10px; }
+    @media (max-width: 1024px) { padding: 0 18px 28px; }
+    @media (max-width: 640px)  { padding: 0 10px 20px; }
 `
 const MissionSection = styled.section`
     background:
@@ -542,7 +542,7 @@ const MissionSection = styled.section`
     min-height: 420px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.14);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.38), 0 6px 20px rgba(0,0,0,0.18);
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
     }
@@ -692,7 +692,7 @@ const BannerWrap = styled.div`
     /* Sombra que da profundidad / efecto 3D */
     box-shadow:
         0 1px 0 rgba(255,255,255,0.55) inset,
-        0 8px 28px -6px rgba(0,0,0,0.09);
+        0 14px 40px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08);
     cursor: ${p => p.as === 'a' ? 'pointer' : 'default'};
     &:hover { opacity: ${p => p.as === 'a' ? 0.7 : 1}; }
     transition: opacity 0.2s;
@@ -845,14 +845,14 @@ const HeroScrollHint = styled.div`
 const SliderFeaturedCard = styled.div`
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 36px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.34), 0 6px 20px rgba(0,0,0,0.16);
 `
 
 /* ═══════════════════════════════════════════════════════════════
    FEATURED PRODUCTS GRID
 ═══════════════════════════════════════════════════════════════ */
 const FeaturedSection = styled.section`
-    background: #ead1b0;
+    background: #f5ede0;
     padding: 52px 40px 80px;
 
     @media (max-width: 640px) { padding: 36px 20px 64px; }
@@ -1178,7 +1178,7 @@ const ArtistsTicker = styled.div`
     overflow: hidden;
     padding: 18px 0;
     border-radius: 20px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.38), 0 6px 20px rgba(0,0,0,0.18);
 `
 
 const ArtistsTrack = styled.div`
@@ -1429,11 +1429,11 @@ const EditorialSectionWord = styled.span`
    EDITORIAL
 ═══════════════════════════════════════════════════════════════ */
 const EditorialSection = styled.section`
-    background: #ead1b0;
+    background: #f5ede0;
     padding: 100px 0 140px;
     overflow: hidden;
     border-radius: 20px;
-    box-shadow: 0 8px 36px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.34), 0 6px 20px rgba(0,0,0,0.16);
 `
 
 const EditorialLayout = styled.div`
@@ -1561,7 +1561,7 @@ const ShopTitle = styled.h2`
 const ArtistsFullCard = styled.div`
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.38), 0 6px 20px rgba(0,0,0,0.18);
 `
 
 const CarouselsSection = styled.section`
@@ -1730,11 +1730,11 @@ const ShopCardPrice = styled.p`
    JOIN SECTION — VENDÉ TU ARTE
 ═══════════════════════════════════════════════════════════════ */
 const JoinSection = styled.section`
-    background: #ead1b0;
+    background: #f5ede0;
     padding: 100px 40px 120px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 36px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.10);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.34), 0 6px 20px rgba(0,0,0,0.16);
     @media (max-width: 640px) { padding: 72px 24px 96px; }
 `
 const JoinInner = styled.div`
@@ -1837,7 +1837,7 @@ const SiteFooter = styled.footer`
         linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.14);
+    box-shadow: 0 22px 70px rgba(0,0,0,0.38), 0 6px 20px rgba(0,0,0,0.18);
 `
 const FooterInner = styled.div`
     display: grid;
