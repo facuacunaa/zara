@@ -164,7 +164,14 @@ export default function PageLoader({ ready = false, onDone }) {
         if (birdLanded && ready) setClosing(true)
     }, [birdLanded, ready])
 
-    // Safety 1: si bird animation no dispara onAnimationEnd, forzar birdLanded
+    // Pájaro toca la casita a los 88% de la animación:
+    // delay(500ms) + duration(3000ms) × 0.88 = 3140ms desde mount
+    useEffect(() => {
+        const t = setTimeout(() => setBirdLanded(true), 3140)
+        return () => clearTimeout(t)
+    }, [])
+
+    // Safety: fallback por si el timeout falla (ej. tab en segundo plano)
     useEffect(() => {
         if (!ready) return
         const t = setTimeout(() => setBirdLanded(true), 3600)
@@ -206,7 +213,7 @@ export default function PageLoader({ ready = false, onDone }) {
                 }
             `}</style>
 
-            <BirdWrap onAnimationEnd={() => setBirdLanded(true)}>
+            <BirdWrap>
                 <Bird />
             </BirdWrap>
 
