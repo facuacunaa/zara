@@ -679,13 +679,7 @@ const BannerWrap = styled.div`
     border-radius: 20px;
     overflow: hidden;
     /* Fondo sólido arriba, se desvanece hacia abajo */
-    background: linear-gradient(
-        to bottom,
-        ${p => p.$bg || 'rgba(137,134,53,0.10)'} 0%,
-        ${p => p.$bg || 'rgba(137,134,53,0.07)'} 30%,
-        ${p => p.$bg || 'rgba(137,134,53,0.03)'} 65%,
-        transparent 100%
-    );
+    background: ${p => p.$bg || 'rgba(137,134,53,0.08)'};
     color: ${p => p.$color || '#898635'};
     text-align: center;
     /* padding-bottom generoso para que el fade tenga espacio */
