@@ -1267,7 +1267,7 @@ const CarouselOverlay = styled.div`
 `
 const CarouselText = styled.div`
     position: absolute;
-    bottom: clamp(48px, 8vh, 100px);
+    bottom: clamp(120px, 18vh, 200px);
     left: 0; right: 0;
     padding: 0 clamp(32px, 7vw, 100px);
     z-index: 2;
