@@ -112,7 +112,7 @@ export default function ArtistPage() {
         </HeroContent>
       </Hero>
 
-      {/* ══ 2. TODOS LOS PRODUCTOS ═══════════════════════════════════════ */}
+      {/* ══ 2. TODOS LOS PRODUCTOS — estilo galería editorial ═══════════ */}
       {products.length > 0 && (
         <ProductsSection>
           <SectionHeader>
@@ -120,11 +120,34 @@ export default function ArtistPage() {
             <SectionTitle>{g('shopTitle') || 'La Colección'}</SectionTitle>
             {g('shopDescription') && <SectionDesc>{g('shopDescription')}</SectionDesc>}
           </SectionHeader>
-          <ProductGrid>
+
+          {/* Galería: pares de fotos grandes lado a lado */}
+          <GalleryGrid>
             {products.map((p, i) => (
-              <ProdCard key={p._id || i} p={p} onSelect={setSelectedProd} />
+              <GalleryItem key={p._id || i} $tall={i % 3 === 0} onClick={() => setSelectedProd(p)}>
+                <GalleryImg>
+                  {p.image
+                    ? <img src={p.image} alt={p.name} loading="lazy" />
+                    : <GalleryNoImg>{p.name?.charAt(0)}</GalleryNoImg>}
+                  <GalleryOverlay>
+                    <GalleryOverlayNum>0{i + 1}</GalleryOverlayNum>
+                    <GalleryOverlayInfo>
+                      <GalleryOverlayName>{p.name}</GalleryOverlayName>
+                      <GalleryOverlayPrice>{p.price}</GalleryOverlayPrice>
+                    </GalleryOverlayInfo>
+                    <GalleryOverlayBtn>Ver obra</GalleryOverlayBtn>
+                  </GalleryOverlay>
+                </GalleryImg>
+                <GalleryCaption>
+                  <GalleryCaptionNum>0{i + 1}</GalleryCaptionNum>
+                  <GalleryCaptionText>
+                    <GalleryCaptionName>{p.name}</GalleryCaptionName>
+                    <GalleryCaptionPrice>{p.price}</GalleryCaptionPrice>
+                  </GalleryCaptionText>
+                </GalleryCaption>
+              </GalleryItem>
             ))}
-          </ProductGrid>
+          </GalleryGrid>
         </ProductsSection>
       )}
 
@@ -236,31 +259,6 @@ export default function ArtistPage() {
   )
 }
 
-/* ─── PROD CARD ───────────────────────────────────────────────────────────── */
-function ProdCard({ p, onSelect }) {
-  const cartData = {
-    producttitle: p.name, image: p.image, price: p.price,
-    pricenum: parseFloat((p.price || '0').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0,
-    quantity: 1, color: '', id: p._id || p.name,
-  }
-  return (
-    <ProdCardWrap>
-      <ProdCardMedia onClick={() => onSelect(p)}>
-        {p.image
-          ? <img src={p.image} alt={p.name} loading="lazy" />
-          : <ProdNoImg>{p.name?.charAt(0)}</ProdNoImg>}
-        <ProdCardOverlay>
-          <ProdCardBtn>Ver detalle</ProdCardBtn>
-        </ProdCardOverlay>
-      </ProdCardMedia>
-      <ProdCardBody>
-        <ProdCardName>{p.name}</ProdCardName>
-        <ProdCardPrice>{p.price}</ProdCardPrice>
-        <AddCart data={cartData} />
-      </ProdCardBody>
-    </ProdCardWrap>
-  )
-}
 
 /* ════════════════════════════════════════════════════════════════
    ESTILOS
@@ -339,69 +337,95 @@ const SectionDesc = styled.p`
   font-size: 12px; line-height: 1.9;
   color: #888; margin: 0; max-width: 560px;
 `
-const ProductGrid = styled.div`
+/* ── Gallery ── */
+const GalleryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
 
-  @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 700px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px) { grid-template-columns: 1fr; gap: 4px; }
 `
-
-/* ── Prod Card ── */
-const ProdCardWrap = styled.div`
-  background: #fff;
-  border-radius: 4px;
-  overflow: hidden;
+const GalleryItem = styled.div`
   cursor: pointer;
-  &:hover img { transform: scale(1.05); }
+  &:hover img { transform: scale(1.04); }
 `
-const ProdCardMedia = styled.div`
-  position: relative; overflow: hidden;
-  background: #e8ddd0; padding-bottom: 130%;
+const GalleryImg = styled.div`
+  position: relative;
+  overflow: hidden;
+  background: #d4c4a8;
+  /* Alterna alturas para efecto editorial dinámico */
+  padding-bottom: ${p => p.$tall ? '145%' : '115%'};
+
   img {
     position: absolute; inset: 0;
     width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.9s cubic-bezier(.25,.46,.45,.94);
+    transition: transform 1.1s cubic-bezier(.25,.46,.45,.94);
   }
 `
-const ProdNoImg = styled.div`
+const GalleryNoImg = styled.div`
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(4rem, 12vw, 8rem);
   font-weight: 300; font-style: italic;
-  color: rgba(0,0,0,0.1);
+  color: rgba(0,0,0,0.08);
 `
-const ProdCardOverlay = styled.div`
+const GalleryOverlay = styled.div`
   position: absolute; inset: 0;
-  display: flex; align-items: flex-end; justify-content: center;
-  padding-bottom: 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 45%);
-  opacity: 0; transition: opacity 0.3s;
-  ${ProdCardWrap}:hover & { opacity: 1; }
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 24px;
+  opacity: 0; transition: opacity 0.4s ease;
+  ${GalleryItem}:hover & { opacity: 1; }
 `
-const ProdCardBtn = styled.span`
+const GalleryOverlayNum = styled.span`
   font-family: 'DM Sans', sans-serif;
-  font-size: 9px; letter-spacing: 0.35em;
-  text-transform: uppercase; color: #fff;
-  border-bottom: 1px solid rgba(255,255,255,0.5);
-  padding-bottom: 2px;
+  font-size: 9px; letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.4); text-transform: uppercase;
 `
-const ProdCardBody = styled.div`
-  padding: 14px 12px 18px;
-  border-bottom: 1px solid #e8ddd0;
+const GalleryOverlayInfo = styled.div`
+  flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
 `
-const ProdCardName = styled.p`
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px; letter-spacing: 0.04em;
-  color: #1a1a1a; margin: 0 0 6px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-`
-const ProdCardPrice = styled.p`
+const GalleryOverlayName = styled.p`
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 14px; font-style: italic;
-  color: #555; margin: 0 0 12px;
+  font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+  font-weight: 300; font-style: italic;
+  color: #fff; margin: 0; line-height: 1.2;
+`
+const GalleryOverlayPrice = styled.p`
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.65); margin: 0;
+`
+const GalleryOverlayBtn = styled.span`
+  display: inline-block; margin-top: 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.45);
+  padding-bottom: 3px;
+`
+const GalleryCaption = styled.div`
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 14px 4px 24px;
+`
+const GalleryCaptionNum = styled.span`
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; letter-spacing: 0.3em;
+  color: #b0a090; flex-shrink: 0;
+`
+const GalleryCaptionText = styled.div``
+const GalleryCaptionName = styled.p`
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  font-weight: 300; font-style: italic;
+  color: #1a1a1a; margin: 0 0 2px;
+`
+const GalleryCaptionPrice = styled.p`
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: #898635; margin: 0;
 `
 
 /* ── Info ── */
