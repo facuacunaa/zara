@@ -261,6 +261,21 @@ export default function ArtistPortal() {
     setSlotProgress(p => { const n = {...p}; delete n[slot]; return n })
   }
 
+  /* ── Eliminar imagen de slot ────────────────────────────────────────── */
+  const deleteSlotImage = async (e, index) => {
+    e.stopPropagation()
+    if (!window.confirm('¿Eliminar esta imagen?')) return
+    try {
+      const res = await axios.delete(`${API}/artist/images/${index}`, { headers })
+      if (res.data?.images !== undefined) {
+        applyArtist({ ...artist, images: res.data.images })
+      }
+      flash('✅ Imagen eliminada')
+    } catch {
+      flash('❌ Error al eliminar imagen')
+    }
+  }
+
   /* ── Subir imagen shop ───────────────────────────────────────────────── */
   const uploadShopImage = async (file) => {
     if (!file) return
@@ -636,6 +651,10 @@ export default function ArtistPortal() {
                         <SlotOverlay>
                           <span>Reemplazar</span>
                         </SlotOverlay>
+                        <SlotDeleteBtn
+                          onClick={e => deleteSlotImage(e, i)}
+                          title="Eliminar imagen"
+                        >✕</SlotDeleteBtn>
                       </SlotPreview>
                     ) : (
                       <SlotEmpty>
@@ -1128,6 +1147,15 @@ const SlotPreview = styled.div`position:relative;width:100%;padding-bottom:150%;
 const SlotOverlay = styled.div`position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:.2s;
   display:flex;align-items:center;justify-content:center;
   span{color:white;font-size:11px;letter-spacing:.15em;text-transform:uppercase;}`
+const SlotDeleteBtn = styled.button`
+  position:absolute;top:8px;right:8px;z-index:10;
+  background:rgba(180,40,20,0.85);border:none;border-radius:50%;
+  width:26px;height:26px;color:#fff;font-size:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+  ${SlotPreview}:hover & { opacity:1; }
+  &:hover{background:rgba(200,30,10,1);}
+`
 const SlotEmpty = styled.div`width:100%;padding-bottom:150%;position:relative;background:#f8f8f8;
   &>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
   span{font-size:28px;color:#ccc;}
