@@ -154,42 +154,60 @@ function Bird() {
 }
 
 export default function PageLoader({ ready = false, onDone }) {
-    const [birdLanded, setBirdLanded] = useState(false)
-    const [closing,    setClosing]    = useState(false)
-    const onDoneRef = useRef(onDone)
+    const [closing, setClosing] = useState(false)
+
+    // Refs para leer valores actuales desde dentro de callbacks/timeouts
+    const readyRef      = useRef(ready)
+    const onDoneRef     = useRef(onDone)
+    const birdLandedRef = useRef(false)
+    const closedRef     = useRef(false)
+
+    useEffect(() => { readyRef.current  = ready  }, [ready])
     useEffect(() => { onDoneRef.current = onDone }, [onDone])
 
-    // Cerrar cuando el pájaro aterriza Y los datos están listos
-    useEffect(() => {
-        if (birdLanded && ready) setClosing(true)
-    }, [birdLanded, ready])
+    // Única función de cierre — idempotente, usa refs para leer estado actual
+    const maybeClose = useRef(() => {
+        if (closedRef.current) return                          // ya cerrado
+        if (!birdLandedRef.current || !readyRef.current) return // aún no listo
+        closedRef.current = true
+        setClosing(true)
+    })
+    // Mantener la ref actualizada cada render (acceso a setClosing actual)
+    maybeClose.current = () => {
+        if (closedRef.current) return
+        if (!birdLandedRef.current || !readyRef.current) return
+        closedRef.current = true
+        setClosing(true)
+    }
 
-    // Pájaro toca la casita a los 88% de la animación:
-    // delay(500ms) + duration(3000ms) × 0.88 = 3140ms desde mount
+    // Pájaro toca la casita a los 88%:  delay 500ms + 3000ms × 0.88 = 3140ms
     useEffect(() => {
-        const t = setTimeout(() => setBirdLanded(true), 3140)
+        const t = setTimeout(() => {
+            birdLandedRef.current = true
+            maybeClose.current()
+        }, 3140)
         return () => clearTimeout(t)
-    }, [])
+    }, []) // eslint-disable-line
 
-    // Safety: fallback por si el timeout falla (ej. tab en segundo plano)
+    // Cuando los datos estén listos, intentar cerrar (el pájaro puede haber llegado ya)
     useEffect(() => {
-        if (!ready) return
-        const t = setTimeout(() => setBirdLanded(true), 3600)
-        return () => clearTimeout(t)
-    }, [ready])
+        if (ready) maybeClose.current()
+    }, [ready]) // eslint-disable-line
 
-    // Safety 2: si closing=true pero onAnimationEnd no dispara, forzar onDone
+    // Después de iniciar el cierre, llamar onDone tras la animación fade-out
     useEffect(() => {
         if (!closing) return
-        const t = setTimeout(() => onDoneRef.current?.(), 800)
+        const t = setTimeout(() => onDoneRef.current?.(), 650)
         return () => clearTimeout(t)
     }, [closing])
 
-    // Safety 3: máximo absoluto — 5s sin importar nada
+    // Safety absoluto — 5s sin importar nada
     useEffect(() => {
         const t = setTimeout(() => {
+            if (closedRef.current) return
+            closedRef.current = true
             setClosing(true)
-            setTimeout(() => onDoneRef.current?.(), 600)
+            setTimeout(() => onDoneRef.current?.(), 650)
         }, 5000)
         return () => clearTimeout(t)
     }, [])
