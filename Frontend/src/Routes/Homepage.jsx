@@ -435,7 +435,7 @@ function ArtistsSlider({ artists }) {
 
 const SliderSection = styled.section`
     padding: 40px 0 0;
-    background: #ead1b0;
+    background: #f5ede0;
     overflow: hidden;
 `
 const SliderHeader = styled.div`
@@ -524,18 +524,7 @@ const ContentReveal = styled.div`
     @media (max-width: 640px)  { padding: 0 10px 20px; }
 `
 const MissionSection = styled.section`
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
-        ),
-        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
+    background: #3c4021;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -593,20 +582,7 @@ const MissionBtnPrimary = styled.a`
     align-items: center;
     justify-content: center;
     padding: 13px 28px;
-    background:
-        repeating-linear-gradient(
-            -52deg,
-            transparent 0px, transparent 5px,
-            rgba(255,255,255,0.035) 5px, rgba(255,255,255,0.035) 7px
-        ),
-        linear-gradient(
-            135deg,
-            #6B3A28 0%,
-            #9B5E32 22%,
-            #C4854A 50%,
-            #9B6035 76%,
-            #7B4525 100%
-        );
+    background: #ad431d;
     color: #fff;
     font-size: 0.72rem;
     letter-spacing: 0.18em;
@@ -968,18 +944,7 @@ const FeaturedCardPrice = styled.p`
    ARTISTAS: PERFILES
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsShowcase = styled.section`
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
-        ),
-        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
+    background: #3c4021;
     padding: 100px 40px 120px;
 
     @media (max-width: 640px) { padding: 72px 20px 96px; }
@@ -1070,7 +1035,7 @@ const ArtistCardMedia = styled.div`
 const ArtistCardPlaceholder = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(160deg, #3c4021 0%, #3c4021 100%);
+    background: #3c4021;
 
     span {
         font-family: 'Playfair Display', Georgia, serif;
@@ -1163,18 +1128,7 @@ const ArtistCardCta = styled.p`
    TICKER DE ARTISTAS
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsTicker = styled.div`
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
-        ),
-        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
+    background: #3c4021;
     overflow: hidden;
     padding: 18px 0;
     border-radius: 20px;
@@ -1269,18 +1223,7 @@ const CarouselWrap = styled.div`
     height: 75vh;
     min-height: 380px;
     overflow: hidden;
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
-        ),
-        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
+    background: #3c4021;
     /* Degradado inferior que se funde con el fondo de la página */
     &::after {
         content: '';
@@ -1565,18 +1508,7 @@ const ArtistsFullCard = styled.div`
 `
 
 const CarouselsSection = styled.section`
-    background:
-        repeating-linear-gradient(
-            -52deg,
-            transparent 0px, transparent 5px,
-            rgba(255,255,255,0.025) 5px, rgba(255,255,255,0.025) 7px
-        ),
-        repeating-linear-gradient(
-            38deg,
-            transparent 0px, transparent 9px,
-            rgba(255,255,255,0.015) 9px, rgba(255,255,255,0.015) 10px
-        ),
-        linear-gradient(145deg, #2D1408 0%, #4A2510 35%, #3A1C0A 65%, #2A1208 100%);
+    background: #4f170f;
     padding: 100px 0 120px;
 `
 
@@ -1823,18 +1755,7 @@ const JoinStepBody = styled.p`
    FOOTER
 ═══════════════════════════════════════════════════════════════ */
 const SiteFooter = styled.footer`
-    background:
-        repeating-linear-gradient(
-            65deg,
-            transparent 0px, transparent 13px,
-            rgba(173,67,29,0.08) 13px, rgba(173,67,29,0.08) 14px
-        ),
-        repeating-linear-gradient(
-            -25deg,
-            transparent 0px, transparent 20px,
-            rgba(173,67,29,0.06) 20px, rgba(173,67,29,0.06) 21px
-        ),
-        linear-gradient(145deg, #3c4021 0%, #3c4021 40%, #3c4021 70%, #3c4021 100%);
+    background: #3c4021;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 22px 70px rgba(0,0,0,0.38), 0 6px 20px rgba(0,0,0,0.18);

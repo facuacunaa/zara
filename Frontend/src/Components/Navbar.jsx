@@ -600,7 +600,7 @@ const PortalLinkSub = styled.p`
 const SellSection = styled.div`
     margin: 0 16px;
     padding: 22px 20px 24px;
-    background: linear-gradient(135deg, #3c4021 0%, #3c4021 100%);
+    background: #3c4021;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
