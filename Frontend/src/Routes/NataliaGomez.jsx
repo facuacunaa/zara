@@ -334,6 +334,8 @@ const GalleryGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
+
+  @media (max-width: 640px) { gap: 0; }
 `
 const GalleryItem = styled.div`
   cursor: pointer;
@@ -372,11 +374,19 @@ const GalleryOverlay = styled.div`
   padding: 20px 24px;
   opacity: 0; transition: opacity 0.4s ease;
   ${GalleryItem}:hover & { opacity: 1; }
+
+  /* En mobile siempre visible — muestra nombre dentro de la foto */
+  @media (max-width: 640px) {
+    opacity: 1;
+    padding: 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+  }
 `
 const GalleryOverlayNum = styled.span`
   font-family: 'DM Sans', sans-serif;
   font-size: 9px; letter-spacing: 0.4em;
   color: rgba(255,255,255,0.4); text-transform: uppercase;
+  @media (max-width: 640px) { display: none; }
 `
 const GalleryOverlayInfo = styled.div`
   flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
@@ -386,11 +396,16 @@ const GalleryOverlayName = styled.p`
   font-size: clamp(1.1rem, 2.2vw, 1.8rem);
   font-weight: 300; font-style: italic;
   color: #fff; margin: 0; line-height: 1.2;
+  @media (max-width: 640px) {
+    font-size: 0.82rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
 `
 const GalleryOverlayPrice = styled.p`
   font-family: 'DM Sans', sans-serif;
   font-size: 11px; letter-spacing: 0.15em;
   color: rgba(255,255,255,0.65); margin: 0;
+  @media (max-width: 640px) { font-size: 9px; letter-spacing: 0.08em; }
 `
 const GalleryOverlayBtn = styled.span`
   display: inline-block; margin-top: 16px;
@@ -399,11 +414,12 @@ const GalleryOverlayBtn = styled.span`
   text-transform: uppercase; color: #fff;
   border-bottom: 1px solid rgba(255,255,255,0.45);
   padding-bottom: 3px;
+  @media (max-width: 640px) { display: none; }
 `
 const GalleryCaption = styled.div`
   display: flex; align-items: baseline; gap: 10px;
   padding: 12px 4px 20px;
-  @media (max-width: 640px) { padding: 8px 6px 16px; gap: 6px; }
+  @media (max-width: 640px) { display: none; }
 `
 const GalleryCaptionNum = styled.span`
   font-family: 'DM Sans', sans-serif;
