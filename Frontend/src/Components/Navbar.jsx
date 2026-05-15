@@ -343,18 +343,12 @@ const NavBar = styled.nav`
     justify-content: space-between;
     padding: 0 24px;
 
-    /* ── Fondo dinámico según contexto ── */
-    background: ${p =>
-        p.$solid        ? '#ead1b0' :
-        p.$frosted      ? 'rgba(234,209,176,0.88)' :
-        'transparent'
-    };
-    backdrop-filter: ${p => p.$frosted ? 'blur(12px)' : 'none'};
-    border-bottom: ${p => (p.$solid || p.$frosted) ? '1px solid rgba(216,200,176,0.35)' : 'none'};
-    transition:
-        background 0.35s ease,
-        backdrop-filter 0.35s ease,
-        border-color 0.35s ease;
+    /* ── Vidrio esmerilado siempre activo ── */
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,0.22);
+    transition: background 0.35s ease;
 `
 
 const HamburgerBtn = styled.button`
