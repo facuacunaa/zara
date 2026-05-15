@@ -180,7 +180,8 @@ const Navbar = ({ activeIndexs }) => {
     useEffect(() => { setOpen(false) }, [location.pathname])
 
     // En hero → íconos blancos sobre fondo transparente; si no, adaptativo
-    const iconColor = (heroVisible || navTheme === 'dark') ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
+    // En hero → íconos blancos sobre transparente; en scroll → oscuros sobre pill blanca
+    const iconColor = heroVisible ? 'rgba(255,255,255,0.92)' : '#1a1a1a'
 
     return (
         <>
@@ -190,7 +191,7 @@ const Navbar = ({ activeIndexs }) => {
             <NavBar
                 ref={navRef}
                 iconColor={iconColor}
-                $hidden={heroVisible}
+                $heroVisible={heroVisible}
             >
                 {/* Hamburger */}
                 <HamburgerBtn onClick={() => setOpen(true)} iconColor={iconColor} aria-label="Abrir menú">
@@ -335,10 +336,7 @@ const NavBar = styled.nav`
     position: fixed;
     top: 18px;
     left: 50%;
-    transform: translateX(-50%) translateY(${p => p.$hidden ? '-16px' : '0'});
-    opacity: ${p => p.$hidden ? 0 : 1};
-    pointer-events: ${p => p.$hidden ? 'none' : 'all'};
-
+    transform: translateX(-50%);
     z-index: 99;
     width: min(calc(100vw - 48px), 980px);
     height: 56px;
@@ -348,22 +346,24 @@ const NavBar = styled.nav`
     justify-content: space-between;
     padding: 0 24px;
 
-    /* ── Vidrio esmerilado ── */
-    background: rgba(255,255,255,0.22);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.28);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+    /* ── Hero: transparente sin fondo ── */
+    /* ── Scrolled: pill con vidrio esmerilado ── */
+    background: ${p => p.$heroVisible ? 'transparent' : 'rgba(255,255,255,0.22)'};
+    backdrop-filter: ${p => p.$heroVisible ? 'none' : 'blur(24px) saturate(160%)'};
+    -webkit-backdrop-filter: ${p => p.$heroVisible ? 'none' : 'blur(24px) saturate(160%)'};
+    border: ${p => p.$heroVisible ? '1px solid transparent' : '1px solid rgba(255,255,255,0.28)'};
+    box-shadow: ${p => p.$heroVisible ? 'none' : '0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)'};
 
     transition:
-        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        background 0.45s ease,
+        backdrop-filter 0.45s ease,
+        border-color 0.45s ease,
+        box-shadow 0.45s ease;
 
     @media (max-width: 640px) {
         width: calc(100vw - 24px);
         top: 12px;
         height: 52px;
-        border-radius: 100px;
     }
 `
 
