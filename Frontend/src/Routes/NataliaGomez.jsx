@@ -234,12 +234,6 @@ export default function ArtistPage() {
             </EditorialDuo>
           )}
 
-          {/* Foto ancha final si hay más imágenes */}
-          {img(4) && (
-            <EditImgWide>
-              <LazyImg src={img(4)} alt="editorial 4" style={{ height: '100%' }} />
-            </EditImgWide>
-          )}
         </EditorialSection>
       )}
 
@@ -554,11 +548,6 @@ const EditImgDuo = styled.div`
   position: relative; overflow: hidden;
   padding-bottom: 130%;
   & > div { position: absolute; inset: 0; }
-`
-const EditImgWide = styled.div`
-  position: relative; overflow: hidden;
-  height: 500px;
-  margin-top: 3px;
 `
 
 /* ── Footer ── */
