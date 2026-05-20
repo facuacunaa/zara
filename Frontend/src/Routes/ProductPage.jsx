@@ -262,6 +262,10 @@ export default function ProductPage() {
                                             <span>Ver detalle</span>
                                         </CardOverlay>
                                         {p.artistName && <ArtistBadge>{p.artistName}</ArtistBadge>}
+                                        <CardInfoOverlay>
+                                            <CardInfoName>{p.name}</CardInfoName>
+                                            <CardInfoPrice>{p.price}</CardInfoPrice>
+                                        </CardInfoOverlay>
                                     </CardMedia>
                                     <CardBody>
                                         <CardName>{p.name}</CardName>
@@ -290,6 +294,7 @@ export default function ProductPage() {
 const PageWrap = styled.div`
     min-height: 100vh;
     background: #ead1b0;
+    @media (min-width: 769px) { background: #fff; }
 `
 
 const PageHeader = styled.div`
@@ -300,6 +305,10 @@ const PageHeader = styled.div`
     position: sticky;
     top: 0;
     z-index: 50;
+    @media (min-width: 769px) {
+        background: rgba(255,255,255,0.97);
+        border-bottom: 1px solid #eee;
+    }
     @media (max-width: 768px) { padding: 68px 16px 10px; }
 `
 
@@ -531,7 +540,10 @@ const ProductGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
-    @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 769px) {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+    }
     @media (max-width: 600px)  { grid-template-columns: repeat(2, 1fr); gap: 2px; }
 `
 
@@ -541,6 +553,10 @@ const ProductCard = styled.div`
     border-radius: 14px;
     overflow: hidden;
     &:hover img { transform: scale(1.04); }
+    @media (min-width: 769px) {
+        border-radius: 0;
+        background: #fff;
+    }
 `
 
 const CardMedia = styled.div`
@@ -605,7 +621,46 @@ const ArtistBadge = styled.span`
 const CardBody = styled.div`
     padding: 10px 10px 14px;
     border-bottom: 1px solid #E8DCC8;
+    @media (min-width: 769px) { display: none; }
     @media (max-width: 600px) { padding: 14px 12px 18px; }
+`
+
+/* ── Info overlay inside photo — desktop only ── */
+const CardInfoOverlay = styled.div`
+    display: none;
+    @media (min-width: 769px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        position: absolute;
+        inset: 0;
+        padding: 14px 12px;
+        background: linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 50%, transparent 100%);
+        pointer-events: none;
+    }
+`
+
+const CardInfoName = styled.p`
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin: 0 0 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.35;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+`
+
+const CardInfoPrice = styled.p`
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(255,255,255,0.82);
+    margin: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
 `
 
 const CardName = styled.p`
