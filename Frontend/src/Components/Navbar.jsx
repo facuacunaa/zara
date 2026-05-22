@@ -532,7 +532,7 @@ const SidebarNavItem = styled.div`
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 1.55rem;
         font-style: normal;
-        font-weight: 300;
+        font-weight: 400;
         color: #fff;
         text-decoration: none;
         display: flex;

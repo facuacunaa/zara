@@ -73,7 +73,7 @@ const DrawerTitle = styled.div`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.3rem;
     font-style: normal;
-    font-weight: 300;
+    font-weight: 400;
     color: #0a0a0a;
     padding: 24px 24px 20px;
     border-bottom: 1px solid #f0f0ee;

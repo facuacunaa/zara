@@ -407,7 +407,7 @@ const HeroDecor = styled.span`
     transform: translateY(-50%) rotate(90deg);
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(8rem, 20vw, 18rem);
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     color: rgba(255,255,255,0.025);
     letter-spacing: -0.04em;
@@ -431,7 +431,7 @@ const HeroIssue = styled.p`
 const HeroTitle = styled.h1`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(4rem, 12vw, 10rem);
-    font-weight: 300;
+    font-weight: 400;
     color: #fff;
     line-height: 0.95;
     margin: 0 0 2.5rem;
@@ -448,7 +448,7 @@ const HeroSub = styled.p`
     font-size: clamp(0.88rem, 1.5vw, 1.05rem);
     line-height: 1.85;
     color: rgba(255,255,255,0.45);
-    font-weight: 300;
+    font-weight: 400;
     max-width: 520px;
     margin: 0 0 2.5rem;
 `
@@ -633,7 +633,7 @@ const PanelProductsHeader = styled.div`
 const PanelProductsLabel = styled.h4`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1rem, 2vw, 1.3rem);
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     color: #1a1a1a;
     margin: 0;
@@ -704,7 +704,7 @@ const LoadingBlock = styled.div`
 const EmptyWrap = styled.div`
     padding: 120px 40px;
     text-align: center;
-    p { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 300; font-style: normal; color: #bbb; margin: 0 0 24px; }
+    p { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 400; font-style: normal; color: #bbb; margin: 0 0 24px; }
     a { font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: #aaa; text-decoration: none; &:hover { color: #0a0a0a; } }
 `
 
@@ -756,7 +756,7 @@ const ArtistImgPlaceholder = styled.div`
     span {
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: clamp(6rem, 15vw, 12rem);
-        font-weight: 300;
+        font-weight: 400;
         font-style: normal;
         color: rgba(255,255,255,0.08);
     }
@@ -788,7 +788,7 @@ const ArtistEyebrow = styled.p`
 const ArtistName = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2.2rem, 5vw, 4.5rem);
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     color: #0a0a0a;
     margin: 0 0 2rem;
@@ -800,7 +800,7 @@ const ArtistBio = styled.p`
     line-height: 1.9;
     color: #777;
     margin: 0 0 2.5rem;
-    font-weight: 300;
+    font-weight: 400;
     max-width: 440px;
 `
 const ArtistStatsRow = styled.div`
@@ -818,7 +818,7 @@ const ArtistStatBox = styled.div`
 const ArtistStatNum = styled.span`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.5rem;
-    font-weight: 300;
+    font-weight: 400;
     color: #0a0a0a;
 `
 const ArtistStatLabel = styled.span`
@@ -860,7 +860,7 @@ const WorksHeader = styled.div`
 const WorksLabel = styled.h3`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.1rem, 2.5vw, 1.7rem);
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     color: #0a0a0a;
     margin: 0;
@@ -910,7 +910,7 @@ const WorkCardNoImg = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 3rem; font-weight: 300; font-style: normal;
+    font-size: 3rem; font-weight: 400; font-style: normal;
     color: rgba(0,0,0,0.1);
 `
 const WorkCardOverlay = styled.div`
@@ -1012,7 +1012,7 @@ const CtaEyebrow = styled.p`
 const CtaTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2rem, 5vw, 4rem);
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     color: #fff;
     margin: 0;
@@ -1026,7 +1026,7 @@ const CtaBody = styled.p`
     line-height: 1.9;
     color: rgba(255,255,255,0.45);
     margin: 0 0 2.5rem;
-    font-weight: 300;
+    font-weight: 400;
 `
 const CtaBtn = styled.a`
     display: inline-flex;
@@ -1098,7 +1098,7 @@ const ModalBody = styled.div`
 `
 const ModalName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 1.4rem; font-weight: 300; font-style: normal;
+    font-size: 1.4rem; font-weight: 400; font-style: normal;
     color: #1a1a1a; margin: 0 0 8px;
 `
 const ModalPrice = styled.p`

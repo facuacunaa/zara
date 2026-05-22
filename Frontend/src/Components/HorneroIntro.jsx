@@ -328,7 +328,7 @@ export default function HorneroIntro() {
                   color: '#fff', margin: '0 0 18px', whiteSpace: 'pre-line',
                   fontFamily: "'Cormorant Garamond',Georgia,serif",
                   fontSize: 'clamp(2.2rem,5.5vw,5rem)',
-                  fontWeight: 300, fontStyle: 'normal', lineHeight: 1.1,
+                  fontWeight: 400, fontStyle: 'normal', lineHeight: 1.1,
                 }}>
                   {s.headline}
                 </h2>
