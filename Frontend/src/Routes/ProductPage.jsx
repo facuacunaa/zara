@@ -345,7 +345,7 @@ const PageEyebrow = styled.p`
 const PageTitle = styled.h1`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1rem, 2vw, 1.35rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     margin: 0;
@@ -586,7 +586,7 @@ const GalleryNoImg = styled.div`
     display: flex; align-items: center; justify-content: center;
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(3rem, 10vw, 6rem);
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: rgba(0,0,0,0.08);
 `
 
@@ -633,7 +633,7 @@ const GalleryOverlayInfo = styled.div`
 const GalleryOverlayName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.1rem, 2.2vw, 1.8rem);
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: #fff; margin: 0; line-height: 1.2;
     text-transform: capitalize;
 
@@ -677,7 +677,7 @@ const GalleryCaptionText = styled.div``
 const GalleryCaptionName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(0.78rem, 1.6vw, 1.1rem);
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: #1a1a1a; margin: 0 0 2px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     text-transform: capitalize;
@@ -736,7 +736,7 @@ const Empty = styled.div`
     p {
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 20px;
-        font-weight: 400;
+        font-weight: 500;
         font-style: normal;
         color: #bbb;
         margin: 0 0 24px;
@@ -812,7 +812,7 @@ const ModalBody = styled.div`
 
 const ModalName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 22px; font-weight: 400; font-style: normal;
+    font-size: 22px; font-weight: 500; font-style: normal;
     color: #1a1a1a; margin: 0 0 8px;
     text-transform: capitalize;
 `

@@ -489,7 +489,7 @@ const SliderCardName = styled.p`
     position: absolute;
     bottom: 12px; left: 0; right: 0;
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 13px; font-weight: 400; font-style: normal;
+    font-size: 13px; font-weight: 500; font-style: normal;
     color: #fff; margin: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     text-transform: capitalize;
@@ -566,7 +566,7 @@ const MissionEyebrow = styled.p`
 const MissionTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.9rem, 4vw, 3.4rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     line-height: 1.12;
     color: #fff;
@@ -616,7 +616,7 @@ const MissionBody = styled.p`
     color: rgba(255,255,255,0.55);
     margin: 0;
     white-space: pre-line;
-    font-weight: 400;
+    font-weight: 500;
 `
 const MissionStats = styled.div`
     display: flex;
@@ -633,7 +633,7 @@ const MissionStat = styled.div`
 const MissionStatNum = styled.span`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.1rem, 2vw, 1.5rem);
-    font-weight: 400;
+    font-weight: 500;
     color: #fff;
     letter-spacing: 0.02em;
 `
@@ -663,7 +663,7 @@ const BannerWrap = styled.div`
     padding: 9px 20px 28px;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.68rem;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-decoration: none;
     /* Sombra que da profundidad / efecto 3D */
@@ -742,7 +742,7 @@ const HeroEyebrow = styled.p`
 const HeroTitle = styled.h1`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(3rem, 9vw, 8rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #fff;
     line-height: 1.05;
@@ -874,7 +874,7 @@ const FeaturedSectionHeader = styled.div`
 const FeaturedTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.2rem, 2vw, 1.6rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     line-height: 1.1;
@@ -959,7 +959,7 @@ const FeaturedOverlayInfo = styled.div`
 const FeaturedOverlayName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(0.75rem, 1.2vw, 1rem);
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: #fff; margin: 0; line-height: 1.2;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     text-transform: capitalize;
@@ -1026,7 +1026,7 @@ const ArtistsShowcaseEyebrow = styled.p`
 const ArtistsShowcaseTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.8rem, 4vw, 3.4rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #fff;
     line-height: 1.12;
@@ -1093,7 +1093,7 @@ const ArtistCardPlaceholder = styled.div`
     span {
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: clamp(5rem, 14vw, 10rem);
-        font-weight: 400;
+        font-weight: 500;
         font-style: normal;
         color: rgba(255,255,255,0.07);
     }
@@ -1135,7 +1135,7 @@ const ArtistCardDivider = styled.div`
 const ArtistCardName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.2rem, 2.2vw, 1.75rem);
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: #fff; margin: 0 0 8px;
     line-height: 1.15; letter-spacing: -0.01em;
     text-transform: capitalize;
@@ -1194,7 +1194,7 @@ const MidTickerItem = styled.span`
     span {
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 11.5px;
-        font-weight: 400;
+        font-weight: 500;
         font-style: normal;
         letter-spacing: 0.1em;
         color: #1a1a1a;
@@ -1357,7 +1357,7 @@ const CarouselText = styled.div`
 const CarouselTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2.6rem, 6.5vw, 6rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #fff;
     letter-spacing: 0.02em;
@@ -1525,7 +1525,7 @@ const EditorialLabel = styled.p`
 const EditorialQuote = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2rem, 4.5vw, 4.2rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     line-height: 1.18;
@@ -1587,7 +1587,7 @@ const EditorialManifestoCol = styled.div`
 const EditorialManifestoColTitle = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #1a1a1a;
     margin: 0 0 14px;
@@ -1618,7 +1618,7 @@ const ShopEyebrow = styled.p`
 const ShopTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2.5rem, 5.5vw, 5rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #ead1b0;
     line-height: 1.1;
@@ -1665,7 +1665,7 @@ const ArtistCarouselHeader = styled.div`
 const ArtistCarouselName = styled.h3`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.4rem, 3vw, 2.2rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #ead1b0;
     margin: 0;
@@ -1735,7 +1735,7 @@ const ShopCardNoImg = styled.div`
     display: flex; align-items: center; justify-content: center;
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: rgba(0,0,0,0.1);
 `
 
@@ -1756,7 +1756,7 @@ const ShopCardOverlayInfo = styled.div`
 const ShopCardOverlayName = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.82rem;
-    font-weight: 400; font-style: normal;
+    font-weight: 500; font-style: normal;
     color: #fff; margin: 0; line-height: 1.2;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     text-transform: capitalize;
@@ -1814,7 +1814,7 @@ const JoinEyebrow = styled.p`
 const JoinTitle = styled.h2`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2rem, 4vw, 3.4rem);
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     margin: 0 0 1.8rem;
@@ -1825,7 +1825,7 @@ const JoinBody = styled.p`
     line-height: 1.9;
     color: #777;
     margin: 0 0 2.5rem;
-    font-weight: 400;
+    font-weight: 500;
     max-width: 460px;
 `
 const JoinCta = styled.a`
@@ -1863,7 +1863,7 @@ const JoinStepNum = styled.span`
 const JoinStepTitle = styled.p`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.15rem;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     margin: 0 0 6px;
@@ -1944,7 +1944,7 @@ function HomeProdModal({ product, onClose, allProducts, onSelect }) {
                     <div style={{ padding: '32px 28px' }}>
                         <p style={{
                             fontFamily: 'Cormorant Garamond, Georgia, serif',
-                            fontSize: '22px', fontWeight: 400, fontStyle: 'normal',
+                            fontSize: '22px', fontWeight: 500, fontStyle: 'normal',
                             color: '#1a1a1a', margin: '0 0 8px'
                         }}>{product.name}</p>
                         <p style={{

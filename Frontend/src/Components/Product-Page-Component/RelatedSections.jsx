@@ -158,7 +158,7 @@ const SectionLabel = styled.p`
 const SectionTitle = styled.h4`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     margin: 0;

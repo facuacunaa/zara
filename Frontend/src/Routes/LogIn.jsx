@@ -69,7 +69,7 @@ const Logo = styled.img`
 const Title = styled.h1`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.8rem;
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
   color: #1a1a1a;
   margin: 0;
@@ -121,7 +121,7 @@ const OptionIcon = styled.span`
 const OptionLabel = styled.p`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.05rem;
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
   color: #1a1a1a;
   margin: 0;

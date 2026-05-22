@@ -532,7 +532,7 @@ const SidebarNavItem = styled.div`
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 1.55rem;
         font-style: normal;
-        font-weight: 400;
+        font-weight: 500;
         color: #fff;
         text-decoration: none;
         display: flex;
@@ -645,7 +645,7 @@ const SellEyebrow = styled.p`
 const SellTitle = styled.h3`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.35rem;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #fff;
     margin: 0;

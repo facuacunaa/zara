@@ -208,7 +208,7 @@ const PanelHeader = styled.div`
 const PanelTitle = styled.h3`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.1rem;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
     color: #0a0a0a;
     margin: 0;

@@ -51,7 +51,7 @@ function ProductModal({ product, artistName, onClose }) {
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.7s' }} />}
           </div>
           <div style={{ padding: '32px 28px' }}>
-            <p style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: 22, fontWeight: 400, fontStyle: 'normal', color: '#1a1a1a', margin: '0 0 6px' }}>{product.name}</p>
+            <p style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: 22, fontWeight: 500, fontStyle: 'normal', color: '#1a1a1a', margin: '0 0 6px' }}>{product.name}</p>
             <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, letterSpacing: '0.1em', color: '#999', margin: '0 0 32px' }}>{product.price}</p>
             <AddCart data={cartData} />
           </div>
@@ -77,7 +77,7 @@ export default function ArtistPage() {
 
   if (notFound) return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#ead1b0' }}>
-      <p style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: '5rem', fontStyle: 'normal', fontWeight: 400, color: '#1a1a1a' }}>404</p>
+      <p style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: '5rem', fontStyle: 'normal', fontWeight: 500, color: '#1a1a1a' }}>404</p>
       <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 11, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#888', margin: '16px 0 40px' }}>Artista no encontrado</p>
       <Link to="/" style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#1a1a1a', border: '1px solid #ccc', padding: '12px 32px', textDecoration: 'none' }}>← Volver al inicio</Link>
     </div>
@@ -293,7 +293,7 @@ const HeroEyebrow = styled.p`
 const HeroTitle = styled.h1`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(3rem, 9vw, 8rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: #fff; line-height: 1.0;
   margin: 0; letter-spacing: -0.02em;
   text-transform: capitalize;
@@ -322,7 +322,7 @@ const Eyebrow = styled.p`
 const SectionTitle = styled.h2`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: #1a1a1a; margin: 0 0 12px;
 `
 const SectionDesc = styled.p`
@@ -366,7 +366,7 @@ const GalleryNoImg = styled.div`
   display: flex; align-items: center; justify-content: center;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(4rem, 12vw, 8rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: rgba(0,0,0,0.08);
 `
 const GalleryOverlay = styled.div`
@@ -396,7 +396,7 @@ const GalleryOverlayInfo = styled.div`
 const GalleryOverlayName = styled.p`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(0.9rem, 1.6vw, 1.25rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: #fff; margin: 0; line-height: 1.2;
   text-transform: capitalize;
   @media (max-width: 640px) {
@@ -456,7 +456,7 @@ const BioText = styled.p`
   font-family: 'DM Sans', sans-serif;
   font-size: clamp(0.9rem, 1.4vw, 1rem);
   line-height: 2; color: rgba(255,255,255,0.65);
-  white-space: pre-line; font-weight: 400; margin: 0;
+  white-space: pre-line; font-weight: 500; margin: 0;
 `
 const InfoSide = styled.div`
   display: flex; flex-direction: column; gap: 40px;
@@ -481,7 +481,7 @@ const InfoQuote = styled.blockquote`
 const InfoQuoteText = styled.p`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: #fff; margin: 0 0 12px; line-height: 1.4;
 `
 const InfoQuoteAuthor = styled.footer`
@@ -536,7 +536,7 @@ const EditTextBlock = styled.div`
 const EditBlockTitle = styled.h2`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: #fff; margin: 0; line-height: 1.15;
 `
 const EditBlockBody = styled.p`
@@ -576,7 +576,7 @@ const FooterEyebrow = styled.p`
 const FooterTitle = styled.h2`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(2.5rem, 7vw, 6rem);
-  font-weight: 400; font-style: normal;
+  font-weight: 500; font-style: normal;
   color: #fff; margin: 0 0 48px;
   text-transform: capitalize;
 `
