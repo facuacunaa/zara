@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import styled, { keyframes, css } from 'styled-components'
 import AddCart from './AddCart'
@@ -617,7 +617,7 @@ const InfoArtist = styled.p`
     letter-spacing:.35em;text-transform:uppercase;color:#bbb;margin:0 0 12px;
 `
 const InfoName = styled.h2`
-    font-family:'Playfair Display',Georgia,serif;
+    font-family:'Cormorant Garamond',Georgia,serif;
     font-size:clamp(1.6rem,3vw,2.4rem);font-weight:300;font-style:italic;
     color:#0a0a0a;line-height:1.2;margin:0 0 12px;
 `

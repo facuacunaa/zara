@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+﻿import React, { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import Navbar from '../Components/Navbar'
@@ -236,11 +236,9 @@ export default function ProductPage() {
 
                     {loading ? (
                         <SkeletonGrid>
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <SkeletonCard key={i}>
-                                    <SkeletonImg />
-                                    <SkeletonLine w="60%" />
-                                    <SkeletonLine w="35%" />
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <SkeletonCard key={i} $tall={i % 3 === 0}>
+                                    <SkeletonImg $tall={i % 3 === 0} />
                                 </SkeletonCard>
                             ))}
                         </SkeletonGrid>
@@ -250,30 +248,36 @@ export default function ProductPage() {
                             <ClearBtn onClick={clearFilters}>Limpiar filtros</ClearBtn>
                         </Empty>
                     ) : (
-                        <ProductGrid>
+                        <GalleryGrid>
                             {filtered.map((p, i) => (
-                                <ProductCard key={p._id || i} onClick={() => setSelectedProd(p)}>
-                                    <CardMedia>
+                                <GalleryItem key={p._id || i} $tall={i % 3 === 0} onClick={() => setSelectedProd(p)}>
+                                    <GalleryImg $tall={i % 3 === 0}>
                                         {p.image
                                             ? <img src={p.image} alt={p.name} loading="lazy" />
-                                            : <CardNoImg>{p.name?.charAt(0)}</CardNoImg>
+                                            : <GalleryNoImg>{p.name?.charAt(0)}</GalleryNoImg>
                                         }
-                                        <CardOverlay>
-                                            <span>Ver detalle</span>
-                                        </CardOverlay>
-                                        {p.artistName && <ArtistBadge>{p.artistName}</ArtistBadge>}
-                                        <CardInfoOverlay>
-                                            <CardInfoName>{p.name}</CardInfoName>
-                                            <CardInfoPrice>{p.price}</CardInfoPrice>
-                                        </CardInfoOverlay>
-                                    </CardMedia>
-                                    <CardBody>
-                                        <CardName>{p.name}</CardName>
-                                        <CardPrice>{p.price}</CardPrice>
-                                    </CardBody>
-                                </ProductCard>
+                                        <GalleryOverlay>
+                                            <GalleryOverlayTop>
+                                                <GalleryOverlayNum>0{i + 1}</GalleryOverlayNum>
+                                                {p.artistName && <GalleryArtistBadge>{p.artistName}</GalleryArtistBadge>}
+                                            </GalleryOverlayTop>
+                                            <GalleryOverlayInfo>
+                                                <GalleryOverlayName>{p.name}</GalleryOverlayName>
+                                                <GalleryOverlayPrice>{p.price}</GalleryOverlayPrice>
+                                            </GalleryOverlayInfo>
+                                            <GalleryOverlayBtn>Ver detalle</GalleryOverlayBtn>
+                                        </GalleryOverlay>
+                                    </GalleryImg>
+                                    <GalleryCaption>
+                                        <GalleryCaptionNum>0{i + 1}</GalleryCaptionNum>
+                                        <GalleryCaptionText>
+                                            <GalleryCaptionName>{p.name}</GalleryCaptionName>
+                                            <GalleryCaptionPrice>{p.price}</GalleryCaptionPrice>
+                                        </GalleryCaptionText>
+                                    </GalleryCaption>
+                                </GalleryItem>
                             ))}
-                        </ProductGrid>
+                        </GalleryGrid>
                     )}
                 </GridArea>
             </ShopLayout>
@@ -339,10 +343,10 @@ const PageEyebrow = styled.p`
 `
 
 const PageTitle = styled.h1`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1rem, 2vw, 1.35rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0;
     line-height: 1;
@@ -404,7 +408,7 @@ const ShopLayout = styled.div`
     margin: 0 auto;
     padding: 0 40px 80px;
     @media (max-width: 900px) { flex-direction: column; padding: 0 16px 60px; }
-    @media (max-width: 600px) { padding: 0 0 60px; }
+    @media (max-width: 600px) { padding: 0 0 80px; }
 `
 
 /* ── SIDEBAR ────────────────────────────────────────────────────────────── */
@@ -498,9 +502,11 @@ const GridArea = styled.div`
     flex: 1;
     min-width: 0;
     padding-top: 36px;
+    @media (max-width: 900px) { width: 100%; }
     @media (max-width: 600px) {
         width: 100%;
         padding-top: 0;
+        overflow: hidden;
     }
 `
 
@@ -536,7 +542,8 @@ const SortSelect = styled.select`
     @media (max-width: 500px) { display: none; }
 `
 
-const ProductGrid = styled.div`
+/* ── EDITORIAL GALLERY ──────────────────────────────────────────────────── */
+const GalleryGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
@@ -544,14 +551,11 @@ const ProductGrid = styled.div`
         grid-template-columns: repeat(4, 1fr);
         gap: 0;
     }
-    @media (max-width: 600px)  { grid-template-columns: repeat(2, 1fr); gap: 2px; }
+    @media (max-width: 600px) { grid-template-columns: repeat(2, 1fr); gap: 2px; }
 `
 
-const ProductCard = styled.div`
+const GalleryItem = styled.div`
     cursor: pointer;
-    background: #ead1b0;
-    border-radius: 14px;
-    overflow: hidden;
     &:hover img { transform: scale(1.04); }
     @media (min-width: 769px) {
         border-radius: 0;
@@ -559,131 +563,130 @@ const ProductCard = styled.div`
     }
 `
 
-const CardMedia = styled.div`
+const GalleryImg = styled.div`
     position: relative;
     overflow: hidden;
-    background: #E8DCC8;
-    aspect-ratio: 3/4;
+    background: #d4c4a8;
+    padding-bottom: 110%;
 
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    @media (max-width: 600px) {
+        padding-bottom: 125%;
     }
 `
 
-const CardOverlay = styled.div`
-    position: absolute; inset: 0;
-    display: flex; align-items: flex-end; justify-content: center;
-    padding-bottom: 16px;
-    background: linear-gradient(to top, rgba(0,0,0,0.38) 0%, transparent 45%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    ${ProductCard}:hover & { opacity: 1; }
-    span {
-        font-size: 8px;
-        letter-spacing: 0.32em;
-        text-transform: uppercase;
-        color: #fff;
-        border-bottom: 1px solid rgba(255,255,255,0.45);
-        padding-bottom: 2px;
-    }
-    @media (max-width: 768px) { opacity: 1; }
-`
-
-const CardNoImg = styled.div`
+const GalleryNoImg = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    font-weight: 300;
-    font-style: italic;
-    color: rgba(0,0,0,0.1);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 300; font-style: normal;
+    color: rgba(0,0,0,0.08);
 `
 
-const ArtistBadge = styled.span`
-    position: absolute;
-    top: 8px; left: 8px;
-    font-size: 7px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #fff;
-    background: rgba(10,10,10,0.45);
-    padding: 3px 7px;
-    backdrop-filter: blur(4px);
-    max-width: calc(100% - 16px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`
+const GalleryOverlay = styled.div`
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.10) 50%, transparent 100%);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 24px;
+    opacity: 0; transition: opacity 0.4s ease;
+    ${GalleryItem}:hover & { opacity: 1; }
 
-const CardBody = styled.div`
-    padding: 10px 10px 14px;
-    border-bottom: 1px solid #E8DCC8;
-    @media (min-width: 769px) { display: none; }
-    @media (max-width: 600px) { padding: 14px 12px 18px; }
-`
-
-/* ── Info overlay inside photo — desktop only ── */
-const CardInfoOverlay = styled.div`
-    display: none;
-    @media (min-width: 769px) {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        position: absolute;
-        inset: 0;
-        padding: 14px 12px;
-        background: linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.18) 50%, transparent 100%);
-        pointer-events: none;
+    @media (max-width: 600px) {
+        opacity: 1;
+        padding: 12px;
+        background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
     }
 `
 
-const CardInfoName = styled.p`
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: #fff;
-    margin: 0 0 3px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    line-height: 1.35;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+const GalleryOverlayTop = styled.div`
+    display: flex; align-items: flex-start; justify-content: space-between;
+    @media (max-width: 600px) { display: none; }
 `
 
-const CardInfoPrice = styled.p`
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: 12px;
-    font-style: italic;
-    color: rgba(255,255,255,0.82);
-    margin: 0;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+const GalleryOverlayNum = styled.span`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px; letter-spacing: 0.4em;
+    color: rgba(255,255,255,0.4); text-transform: uppercase;
 `
 
-const CardName = styled.p`
-    font-size: 11px;
-    letter-spacing: 0.03em;
-    color: #1a1a1a;
-    margin: 0 0 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    line-height: 1.4;
-    @media (max-width: 600px) { font-size: 13px; }
+const GalleryArtistBadge = styled.span`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 7px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: rgba(255,255,255,0.6);
+    background: rgba(10,10,10,0.35);
+    backdrop-filter: blur(4px);
+    padding: 3px 8px;
 `
 
-const CardPrice = styled.p`
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: 13px;
-    font-style: italic;
-    color: #666;
-    margin: 0;
-    @media (max-width: 600px) { font-size: 15px; }
+const GalleryOverlayInfo = styled.div`
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
+`
+
+const GalleryOverlayName = styled.p`
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+    font-weight: 300; font-style: normal;
+    color: #fff; margin: 0; line-height: 1.2;
+    text-transform: capitalize;
+
+    @media (max-width: 600px) {
+        font-size: 0.82rem;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+`
+
+const GalleryOverlayPrice = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.65); margin: 0;
+    @media (max-width: 600px) { font-size: 9px; letter-spacing: 0.08em; }
+`
+
+const GalleryOverlayBtn = styled.span`
+    display: inline-block; margin-top: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px; letter-spacing: 0.4em;
+    text-transform: uppercase; color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.45);
+    padding-bottom: 3px;
+    @media (max-width: 600px) { display: none; }
+`
+
+const GalleryCaption = styled.div`
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 12px 4px 20px;
+    @media (max-width: 600px) { display: none; }
+`
+
+const GalleryCaptionNum = styled.span`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px; letter-spacing: 0.3em;
+    color: #b0a090; flex-shrink: 0;
+`
+
+const GalleryCaptionText = styled.div``
+
+const GalleryCaptionName = styled.p`
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(0.78rem, 1.6vw, 1.1rem);
+    font-weight: 300; font-style: normal;
+    color: #1a1a1a; margin: 0 0 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-transform: capitalize;
+`
+
+const GalleryCaptionPrice = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: #898635; margin: 0;
 `
 
 /* ── SKELETON ─────────────────────────────────────────────────────────────── */
@@ -696,45 +699,33 @@ const skeletonAnim = `
 
 const SkeletonGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3px;
-    @media (max-width: 700px) { grid-template-columns: repeat(2, 1fr); }
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    @media (max-width: 600px) { gap: 0; }
 `
 
 const SkeletonCard = styled.div`
-    background: #ead1b0;
-    padding-bottom: 8px;
+    background: #d4c4a8;
+    padding-bottom: 110%;
+    position: relative;
+    ${skeletonAnim}
+    &::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.6s ease-in-out infinite;
+    }
 `
 
-const SkeletonImg = styled.div`
-    width: 100%;
-    padding-bottom: 133%;
-    background: linear-gradient(
-        90deg,
-        #E8DCC8 0%,
-        #E8DCC8 40%,
-        #E8DCC8 50%,
-        #E8DCC8 60%,
-        #E8DCC8 100%
-    );
-    background-size: 200% 100%;
-    animation: skeletonShimmer 1.6s ease-in-out infinite;
-    ${skeletonAnim}
-`
+const SkeletonImg = styled.div``
 
 const SkeletonLine = styled.div`
     height: 9px;
     width: ${p => p.w || '80%'};
-    background: linear-gradient(
-        90deg,
-        #E8DCC8 0%, #E8DCC8 40%, #E8DCC8 50%, #E8DCC8 60%, #E8DCC8 100%
-    );
-    background-size: 200% 100%;
-    animation: skeletonShimmer 1.6s ease-in-out infinite;
-    border-radius: 2px;
+    background: #d4c4a8;
     border-radius: 2px;
     margin: 12px 12px 6px;
-    animation: shimmer 1.4s infinite;
 `
 
 /* ── EMPTY STATE ───────────────────────────────────────────────────────────── */
@@ -743,10 +734,10 @@ const Empty = styled.div`
     padding: 80px 24px;
 
     p {
-        font-family: 'Playfair Display', Georgia, serif;
+        font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 20px;
         font-weight: 300;
-        font-style: italic;
+        font-style: normal;
         color: #bbb;
         margin: 0 0 24px;
     }
@@ -820,9 +811,10 @@ const ModalBody = styled.div`
 `
 
 const ModalName = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 22px; font-weight: 300; font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 22px; font-weight: 300; font-style: normal;
     color: #1a1a1a; margin: 0 0 8px;
+    text-transform: capitalize;
 `
 
 const ModalPrice = styled.p`

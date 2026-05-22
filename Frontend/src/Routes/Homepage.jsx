@@ -1,14 +1,28 @@
-import styled, { keyframes } from "styled-components";
+﻿import styled, { keyframes } from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
 import PageLoader from "../Components/PageLoader";
+import SiteFooter from "../Components/SiteFooter";
 import AddCart from "../Components/Product-Page-Component/AddCart";
 import RelatedSections from "../Components/Product-Page-Component/RelatedSections";
 import ProductDetailModal from "../Components/Product-Page-Component/ProductDetailModal";
 
 const API = process.env.REACT_APP_BACKEND_URL || 'https://zara-backend.vercel.app'
+
+const TICKER_PHRASES = [
+    'No somos un marketplace cualquiera',
+    'Vendemos arte',
+    'Obras únicas, artistas reales',
+    'Arte hecho con alma',
+    'Conectamos artistas con el mundo',
+    'Cada obra tiene una historia',
+    'Apoyá el arte local',
+    'Arte argentino auténtico',
+    'Piezas únicas, nunca en serie',
+    'El arte que buscabas existe',
+]
 
 const Homepage = () => {
     const [carouselImgs,  setCarouselImgs]  = useState([])
@@ -85,9 +99,13 @@ const Homepage = () => {
                       </BannerWrap>
             )}
 
-            {/* ── SLIDER + PRODUCTOS (tarjeta unificada) ──────────────── */}
-            <SliderFeaturedCard>
+            {/* ── SLIDER DE ARTISTAS ──────────────────────────────────── */}
+            <SliderCard>
                 {artists.length > 0 && <ArtistsSlider artists={artists} />}
+            </SliderCard>
+
+            {/* ── PRODUCTOS (tarjeta independiente) ───────────────────── */}
+            <SliderFeaturedCard>
                 {artistProducts.length > 0 && (
                     <FeaturedSection id="coleccion">
                         <FeaturedSectionHeader>
@@ -102,12 +120,14 @@ const Homepage = () => {
                                             ? <img src={p.image} alt={p.name} loading="lazy" />
                                             : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
                                         }
-                                        <ShopCardOverlay>
-                                            <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
-                                        </ShopCardOverlay>
-                                        {p.artistName && (
-                                            <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>
-                                        )}
+                                        <FeaturedOverlay>
+                                            {p.artistName && <FeaturedArtistBadge>{p.artistName}</FeaturedArtistBadge>}
+                                            <FeaturedOverlayInfo>
+                                                <FeaturedOverlayName>{p.name}</FeaturedOverlayName>
+                                                <FeaturedOverlayPrice>{p.price}</FeaturedOverlayPrice>
+                                            </FeaturedOverlayInfo>
+                                            <FeaturedOverlayBtn>Ver detalle</FeaturedOverlayBtn>
+                                        </FeaturedOverlay>
                                     </FeaturedCardMedia>
                                     <FeaturedCardBody>
                                         <FeaturedCardName>{p.name}</FeaturedCardName>
@@ -195,13 +215,13 @@ const Homepage = () => {
                                                         : <ShopCardNoImg>{p.name?.charAt(0)}</ShopCardNoImg>
                                                     }
                                                     <ShopCardOverlay>
-                                                        <ShopCardOverlayBtn>Agregar al carrito</ShopCardOverlayBtn>
+                                                        <ShopCardOverlayInfo>
+                                                            <ShopCardOverlayName>{p.name}</ShopCardOverlayName>
+                                                            <ShopCardOverlayPrice>{p.price}</ShopCardOverlayPrice>
+                                                        </ShopCardOverlayInfo>
+                                                        <ShopCardOverlayBtn>Ver detalle</ShopCardOverlayBtn>
                                                     </ShopCardOverlay>
                                                 </ShopCardMedia>
-                                                <ShopCardBody>
-                                                    <ShopCardName>{p.name}</ShopCardName>
-                                                    <ShopCardPrice>{p.price}</ShopCardPrice>
-                                                </ShopCardBody>
                                             </ShopCard>
                                         ))}
                                     </ArtistCarouselTrack>
@@ -252,7 +272,7 @@ const Homepage = () => {
                     <ArtistsTrack>
                         {[...artists, ...artists, ...artists].map((a, i) => (
                             <ArtistsTickerItem key={i}>
-                                <Link to={`/${a.slug}`}>{a.name.toUpperCase()}</Link>
+                                <Link to={`/${a.slug}`}>{a.name}</Link>
                                 <ArtistsTickerDot>·</ArtistsTickerDot>
                             </ArtistsTickerItem>
                         ))}
@@ -289,72 +309,42 @@ const Homepage = () => {
                 </JoinInner>
             </JoinSection>
 
-            {/* ── SECCIÓN EDITORIAL ──────────────────────────────────── */}
-            {(editorial.editorialQuote || editorial.editorialBody || editorial.editorialImage1 || editorial.editorialImage2) && (
-                <EditorialSection>
-                    <EditorialSectionTag>
-                        <EditorialSectionNum>01</EditorialSectionNum>
-                        <EditorialSectionLine />
-                        <EditorialSectionWord>Editorial</EditorialSectionWord>
-                    </EditorialSectionTag>
+            {/* ── SECCIÓN QUIÉNES SOMOS ──────────────────────────────── */}
+            <EditorialSection>
+                <EditorialSectionTag>
+                    <EditorialSectionNum>01</EditorialSectionNum>
+                    <EditorialSectionLine />
+                    <EditorialSectionWord>Quiénes somos</EditorialSectionWord>
+                </EditorialSectionTag>
 
-                    <EditorialLayout>
-                        {editorial.editorialImage1 && (
-                            <EditorialImgWrap side="left">
-                                <img src={editorial.editorialImage1} alt="editorial" loading="lazy" />
-                            </EditorialImgWrap>
-                        )}
-                        <EditorialInner hasImages={editorial.editorialImage1 || editorial.editorialImage2}>
-                            {editorial.editorialLabel && (
-                                <EditorialLabel>{editorial.editorialLabel}</EditorialLabel>
-                            )}
-                            {editorial.editorialQuote && (
-                                <EditorialQuote>{editorial.editorialQuote}</EditorialQuote>
-                            )}
-                            {editorial.editorialBody && (
-                                <EditorialBody>{editorial.editorialBody}</EditorialBody>
-                            )}
-                            {editorial.editorialCta && (
-                                <EditorialCta>{editorial.editorialCta} →</EditorialCta>
-                            )}
-                        </EditorialInner>
-                        {editorial.editorialImage2 && (
-                            <EditorialImgWrap side="right">
-                                <img src={editorial.editorialImage2} alt="editorial" loading="lazy" />
-                            </EditorialImgWrap>
-                        )}
-                    </EditorialLayout>
-                </EditorialSection>
-            )}
+                <EditorialManifesto>
+                    <EditorialManifestoTop>
+                        <EditorialLabel>— Arte · Chaco · Comunidad</EditorialLabel>
+                        <EditorialQuote>Arte nacido en el corazón del Chaco</EditorialQuote>
+                    </EditorialManifestoTop>
 
-            {/* ── FOOTER ─────────────────────────────────────────────── */}
-            <SiteFooter>
-                <FooterInner>
-                    <FooterBrand>
-                        <FooterBrandName>La Casita<br/>del Hornero</FooterBrandName>
-                        <FooterBrandSub>Arte local · Bienal de Esculturas</FooterBrandSub>
-                    </FooterBrand>
-                    <FooterCol>
-                        <FooterColTitle>Comprar</FooterColTitle>
-                        <FooterLink as={Link} to="/products">Tienda</FooterLink>
-                        <FooterLink as={Link} to="/#coleccion">Novedades</FooterLink>
-                        <FooterLink as={Link} to="/#artistas">Artistas</FooterLink>
-                    </FooterCol>
-                    <FooterCol>
-                        <FooterColTitle>Para artistas</FooterColTitle>
-                        <FooterLink href="mailto:lacasitadelhornero@gmail.com">Vender mi arte</FooterLink>
-                        <FooterLink href="#coleccion">Cómo funciona</FooterLink>
-                    </FooterCol>
-                    <FooterCol>
-                        <FooterColTitle>Nosotros</FooterColTitle>
-                        <FooterLink as={Link} to="/#mision">Nuestra misión</FooterLink>
-                        <FooterLink href="#">Bienal de Esculturas</FooterLink>
-                    </FooterCol>
-                </FooterInner>
-                <FooterBottom>
-                    <span>© {new Date().getFullYear()} La Casita del Hornero · Todos los derechos reservados</span>
-                </FooterBottom>
-            </SiteFooter>
+                    <EditorialManifestoCols>
+                        <EditorialManifestoCol>
+                            <EditorialManifestoColTitle>Qué hacemos</EditorialManifestoColTitle>
+                            <EditorialManifestoColBody>
+                                Somos La Casita del Hornero, un marketplace de arte 100% chaqueño. Conectamos a artistas y emprendedores locales con personas que valoran las obras únicas, hechas a mano y con propósito.
+                            </EditorialManifestoColBody>
+                        </EditorialManifestoCol>
+                        <EditorialManifestoCol>
+                            <EditorialManifestoColTitle>Nuestra raíz</EditorialManifestoColTitle>
+                            <EditorialManifestoColBody>
+                                Nacimos en el Chaco, una provincia con una riqueza cultural enorme y artistas que merecen visibilidad. Nuestro nombre rinde homenaje al hornero, el pájaro que construye su hogar con sus propias manos, igual que nuestros artistas.
+                            </EditorialManifestoColBody>
+                        </EditorialManifestoCol>
+                        <EditorialManifestoCol>
+                            <EditorialManifestoColTitle>Bienal de Esculturas</EditorialManifestoColTitle>
+                            <EditorialManifestoColBody>
+                                Somos parte del ecosistema de la Bienal de Esculturas del Chaco, donde el arte ocupa cada rincón del espacio público. Quisimos llevar esa misma energía al mundo digital.
+                            </EditorialManifestoColBody>
+                        </EditorialManifestoCol>
+                    </EditorialManifestoCols>
+                </EditorialManifesto>
+            </EditorialSection>
 
             {/* ── PRODUCT MODAL ──────────────────────────────────────── */}
             {selectedProd && (
@@ -367,6 +357,7 @@ const Homepage = () => {
             )}
 
             </ContentReveal>
+            <SiteFooter />
             </>}
         </HomeWrap>
     );
@@ -423,8 +414,8 @@ function ArtistsSlider({ artists }) {
                                     : <ArtistCardInitial>{a.name.charAt(0)}</ArtistCardInitial>
                                 }
                                 <ArtistCardOverlay />
+                                <SliderCardName>{a.name}</SliderCardName>
                             </ArtistCardImg>
-                            <SliderCardName>{a.name}</SliderCardName>
                         </ArtistCard>
                     )
                 })}
@@ -466,17 +457,17 @@ const SliderTrack = styled.div`
 `
 const ArtistCard = styled(Link)`
     flex-shrink: 0;
-    width: 140px;
-    display: flex; flex-direction: column; gap: 8px;
+    width: 160px;
     text-decoration: none;
-    border-radius: 12px;
     overflow: hidden;
+    padding: 20px 0;
     &:hover img { transform: scale(1.05); }
 `
 const ArtistCardImg = styled.div`
-    width: 140px; height: 180px;
+    width: 160px; height: 190px;
     background: #E8DCC8;
     overflow: hidden; position: relative;
+    border-radius: 12px;
     img {
         width: 100%; height: 100%;
         object-fit: cover; display: block;
@@ -486,19 +477,26 @@ const ArtistCardImg = styled.div`
 const ArtistCardInitial = styled.div`
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 2.5rem; font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 2.5rem; font-style: normal;
     color: rgba(0,0,0,.12);
 `
 const ArtistCardOverlay = styled.div`
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,.35) 0%, transparent 55%);
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%);
 `
 const SliderCardName = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 500;
-    color: #1a1a1a; margin: 0;
+    position: absolute;
+    bottom: 12px; left: 0; right: 0;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 13px; font-weight: 300; font-style: normal;
+    color: #fff; margin: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-transform: capitalize;
+    text-align: center;
+    z-index: 2;
+    pointer-events: none;
+    padding: 0 8px;
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -566,10 +564,10 @@ const MissionEyebrow = styled.p`
     margin: 0 0 1.5rem;
 `
 const MissionTitle = styled.h2`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.9rem, 4vw, 3.4rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     line-height: 1.12;
     color: #fff;
     margin: 0 0 2.5rem;
@@ -633,7 +631,7 @@ const MissionStat = styled.div`
     gap: 4px;
 `
 const MissionStatNum = styled.span`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.1rem, 2vw, 1.5rem);
     font-weight: 300;
     color: #fff;
@@ -742,10 +740,10 @@ const HeroEyebrow = styled.p`
 `
 
 const HeroTitle = styled.h1`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(3rem, 9vw, 8rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #fff;
     line-height: 1.05;
     margin: 0 0 28px;
@@ -819,12 +817,32 @@ const HeroScrollHint = styled.div`
 `
 
 /* ═══════════════════════════════════════════════════════════════
-   SLIDER + FEATURED — tarjeta unificada
+   SLIDER — tarjeta propia
+═══════════════════════════════════════════════════════════════ */
+const SliderCard = styled.div`
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 22px 70px rgba(0,0,0,0.34), 0 6px 20px rgba(0,0,0,0.16);
+
+    @media (max-width: 640px) {
+        border-radius: 12px;
+        margin: 0 -10px;
+    }
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   FEATURED PRODUCTS — tarjeta propia
 ═══════════════════════════════════════════════════════════════ */
 const SliderFeaturedCard = styled.div`
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 22px 70px rgba(0,0,0,0.34), 0 6px 20px rgba(0,0,0,0.16);
+
+    @media (max-width: 640px) {
+        border-radius: 0;
+        margin: 0 -10px;
+        box-shadow: none;
+    }
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -834,7 +852,7 @@ const FeaturedSection = styled.section`
     background: #f5ede0;
     padding: 52px 40px 80px;
 
-    @media (max-width: 640px) { padding: 36px 20px 64px; }
+    @media (max-width: 640px) { padding: 36px 0 0; }
 `
 
 const FeaturedSectionHeader = styled.div`
@@ -845,13 +863,19 @@ const FeaturedSectionHeader = styled.div`
     margin-bottom: 56px;
     border-bottom: 1px solid #D8C8B0;
     padding-bottom: 24px;
+
+    @media (max-width: 640px) {
+        padding: 0 16px 20px;
+        margin-bottom: 0;
+        border-bottom: none;
+    }
 `
 
 const FeaturedTitle = styled.h2`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.2rem, 2vw, 1.6rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     line-height: 1.1;
     margin: 0;
@@ -877,85 +901,117 @@ const FeaturedGrid = styled.div`
     grid-template-columns: repeat(4, 1fr);
     gap: 3px;
 
-    @media (max-width: 900px)  { grid-template-columns: repeat(3, 1fr); }
-    @media (max-width: 640px)  { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 900px)  { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 640px)  { grid-template-columns: repeat(2, 1fr); gap: 0; }
 `
 
 const FeaturedCard = styled.div`
     cursor: pointer;
-    background: #fff;
-    border-radius: 4px;
     overflow: hidden;
-
+    background: #d4c4a8;
     &:hover img { transform: scale(1.05); }
 `
 
 const FeaturedCardMedia = styled.div`
     position: relative;
     overflow: hidden;
-    background: #E8DCC8;
+    background: #d4c4a8;
     padding-bottom: 130%;
 
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+
+    @media (max-width: 640px) { padding-bottom: 135%; }
+`
+
+/* Overlay siempre visible — nombre y precio dentro de la foto */
+const FeaturedOverlay = styled.div`
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.08) 50%, transparent 100%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px 16px 14px;
+    gap: 4px;
+    opacity: 1;
+
+    @media (max-width: 640px) { padding: 12px; }
 `
 
 const FeaturedArtistBadge = styled.span`
     position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 2;
+    top: 10px; left: 10px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 7px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: #fff;
-    background: rgba(10,10,10,0.55);
-    padding: 4px 8px;
+    font-size: 7px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255,255,255,0.7);
+    background: rgba(10,10,10,0.35);
     backdrop-filter: blur(4px);
+    padding: 3px 7px;
 `
 
-const FeaturedCardBody = styled.div`
-    padding: 14px 12px 20px;
-    border-bottom: 1px solid #E8DCC8;
+const FeaturedOverlayInfo = styled.div`
+    display: flex; flex-direction: column; gap: 3px;
 `
 
-const FeaturedCardName = styled.p`
+const FeaturedOverlayName = styled.p`
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(0.75rem, 1.2vw, 1rem);
+    font-weight: 300; font-style: normal;
+    color: #fff; margin: 0; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-transform: capitalize;
+`
+
+const FeaturedOverlayPrice = styled.p`
     font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    color: #1a1a1a;
-    margin: 0 0 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 9px; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.6); margin: 0;
 `
 
-const FeaturedCardPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 14px;
-    font-style: italic;
-    color: #555;
-    margin: 0;
+const FeaturedOverlayBtn = styled.span`
+    display: inline-block; margin-top: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8px; letter-spacing: 0.4em;
+    text-transform: uppercase; color: rgba(255,255,255,0.65);
+    border-bottom: 1px solid rgba(255,255,255,0.32);
+    padding-bottom: 2px;
+    opacity: 0; transition: opacity 0.3s ease;
+    ${FeaturedCard}:hover & { opacity: 1; }
+    @media (max-width: 640px) { display: none; }
 `
+
+/* CardBody oculto — info dentro de la foto */
+const FeaturedCardBody = styled.div` display: none; `
+const FeaturedCardName  = styled.p`  margin: 0; `
+const FeaturedCardPrice = styled.p`  margin: 0; `
 
 /* ═══════════════════════════════════════════════════════════════
    ARTISTAS: PERFILES
 ═══════════════════════════════════════════════════════════════ */
 const ArtistsShowcase = styled.section`
-    background: #3c4021;
-    padding: 100px 40px 120px;
+    background: #4f170f;
+    padding: 72px 0 0;
 
-    @media (max-width: 640px) { padding: 72px 20px 96px; }
+    @media (max-width: 640px) { padding: 56px 0 0; }
 `
 
 const ArtistsShowcaseHeader = styled.div`
-    text-align: center;
-    margin-bottom: 64px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 clamp(24px, 5vw, 60px) 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 3px;
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 0 20px 32px;
+    }
 `
 
 const ArtistsShowcaseEyebrow = styled.p`
@@ -964,14 +1020,14 @@ const ArtistsShowcaseEyebrow = styled.p`
     letter-spacing: 0.5em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.35);
-    margin: 0 0 24px;
+    margin: 0 0 16px;
 `
 
 const ArtistsShowcaseTitle = styled.h2`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.8rem, 4vw, 3.4rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #fff;
     line-height: 1.12;
     margin: 0;
@@ -979,152 +1035,178 @@ const ArtistsShowcaseTitle = styled.h2`
 `
 
 const ArtistsShowcaseLink = styled(Link)`
-    display: inline-block;
-    margin-top: 24px;
-    font-size: 0.7rem;
-    letter-spacing: 0.28em;
+    flex-shrink: 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.4);
     text-decoration: none;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.18);
     padding-bottom: 3px;
     transition: color 0.2s, border-color 0.2s;
-    &:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+    white-space: nowrap;
+    margin-bottom: 4px;
+    &:hover { color: #fff; border-color: rgba(255,255,255,0.55); }
 `
 
 const ArtistsGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(${p => Math.min(p.count, 3)}, 1fr);
-    gap: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
+    gap: 3px;
 
     @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 520px) { grid-template-columns: 1fr; }
+    @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); gap: 2px; }
 `
 
 const ArtistProfileCard = styled.div`
     position: relative;
     overflow: hidden;
-    border-radius: 4px;
-    background: #111;
-    transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                box-shadow 0.45s ease;
+    background: #1a1a1a;
 
     a { display: block; text-decoration: none; color: inherit; }
-
-    &:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-    }
-    &:hover img { transform: scale(1.07); }
+    &:hover img { transform: scale(1.06); }
 `
 
 const ArtistCardMedia = styled.div`
     position: relative;
-    padding-bottom: 130%;
+    padding-bottom: 140%;
     overflow: hidden;
-    background: #111;
+    background: #1a1a1a;
 
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        filter: brightness(0.92) saturate(1.05);
+        transition: transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        filter: brightness(0.88) saturate(1.05);
     }
+
+    @media (max-width: 640px) { padding-bottom: 130%; }
 `
 
 const ArtistCardPlaceholder = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    background: #3c4021;
+    background: #2a2e18;
 
     span {
-        font-family: 'Playfair Display', Georgia, serif;
+        font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: clamp(5rem, 14vw, 10rem);
         font-weight: 300;
-        font-style: italic;
-        color: rgba(255,255,255,0.10);
+        font-style: normal;
+        color: rgba(255,255,255,0.07);
     }
 `
 
 const ArtistCardGradient = styled.div`
     position: absolute; inset: 0;
-    background:
-        linear-gradient(to bottom,
-            transparent 35%,
-            rgba(10,20,14,0.55) 65%,
-            rgba(6,14,10,0.95) 100%
-        );
+    background: linear-gradient(to bottom,
+        transparent 30%,
+        rgba(0,0,0,0.45) 65%,
+        rgba(0,0,0,0.88) 100%
+    );
 `
 
 const ArtistCardIndex = styled.span`
     position: absolute;
-    top: 20px;
-    left: 22px;
+    top: 18px; left: 20px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: rgba(255,255,255,0.35);
+    font-size: 9px; letter-spacing: 0.35em;
+    color: rgba(255,255,255,0.28);
     z-index: 3;
 `
 
 const ArtistCardInfo = styled.div`
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    padding: 0 26px 28px;
+    padding: 0 22px 24px;
     z-index: 2;
 `
 
 const ArtistCardDivider = styled.div`
-    width: 32px;
-    height: 1px;
-    background: rgba(173,67,29,0.6);
-    margin-bottom: 14px;
+    width: 28px; height: 1px;
+    background: rgba(173,67,29,0.55);
+    margin-bottom: 12px;
     transition: width 0.4s ease;
-
-    ${ArtistProfileCard}:hover & { width: 56px; }
+    ${ArtistProfileCard}:hover & { width: 48px; }
 `
 
 const ArtistCardName = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(1.4rem, 2.6vw, 2rem);
-    font-weight: 400;
-    font-style: italic;
-    color: #fff;
-    margin: 0 0 10px;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+    font-weight: 300; font-style: normal;
+    color: #fff; margin: 0 0 8px;
+    line-height: 1.15; letter-spacing: -0.01em;
+    text-transform: capitalize;
+
+    @media (max-width: 640px) { font-size: 1.05rem; }
 `
 
 const ArtistCardCta = styled.p`
     font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.42em;
+    font-size: 8px; letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.42);
     margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.3s, letter-spacing 0.35s ease;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.3s ease;
 
     &::after {
         content: '';
         display: inline-block;
-        width: 18px;
-        height: 1px;
+        width: 16px; height: 1px;
         background: currentColor;
         transition: width 0.35s ease;
     }
 
     ${ArtistProfileCard}:hover & {
-        color: rgba(173,67,29,0.9);
-        letter-spacing: 0.5em;
-        &::after { width: 28px; }
+        color: rgba(173,67,29,0.85);
+        &::after { width: 26px; }
     }
+`
+
+/* ═══════════════════════════════════════════════════════════════
+   MID TICKER (entre slider y productos)
+═══════════════════════════════════════════════════════════════ */
+const MidTicker = styled.div`
+    background: #f5ede0;
+    overflow: hidden;
+    padding: 16px 0;
+    border-radius: 20px;
+    box-shadow: 0 22px 70px rgba(0,0,0,0.10), 0 6px 20px rgba(0,0,0,0.06);
+`
+const MidTickerTrack = styled.div`
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: tickerScroll 28s linear infinite;
+    @keyframes tickerScroll {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-33.333%); }
+    }
+    &:hover { animation-play-state: paused; }
+`
+const MidTickerItem = styled.span`
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    span {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 11.5px;
+        font-weight: 300;
+        font-style: normal;
+        letter-spacing: 0.1em;
+        color: #1a1a1a;
+        white-space: nowrap;
+        opacity: 0.85;
+    }
+`
+const MidTickerDot = styled.span`
+    font-size: 14px;
+    color: #c4a882;
+    margin: 0 18px;
+    line-height: 1;
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1161,7 +1243,7 @@ const ArtistsTickerItem = styled.span`
         font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
         font-size: 10px;
         letter-spacing: 0.45em;
-        text-transform: uppercase;
+        text-transform: capitalize;
         color: rgba(255,255,255,0.45);
         text-decoration: none;
         transition: color 0.25s;
@@ -1273,10 +1355,10 @@ const CarouselText = styled.div`
     z-index: 2;
 `
 const CarouselTitle = styled.h2`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2.6rem, 6.5vw, 6rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #fff;
     letter-spacing: 0.02em;
     line-height: 1.05;
@@ -1441,10 +1523,10 @@ const EditorialLabel = styled.p`
 `
 
 const EditorialQuote = styled.h2`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2rem, 4.5vw, 4.2rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     line-height: 1.18;
     margin: 0 0 40px;
@@ -1477,6 +1559,49 @@ const EditorialCta = styled.span`
     &:hover { opacity: 0.5; }
 `
 
+const EditorialManifesto = styled.div`
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    @media (max-width: 640px) { padding: 0 24px; }
+`
+
+const EditorialManifestoTop = styled.div`
+    text-align: center;
+    margin-bottom: 72px;
+`
+
+const EditorialManifestoCols = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px;
+    @media (max-width: 900px) { grid-template-columns: 1fr 1fr; gap: 36px; }
+    @media (max-width: 560px) { grid-template-columns: 1fr; gap: 32px; }
+`
+
+const EditorialManifestoCol = styled.div`
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 24px;
+`
+
+const EditorialManifestoColTitle = styled.p`
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: normal;
+    color: #1a1a1a;
+    margin: 0 0 14px;
+`
+
+const EditorialManifestoColBody = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    line-height: 2.0;
+    letter-spacing: 0.03em;
+    color: #888;
+    margin: 0;
+`
+
 /* ═══════════════════════════════════════════════════════════════
    SHOP SHARED
 ═══════════════════════════════════════════════════════════════ */
@@ -1491,10 +1616,10 @@ const ShopEyebrow = styled.p`
 `
 
 const ShopTitle = styled.h2`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2.5rem, 5.5vw, 5rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #ead1b0;
     line-height: 1.1;
     margin: 0 0 16px;
@@ -1538,13 +1663,14 @@ const ArtistCarouselHeader = styled.div`
 `
 
 const ArtistCarouselName = styled.h3`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #ead1b0;
     margin: 0;
     letter-spacing: -0.01em;
+    text-transform: capitalize;
 `
 
 const ArtistCarouselLink = styled(Link)`
@@ -1579,87 +1705,83 @@ const ArtistCarouselTrack = styled.div`
 `
 
 const ShopCard = styled.div`
-    flex: 0 0 260px;
+    flex: 0 0 220px;
     scroll-snap-align: start;
     cursor: pointer;
-    background: #fff;
-    border-radius: 4px;
     overflow: hidden;
+    background: #d4c4a8;
 
     &:hover img { transform: scale(1.05); }
 
-    @media (max-width: 640px) { flex: 0 0 200px; }
+    @media (max-width: 640px) { flex: 0 0 170px; }
 `
 
 const ShopCardMedia = styled.div`
     position: relative;
     overflow: hidden;
-    background: #E8DCC8;
-    padding-bottom: 125%;
+    background: #d4c4a8;
+    padding-bottom: 130%;
 
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
-        transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 `
 
 const ShopCardNoImg = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 300;
-    font-style: italic;
+    font-weight: 300; font-style: normal;
     color: rgba(0,0,0,0.1);
 `
 
 const ShopCardOverlay = styled.div`
     position: absolute; inset: 0;
-    display: flex; align-items: flex-end; justify-content: center;
-    padding-bottom: 24px;
-    background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 45%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    background: linear-gradient(to top, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.08) 50%, transparent 100%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 14px 14px 12px;
+    gap: 3px;
+    opacity: 1;
+`
 
-    ${ShopCard}:hover & { opacity: 1; }
-    ${FeaturedCard}:hover & { opacity: 1; }
+const ShopCardOverlayInfo = styled.div`
+    display: flex; flex-direction: column; gap: 3px;
+`
+
+const ShopCardOverlayName = styled.p`
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.82rem;
+    font-weight: 300; font-style: normal;
+    color: #fff; margin: 0; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-transform: capitalize;
+`
+
+const ShopCardOverlayPrice = styled.p`
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.6); margin: 0;
 `
 
 const ShopCardOverlayBtn = styled.span`
+    display: inline-block; margin-top: 8px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 9px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,0.5);
-    padding-bottom: 3px;
+    font-size: 8px; letter-spacing: 0.38em;
+    text-transform: uppercase; color: rgba(255,255,255,0.65);
+    border-bottom: 1px solid rgba(255,255,255,0.32);
+    padding-bottom: 2px;
+    opacity: 0; transition: opacity 0.3s ease;
+    ${ShopCard}:hover & { opacity: 1; }
 `
 
-const ShopCardBody = styled.div`
-    padding: 16px 14px 20px;
-    border-bottom: 1px solid #E8DCC8;
-`
-
-const ShopCardName = styled.p`
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    color: #1a1a1a;
-    margin: 0 0 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-`
-
-const ShopCardPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 15px;
-    font-style: italic;
-    color: #0a0a0a;
-    margin: 0;
-`
+const ShopCardBody = styled.div` display: none; `
+const ShopCardName  = styled.p`  margin: 0; `
+const ShopCardPrice = styled.p`  margin: 0; `
 
 /* ═══════════════════════════════════════════════════════════════
    JOIN SECTION — VENDÉ TU ARTE
@@ -1690,10 +1812,10 @@ const JoinEyebrow = styled.p`
     margin: 0 0 1.4rem;
 `
 const JoinTitle = styled.h2`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2rem, 4vw, 3.4rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0 0 1.8rem;
     line-height: 1.12;
@@ -1731,7 +1853,7 @@ const JoinStep = styled.div`
     align-items: start;
 `
 const JoinStepNum = styled.span`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.72rem;
     color: #ccc;
     letter-spacing: 0.1em;
@@ -1739,10 +1861,10 @@ const JoinStepNum = styled.span`
     padding-top: 3px;
 `
 const JoinStepTitle = styled.p`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.15rem;
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0 0 6px;
 `
@@ -1752,74 +1874,6 @@ const JoinStepBody = styled.p`
     margin: 0;
     line-height: 1.75;
     letter-spacing: 0.02em;
-`
-
-/* ═══════════════════════════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════════════════════════ */
-const SiteFooter = styled.footer`
-    background: #3c4021;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 22px 70px rgba(0,0,0,0.38), 0 6px 20px rgba(0,0,0,0.18);
-`
-const FooterInner = styled.div`
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 60px;
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 80px 40px 64px;
-    @media (max-width: 900px) { grid-template-columns: 1fr 1fr; gap: 40px; padding: 60px 24px 48px; }
-    @media (max-width: 520px) { grid-template-columns: 1fr; gap: 36px; padding: 56px 24px 40px; }
-`
-const FooterBrand = styled.div``
-const FooterBrandName = styled.p`
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 300;
-    font-style: italic;
-    color: #fff;
-    margin: 0 0 14px;
-    line-height: 1.15;
-`
-const FooterBrandSub = styled.p`
-    font-size: 0.62rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
-    margin: 0;
-`
-const FooterCol = styled.div``
-const FooterColTitle = styled.p`
-    font-size: 0.62rem;
-    letter-spacing: 0.38em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    margin: 0 0 20px;
-`
-const FooterLink = styled.a`
-    display: block;
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.55);
-    text-decoration: none;
-    margin-bottom: 10px;
-    transition: color 0.2s;
-    letter-spacing: 0.02em;
-    &:hover { color: #fff; }
-`
-const FooterBottom = styled.div`
-    border-top: 1px solid rgba(255,255,255,0.07);
-    padding: 24px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
-    @media (max-width: 640px) { padding: 20px 24px; }
-    span {
-        font-size: 0.62rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.2);
-    }
 `
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1889,8 +1943,8 @@ function HomeProdModal({ product, onClose, allProducts, onSelect }) {
                     </ModalImgWrap>
                     <div style={{ padding: '32px 28px' }}>
                         <p style={{
-                            fontFamily: 'Playfair Display, Georgia, serif',
-                            fontSize: '22px', fontWeight: 300, fontStyle: 'italic',
+                            fontFamily: 'Cormorant Garamond, Georgia, serif',
+                            fontSize: '22px', fontWeight: 300, fontStyle: 'normal',
                             color: '#1a1a1a', margin: '0 0 8px'
                         }}>{product.name}</p>
                         <p style={{

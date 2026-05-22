@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+﻿import React, { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import styled, { keyframes } from 'styled-components'
@@ -51,7 +51,7 @@ function ProductModal({ product, artistName, onClose }) {
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.7s' }} />}
           </div>
           <div style={{ padding: '32px 28px' }}>
-            <p style={{ fontFamily: 'Playfair Display,Georgia,serif', fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: '#1a1a1a', margin: '0 0 6px' }}>{product.name}</p>
+            <p style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: 22, fontWeight: 300, fontStyle: 'normal', color: '#1a1a1a', margin: '0 0 6px' }}>{product.name}</p>
             <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, letterSpacing: '0.1em', color: '#999', margin: '0 0 32px' }}>{product.price}</p>
             <AddCart data={cartData} />
           </div>
@@ -77,7 +77,7 @@ export default function ArtistPage() {
 
   if (notFound) return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#ead1b0' }}>
-      <p style={{ fontFamily: 'Playfair Display,Georgia,serif', fontSize: '5rem', fontStyle: 'italic', fontWeight: 300, color: '#1a1a1a' }}>404</p>
+      <p style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: '5rem', fontStyle: 'normal', fontWeight: 300, color: '#1a1a1a' }}>404</p>
       <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 11, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#888', margin: '16px 0 40px' }}>Artista no encontrado</p>
       <Link to="/" style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#1a1a1a', border: '1px solid #ccc', padding: '12px 32px', textDecoration: 'none' }}>← Volver al inicio</Link>
     </div>
@@ -291,17 +291,18 @@ const HeroEyebrow = styled.p`
   margin: 0 0 20px;
 `
 const HeroTitle = styled.h1`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(3rem, 9vw, 8rem);
-  font-weight: 300; font-style: italic;
+  font-weight: 300; font-style: normal;
   color: #fff; line-height: 1.0;
   margin: 0; letter-spacing: -0.02em;
+  text-transform: capitalize;
 `
 
 /* ── Products ── */
 const ProductsSection = styled.section`
   background: #f5ede0;
-  padding: 80px clamp(40px, 6vw, 100px) 100px;
+  padding: 80px clamp(48px, 8vw, 140px) 100px;
   animation: ${fadeUp} 0.7s ease both;
 
   @media (max-width: 640px) { padding: 48px 0 64px; }
@@ -319,9 +320,9 @@ const Eyebrow = styled.p`
   margin: 0 0 16px;
 `
 const SectionTitle = styled.h2`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
-  font-weight: 300; font-style: italic;
+  font-weight: 300; font-style: normal;
   color: #1a1a1a; margin: 0 0 12px;
 `
 const SectionDesc = styled.p`
@@ -333,9 +334,12 @@ const SectionDesc = styled.p`
 const GalleryGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 48px 48px;
+  max-width: 640px;
+  margin: 0 auto;
 
-  @media (max-width: 640px) { gap: 0; }
+  @media (max-width: 1024px) { gap: 32px 32px; max-width: 580px; }
+  @media (max-width: 640px)  { gap: 0; max-width: 100%; }
 `
 const GalleryItem = styled.div`
   cursor: pointer;
@@ -345,8 +349,7 @@ const GalleryImg = styled.div`
   position: relative;
   overflow: hidden;
   background: #d4c4a8;
-  /* Alterna alturas para efecto editorial dinámico */
-  padding-bottom: ${p => p.$tall ? '145%' : '115%'};
+  padding-bottom: 120%;
 
   img {
     position: absolute; inset: 0;
@@ -355,29 +358,28 @@ const GalleryImg = styled.div`
   }
 
   @media (max-width: 640px) {
-    padding-bottom: 130%;
+    padding-bottom: 125%;
   }
 `
 const GalleryNoImg = styled.div`
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(4rem, 12vw, 8rem);
-  font-weight: 300; font-style: italic;
+  font-weight: 300; font-style: normal;
   color: rgba(0,0,0,0.08);
 `
 const GalleryOverlay = styled.div`
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.08) 50%, transparent 100%);
   display: flex; flex-direction: column;
   justify-content: space-between;
-  padding: 20px 24px;
-  opacity: 0; transition: opacity 0.4s ease;
-  ${GalleryItem}:hover & { opacity: 1; }
+  padding: 20px 20px 18px;
+  /* siempre visible en desktop — nombre y precio dentro de la foto */
+  opacity: 1;
+  transition: background 0.4s ease;
 
-  /* En mobile siempre visible — muestra nombre dentro de la foto */
   @media (max-width: 640px) {
-    opacity: 1;
     padding: 12px;
     background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
   }
@@ -392,10 +394,11 @@ const GalleryOverlayInfo = styled.div`
   flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
 `
 const GalleryOverlayName = styled.p`
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.1rem, 2.2vw, 1.8rem);
-  font-weight: 300; font-style: italic;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(0.9rem, 1.6vw, 1.25rem);
+  font-weight: 300; font-style: normal;
   color: #fff; margin: 0; line-height: 1.2;
+  text-transform: capitalize;
   @media (max-width: 640px) {
     font-size: 0.82rem;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -403,42 +406,29 @@ const GalleryOverlayName = styled.p`
 `
 const GalleryOverlayPrice = styled.p`
   font-family: 'DM Sans', sans-serif;
-  font-size: 11px; letter-spacing: 0.15em;
-  color: rgba(255,255,255,0.65); margin: 0;
+  font-size: 10px; letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.6); margin: 0;
   @media (max-width: 640px) { font-size: 9px; letter-spacing: 0.08em; }
 `
 const GalleryOverlayBtn = styled.span`
-  display: inline-block; margin-top: 16px;
+  display: inline-block; margin-top: 12px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 9px; letter-spacing: 0.4em;
-  text-transform: uppercase; color: #fff;
-  border-bottom: 1px solid rgba(255,255,255,0.45);
+  font-size: 8px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: rgba(255,255,255,0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.35);
   padding-bottom: 3px;
+  opacity: 0; transition: opacity 0.3s ease;
+  ${GalleryItem}:hover & { opacity: 1; }
   @media (max-width: 640px) { display: none; }
 `
+/* Caption oculto — info ahora va dentro de la foto */
 const GalleryCaption = styled.div`
-  display: flex; align-items: baseline; gap: 10px;
-  padding: 12px 4px 20px;
-  @media (max-width: 640px) { display: none; }
+  display: none;
 `
-const GalleryCaptionNum = styled.span`
-  font-family: 'DM Sans', sans-serif;
-  font-size: 9px; letter-spacing: 0.3em;
-  color: #b0a090; flex-shrink: 0;
-`
+const GalleryCaptionNum = styled.span``
 const GalleryCaptionText = styled.div``
-const GalleryCaptionName = styled.p`
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(0.78rem, 1.6vw, 1.2rem);
-  font-weight: 300; font-style: italic;
-  color: #1a1a1a; margin: 0 0 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-`
-const GalleryCaptionPrice = styled.p`
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px; letter-spacing: 0.1em;
-  color: #898635; margin: 0;
-`
+const GalleryCaptionName = styled.p``
+const GalleryCaptionPrice = styled.p``
 
 /* ── Info ── */
 const InfoSection = styled.section`
@@ -489,9 +479,9 @@ const InfoQuote = styled.blockquote`
   padding-left: 24px; margin: 0;
 `
 const InfoQuoteText = styled.p`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-weight: 300; font-style: italic;
+  font-weight: 300; font-style: normal;
   color: #fff; margin: 0 0 12px; line-height: 1.4;
 `
 const InfoQuoteAuthor = styled.footer`
@@ -544,9 +534,9 @@ const EditTextBlock = styled.div`
   gap: 24px;
 `
 const EditBlockTitle = styled.h2`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
-  font-weight: 300; font-style: italic;
+  font-weight: 300; font-style: normal;
   color: #fff; margin: 0; line-height: 1.15;
 `
 const EditBlockBody = styled.p`
@@ -584,10 +574,11 @@ const FooterEyebrow = styled.p`
   margin: 0 0 20px;
 `
 const FooterTitle = styled.h2`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(2.5rem, 7vw, 6rem);
-  font-weight: 300; font-style: italic;
+  font-weight: 300; font-style: normal;
   color: #fff; margin: 0 0 48px;
+  text-transform: capitalize;
 `
 
 /* ── Modal ── */

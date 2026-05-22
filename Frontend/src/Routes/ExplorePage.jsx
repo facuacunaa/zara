@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+﻿import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import axios from 'axios'
 import styled, { keyframes } from 'styled-components'
 import Navbar from '../Components/Navbar'
@@ -253,31 +253,37 @@ export default function ExplorePage() {
                                             <ArtistProfileBtn to={`/${artist.slug}`}>
                                                 Ver perfil completo
                                             </ArtistProfileBtn>
-
-                                            {/* Obras dentro del panel */}
-                                            {prods.length > 0 && (
-                                                <PanelWorksTrack>
-                                                    {prods.map((p, i) => (
-                                                        <PanelWorkCard key={p._id || i} onClick={() => setSelectedProd(p)}>
-                                                            <PanelWorkImg>
-                                                                {p.image
-                                                                    ? <FadeImg src={p.image} alt={p.name} />
-                                                                    : <WorkCardNoImg>{p.name?.charAt(0)}</WorkCardNoImg>
-                                                                }
-                                                                <WorkCardOverlay>
-                                                                    <span>Ver</span>
-                                                                </WorkCardOverlay>
-                                                            </PanelWorkImg>
-                                                            <WorkCardBody>
-                                                                <WorkCardName>{p.name}</WorkCardName>
-                                                                <WorkCardPrice>{p.price}</WorkCardPrice>
-                                                            </WorkCardBody>
-                                                        </PanelWorkCard>
-                                                    ))}
-                                                </PanelWorksTrack>
-                                            )}
                                         </ArtistInfo>
                                     </ArtistCover>
+
+                                    {/* ─ OBRAS ────────────────────────────── */}
+                                    {prods.length > 0 && (
+                                        <PanelProductsSection>
+                                            <PanelProductsHeader>
+                                                <PanelProductsLabel>Obras de {artist.name}</PanelProductsLabel>
+                                                <PanelProductsCount>{prods.length} disponible{prods.length !== 1 ? 's' : ''}</PanelProductsCount>
+                                            </PanelProductsHeader>
+                                            <PanelWorksTrack>
+                                                {prods.map((p, i) => (
+                                                    <PanelWorkCard key={p._id || i} onClick={() => setSelectedProd(p)}>
+                                                        <PanelWorkImg>
+                                                            {p.image
+                                                                ? <FadeImg src={p.image} alt={p.name} />
+                                                                : <WorkCardNoImg>{p.name?.charAt(0)}</WorkCardNoImg>
+                                                            }
+                                                            <WorkCardOverlay>
+                                                                <span>Ver</span>
+                                                            </WorkCardOverlay>
+                                                        </PanelWorkImg>
+                                                        <WorkCardBody>
+                                                            <WorkCardName>{p.name}</WorkCardName>
+                                                            <WorkCardPrice>{p.price}</WorkCardPrice>
+                                                        </WorkCardBody>
+                                                    </PanelWorkCard>
+                                                ))}
+                                            </PanelWorksTrack>
+                                        </PanelProductsSection>
+                                    )}
                                 </ArtistPanel>
                             )
                         })}
@@ -399,10 +405,10 @@ const HeroDecor = styled.span`
     right: -40px;
     top: 50%;
     transform: translateY(-50%) rotate(90deg);
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(8rem, 20vw, 18rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: rgba(255,255,255,0.025);
     letter-spacing: -0.04em;
     user-select: none;
@@ -423,14 +429,14 @@ const HeroIssue = styled.p`
     margin: 0 0 2rem;
 `
 const HeroTitle = styled.h1`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(4rem, 12vw, 10rem);
     font-weight: 300;
     color: #fff;
     line-height: 0.95;
     margin: 0 0 2.5rem;
     letter-spacing: -0.02em;
-    em { font-style: italic; color: rgba(255,255,255,0.65); }
+    em { font-style: normal; color: rgba(255,255,255,0.65); }
 `
 const HeroLine = styled.div`
     width: 60px;
@@ -612,25 +618,59 @@ const NavDot = styled.button`
     &:hover { background: #888; }
 `
 
-/* Obras dentro del panel info */
+/* ── PANEL PRODUCTS SECTION ──────────────────────────────────────────────────── */
+const PanelProductsSection = styled.div`
+    background: #f5ede0;
+    border-top: 1px solid #D8C8B0;
+    padding: 28px 0 36px;
+`
+const PanelProductsHeader = styled.div`
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 clamp(20px, 5vw, 60px) 18px;
+`
+const PanelProductsLabel = styled.h4`
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 300;
+    font-style: normal;
+    color: #1a1a1a;
+    margin: 0;
+`
+const PanelProductsCount = styled.span`
+    font-size: 0.6rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #bbb;
+`
+
 const PanelWorksTrack = styled.div`
     display: flex;
-    gap: 10px;
+    gap: 12px;
     overflow-x: auto;
-    margin-top: 32px;
-    padding-bottom: 10px;
+    padding: 4px clamp(20px, 5vw, 60px) 12px;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
-    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    &:active { cursor: grabbing; }
+    -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, black 90%, transparent 100%);
 `
 
 const PanelWorkCard = styled.div`
-    flex: 0 0 180px;
+    flex: 0 0 200px;
     cursor: pointer;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    &:hover img { transform: scale(1.04); }
+    background: #E8DCC8;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s ease;
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
     @media (max-width: 640px) { flex: 0 0 150px; }
 `
 
@@ -638,14 +678,14 @@ const PanelWorkImg = styled.div`
     position: relative;
     overflow: hidden;
     background: #E8DCC8;
-    padding-bottom: 125%;
-    margin-bottom: 8px;
+    padding-bottom: 120%;
     img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
         transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+    ${PanelWorkCard}:hover & img { transform: scale(1.05); }
 `
 
 /* ── LOADING ─────────────────────────────────────────────────────────────────── */
@@ -664,7 +704,7 @@ const LoadingBlock = styled.div`
 const EmptyWrap = styled.div`
     padding: 120px 40px;
     text-align: center;
-    p { font-family: 'Times New Roman', Georgia, serif; font-size: 1.5rem; font-weight: 300; font-style: italic; color: #bbb; margin: 0 0 24px; }
+    p { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 300; font-style: normal; color: #bbb; margin: 0 0 24px; }
     a { font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: #aaa; text-decoration: none; &:hover { color: #0a0a0a; } }
 `
 
@@ -714,10 +754,10 @@ const ArtistImgPlaceholder = styled.div`
     display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, #111 0%, #222 100%);
     span {
-        font-family: 'Times New Roman', Georgia, serif;
+        font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: clamp(6rem, 15vw, 12rem);
         font-weight: 300;
-        font-style: italic;
+        font-style: normal;
         color: rgba(255,255,255,0.08);
     }
 `
@@ -725,7 +765,7 @@ const ArtistImgNum = styled.span`
     position: absolute;
     bottom: 24px;
     left: 28px;
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.72rem;
     letter-spacing: 0.2em;
     color: rgba(255,255,255,0.3);
@@ -736,7 +776,6 @@ const ArtistInfo = styled.div`
     flex-direction: column;
     justify-content: center;
     background: #ead1b0;
-    overflow-y: auto;
     @media (max-width: 768px) { padding: 32px 24px 40px; }
 `
 const ArtistEyebrow = styled.p`
@@ -747,10 +786,10 @@ const ArtistEyebrow = styled.p`
     margin: 0 0 1.2rem;
 `
 const ArtistName = styled.h2`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2.2rem, 5vw, 4.5rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0 0 2rem;
     line-height: 1.08;
@@ -777,7 +816,7 @@ const ArtistStatBox = styled.div`
     gap: 4px;
 `
 const ArtistStatNum = styled.span`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.5rem;
     font-weight: 300;
     color: #0a0a0a;
@@ -819,10 +858,10 @@ const WorksHeader = styled.div`
     @media (max-width: 640px) { padding: 0 20px 20px; }
 `
 const WorksLabel = styled.h3`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(1.1rem, 2.5vw, 1.7rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0;
 `
@@ -870,8 +909,8 @@ const WorkCardImg = styled.div`
 const WorkCardNoImg = styled.div`
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: 3rem; font-weight: 300; font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 3rem; font-weight: 300; font-style: normal;
     color: rgba(0,0,0,0.1);
 `
 const WorkCardOverlay = styled.div`
@@ -906,9 +945,9 @@ const WorkCardName = styled.p`
     white-space: nowrap;
 `
 const WorkCardPrice = styled.p`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 13px;
-    font-style: italic;
+    font-style: normal;
     color: #666;
     margin: 0;
 `
@@ -929,7 +968,7 @@ const DivLine = styled.div`
     background: #D8C8B0;
 `
 const DivTag = styled.span`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.72rem;
     letter-spacing: 0.2em;
     color: #ddd;
@@ -971,10 +1010,10 @@ const CtaEyebrow = styled.p`
     margin: 0 0 1.5rem;
 `
 const CtaTitle = styled.h2`
-    font-family: 'Times New Roman', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #fff;
     margin: 0;
     line-height: 1.1;
@@ -1058,8 +1097,8 @@ const ModalBody = styled.div`
     padding: 32px 28px;
 `
 const ModalName = styled.p`
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: 1.4rem; font-weight: 300; font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.4rem; font-weight: 300; font-style: normal;
     color: #1a1a1a; margin: 0 0 8px;
 `
 const ModalPrice = styled.p`

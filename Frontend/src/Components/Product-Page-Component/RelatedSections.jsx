@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+﻿import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 
@@ -156,10 +156,10 @@ const SectionLabel = styled.p`
 `
 
 const SectionTitle = styled.h4`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1rem;
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0;
 `
@@ -203,8 +203,8 @@ const ProdThumbImg = styled.div`
     span {
         position: absolute; inset: 0;
         display: flex; align-items: center; justify-content: center;
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size: 1.6rem; font-style: italic;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.6rem; font-style: normal;
         color: rgba(0,0,0,0.12);
     }
 `
@@ -233,9 +233,9 @@ const ProdThumbName = styled.p`
 `
 
 const ProdThumbPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 11px;
-    font-style: italic;
+    font-style: normal;
     color: #777;
     margin: 0;
 `
@@ -272,8 +272,8 @@ const ArtistAvatar = styled.div`
 const ArtistInitial = styled.div`
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.4rem; font-style: italic;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.4rem; font-style: normal;
     color: rgba(255,255,255,0.2);
 `
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+﻿import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -70,9 +70,9 @@ const Wrap = styled.div`
 `
 
 const DrawerTitle = styled.div`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.3rem;
-    font-style: italic;
+    font-style: normal;
     font-weight: 300;
     color: #0a0a0a;
     padding: 24px 24px 20px;
@@ -144,9 +144,9 @@ const ImgPlaceholder = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.5rem;
-    font-style: italic;
+    font-style: normal;
     color: rgba(0,0,0,0.12);
 `
 
@@ -184,9 +184,9 @@ const ItemQty = styled.p`
 `
 
 const ItemPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 13px;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: auto 0 0;
 `
@@ -212,9 +212,9 @@ const TotalRow = styled.div`
         color: #aaa;
     }
     span:last-child {
-        font-family: 'Playfair Display', Georgia, serif;
+        font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 1.1rem;
-        font-style: italic;
+        font-style: normal;
         color: #0a0a0a;
     }
 `

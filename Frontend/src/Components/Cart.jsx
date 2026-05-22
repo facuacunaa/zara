@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+﻿import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { deleteCart, getCart, patchcart } from "../Redux/App/action";
@@ -105,10 +105,10 @@ const Header = styled.div`
 `
 
 const Title = styled.h1`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 300;
-  font-style: italic;
+  font-style: normal;
   color: #0a0a0a;
   margin: 0;
 `
@@ -146,9 +146,9 @@ const EmptyIcon = styled.div`
 `
 
 const EmptyText = styled.p`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.4rem;
-  font-style: italic;
+  font-style: normal;
   font-weight: 300;
   color: #aaa;
   margin: 0;
@@ -204,9 +204,9 @@ const ImgPlaceholder = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 2rem;
-  font-style: italic;
+  font-style: normal;
   color: rgba(0,0,0,0.15);
 `
 
@@ -268,9 +268,9 @@ const QtyNum = styled.span`
 `
 
 const ItemPrice = styled.p`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 15px;
-  font-style: italic;
+  font-style: normal;
   color: #0a0a0a;
   margin: auto 0 0;
 `
@@ -325,9 +325,9 @@ const TotalLabel = styled.p`
 `
 
 const TotalAmount = styled.p`
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.4rem;
-  font-style: italic;
+  font-style: normal;
   color: #0a0a0a;
   margin: 0 0 2px;
 `

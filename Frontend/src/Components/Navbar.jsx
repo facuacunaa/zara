@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -199,8 +199,8 @@ const Navbar = ({ activeIndexs }) => {
                 </HamburgerBtn>
 
                 {/* Logo central */}
-                <BrandLink to="/" iconColor={iconColor}>
-                    La Casita del Hornero
+                <BrandLink to="/" $heroVisible={heroVisible}>
+                    <img src="/logo-nav.png" alt="La Casita del Hornero" />
                 </BrandLink>
 
                 {/* Acciones derecha */}
@@ -244,7 +244,7 @@ const Navbar = ({ activeIndexs }) => {
                     {/* Cabecera: logo + cerrar */}
                     <SidebarHeader>
                         <SidebarLogoWrap>
-                            <img src="/logo-hornero.png" alt="La Casita del Hornero" />
+                            <img src="/logo-footer.png" alt="La Casita del Hornero" />
                         </SidebarLogoWrap>
                         <CloseBtn onClick={() => setOpen(false)} aria-label="Cerrar menú">✕</CloseBtn>
                     </SidebarHeader>
@@ -254,6 +254,9 @@ const Navbar = ({ activeIndexs }) => {
                     {/* Navegación principal */}
                     <SidebarNav>
                         <SidebarNavLabel>Navegar</SidebarNavLabel>
+                        <SidebarNavItem>
+                            <Link to="/login">Iniciar sesión</Link>
+                        </SidebarNavItem>
                         <SidebarNavItem>
                             <Link to="/">Inicio</Link>
                         </SidebarNavItem>
@@ -272,37 +275,13 @@ const Navbar = ({ activeIndexs }) => {
                     </SidebarNav>
 
                     {/* ¿Querés vender? — debajo del carrito */}
-                    <SellSection>
+                    <SellSection href="mailto:lacasitadelhornero@gmail.com" as="a">
                         <SellEyebrow>— Para artistas</SellEyebrow>
                         <SellTitle>¿Querés vender<br/>tu arte?</SellTitle>
-                        <SellBody>
-                            Unite a nuestra comunidad de artistas locales y empezá a vender tus obras sin complicaciones.
-                        </SellBody>
-                        <SellCta href="mailto:lacasitadelhornero@gmail.com">
+                        <SellCta as="span">
                             Quiero vender →
                         </SellCta>
                     </SellSection>
-
-                    <SidebarDivider />
-
-                    {/* Acceso portales */}
-                    <PortalSection>
-                        <SidebarNavLabel>Portales</SidebarNavLabel>
-                        <PortalLink to="/artist-portal">
-                            <PortalIcon>🎨</PortalIcon>
-                            <div>
-                                <PortalLinkTitle>Portal Artista</PortalLinkTitle>
-                                <PortalLinkSub>Gestioná tu página y productos</PortalLinkSub>
-                            </div>
-                        </PortalLink>
-                        <PortalLink to="/admin">
-                            <PortalIcon>⚙️</PortalIcon>
-                            <div>
-                                <PortalLinkTitle>Administrador</PortalLinkTitle>
-                                <PortalLinkSub>Panel de control de la tienda</PortalLinkSub>
-                            </div>
-                        </PortalLink>
-                    </PortalSection>
 
                     <SidebarDivider />
 
@@ -388,20 +367,24 @@ const HamburgerBtn = styled.button`
 const BrandLink = styled(Link)`
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Schoolbell', cursive;
-    font-size: clamp(16px, 2.2vw, 22px);
-    font-style: normal;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    color: ${p => p.iconColor};
+    top: 50%;
+    transform: translate(-50%, -50%);
     text-decoration: none;
-    white-space: nowrap;
-    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    z-index: 10;
+
+    img {
+        height: 120px;
+        width: auto;
+        display: block;
+        filter: ${p => p.$heroVisible ? 'none' : 'invert(1) brightness(0)'};
+        transition: filter 0.45s ease;
+    }
 
     @media (max-width: 480px) {
-        font-size: 13px;
-        letter-spacing: 0;
+        img { height: 90px; }
     }
 `
 
@@ -450,13 +433,35 @@ const Sidebar = styled.aside`
     top: 0; left: 0; bottom: 0;
     width: 300px;
     max-width: 88vw;
-    background: #ead1b0;
+    background: #c4622a;
     z-index: 100;
     border-radius: 0 24px 24px 0;
     transform: ${p => p.open ? 'translateX(0)' : 'translateX(-100%)'};
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
     box-shadow: 6px 0 48px rgba(0,0,0,0.13);
+
+    /* Scrollbar personalizado */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.35) transparent;
+
+    &::-webkit-scrollbar {
+        width: 3px;
+        margin-right: 4px;
+    }
+    &::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.08);
+        border-radius: 100px;
+        margin: 120px 12px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.4);
+        border-radius: 100px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgba(255,255,255,0.65);
+    }
+    padding-right: 6px;
 `
 
 const SidebarInner = styled.div`
@@ -486,7 +491,7 @@ const CloseBtn = styled.button`
     line-height: 1;
     transition: color 0.2s;
 
-    &:hover { color: #0a0a0a; }
+    &:hover { color: #fff; }
 `
 
 const SidebarLogoWrap = styled.div`
@@ -496,12 +501,13 @@ const SidebarLogoWrap = styled.div`
     img {
         width: 160px;
         height: auto;
+        filter: brightness(0) invert(1);
     }
 `
 
 const SidebarDivider = styled.hr`
     border: none;
-    border-top: 1px solid #D8C8B0;
+    border-top: 1px solid rgba(255,255,255,0.2);
     margin: 0 24px;
 `
 
@@ -517,27 +523,27 @@ const SidebarNavLabel = styled.p`
     font-size: 7.5px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: #898635;
+    color: rgba(255,255,255,0.5);
     margin: 0 0 18px;
 `
 
 const SidebarNavItem = styled.div`
     a {
-        font-family: 'Playfair Display', Georgia, serif;
+        font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 1.55rem;
-        font-style: italic;
+        font-style: normal;
         font-weight: 300;
-        color: #1a1a1a;
+        color: #fff;
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 10px;
         padding: 10px 0;
-        border-bottom: 1px solid #D8C8B0;
+        border-bottom: 1px solid rgba(255,255,255,0.18);
         transition: color 0.2s, padding-left 0.2s;
 
         &:hover {
-            color: #898635;
+            color: rgba(255,255,255,0.7);
             padding-left: 10px;
         }
     }
@@ -549,10 +555,9 @@ const SidebarCartBadge = styled.span`
     justify-content: center;
     width: 20px;
     height: 20px;
-    background: #898635;
+    background: rgba(255,255,255,0.25);
     border-radius: 50%;
     color: #fff;
-    border-radius: 50%;
     font-family: 'DM Sans', sans-serif;
     font-size: 9px;
     font-style: normal;
@@ -610,11 +615,22 @@ const PortalLinkSub = styled.p`
 const SellSection = styled.div`
     margin: 0 16px;
     padding: 22px 20px 24px;
-    background: #3c4021;
+    background: #6b3a1f;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &:hover {
+        background: #7d4520;
+        box-shadow: 0 4px 20px rgba(107,58,31,0.35);
+    }
 `
 
 const SellEyebrow = styled.p`
@@ -622,15 +638,15 @@ const SellEyebrow = styled.p`
     font-size: 7.5px;
     letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: rgba(173,67,29,0.85);
+    color: rgba(255,200,160,0.7);
     margin: 0;
 `
 
 const SellTitle = styled.h3`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.35rem;
     font-weight: 400;
-    font-style: italic;
+    font-style: normal;
     color: #fff;
     margin: 0;
     line-height: 1.2;
@@ -651,12 +667,12 @@ const SellCta = styled.a`
     font-size: 9px;
     letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: rgba(173,67,29,0.9);
+    color: rgba(255,200,160,0.9);
     text-decoration: none;
     transition: color 0.2s, letter-spacing 0.2s;
 
     &:hover {
-        color: #ad431d;
+        color: #ffc8a0;
         letter-spacing: 0.45em;
     }
 `
@@ -665,14 +681,14 @@ const SellCta = styled.a`
 const SidebarFooterLinks = styled.div`
     margin-top: auto;
     padding: 24px 24px 0;
-    border-top: 1px solid #D8C8B0;
+    border-top: 1px solid rgba(255,255,255,0.2);
 
     a, button {
         font-family: 'DM Sans', sans-serif;
         font-size: 9px;
         letter-spacing: 0.35em;
         text-transform: uppercase;
-        color: #aaa;
+        color: rgba(255,255,255,0.45);
         text-decoration: none;
         background: none;
         border: none;
@@ -681,7 +697,7 @@ const SidebarFooterLinks = styled.div`
         text-align: left;
         transition: color 0.2s;
 
-        &:hover { color: #898635; }
+        &:hover { color: #fff; }
     }
 `
 

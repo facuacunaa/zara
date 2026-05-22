@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+﻿import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useDispatch } from 'react-redux'
 import { getCart, postCart } from '../../Redux/App/action'
@@ -206,10 +206,10 @@ const PanelHeader = styled.div`
 `
 
 const PanelTitle = styled.h3`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.1rem;
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: #0a0a0a;
     margin: 0;
 `
@@ -253,8 +253,8 @@ const AddedImg = styled.div`
     span {
         width: 100%; height: 100%;
         display: flex; align-items: center; justify-content: center;
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size: 1.4rem; font-style: italic;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.4rem; font-style: normal;
         color: rgba(0,0,0,0.15);
     }
 `
@@ -285,9 +285,9 @@ const AddedName = styled.p`
 `
 
 const AddedPrice = styled.p`
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 14px;
-    font-style: italic;
+    font-style: normal;
     color: #555;
     margin: 0;
 `

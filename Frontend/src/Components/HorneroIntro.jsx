@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 /* ── Generador pseudo-aleatorio determinista ────────────────────────────── */
@@ -326,9 +326,9 @@ export default function HorneroIntro() {
                 </p>
                 <h2 style={{
                   color: '#fff', margin: '0 0 18px', whiteSpace: 'pre-line',
-                  fontFamily: "'Playfair Display',Georgia,serif",
+                  fontFamily: "'Cormorant Garamond',Georgia,serif",
                   fontSize: 'clamp(2.2rem,5.5vw,5rem)',
-                  fontWeight: 300, fontStyle: 'italic', lineHeight: 1.1,
+                  fontWeight: 300, fontStyle: 'normal', lineHeight: 1.1,
                 }}>
                   {s.headline}
                 </h2>
