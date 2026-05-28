@@ -59,8 +59,7 @@ artistRouter.post("/login", async (req, res) => {
         if (!match)  return res.status(401).json({ msg: "Contraseña incorrecta" })
         const token  = jwt.sign(
             { artistId: artist._id, artistSlug: artist.slug },
-            process.env.JWT_SECRET,
-            { expiresIn: "30d" }
+            process.env.JWT_SECRET
         )
         res.json({ msg: "Login exitoso", token, artist: { ...artist.toObject(), password: undefined } })
     } catch (err) {
