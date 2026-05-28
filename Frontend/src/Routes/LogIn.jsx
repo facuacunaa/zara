@@ -67,7 +67,7 @@ const Logo = styled.img`
 `
 
 const Title = styled.h1`
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: 1.8rem;
   font-weight: 500;
   font-style: normal;

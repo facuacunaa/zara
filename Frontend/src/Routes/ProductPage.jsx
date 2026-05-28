@@ -343,7 +343,7 @@ const PageEyebrow = styled.p`
 `
 
 const PageTitle = styled.h1`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(1rem, 2vw, 1.35rem);
     font-weight: 500;
     font-style: normal;

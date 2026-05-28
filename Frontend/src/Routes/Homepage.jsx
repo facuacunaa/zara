@@ -564,7 +564,7 @@ const MissionEyebrow = styled.p`
     margin: 0 0 1.5rem;
 `
 const MissionTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(1.9rem, 4vw, 3.4rem);
     font-weight: 500;
     font-style: normal;
@@ -740,14 +740,14 @@ const HeroEyebrow = styled.p`
 `
 
 const HeroTitle = styled.h1`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(3rem, 9vw, 8rem);
-    font-weight: 500;
+    font-weight: 600;
     font-style: normal;
     color: #fff;
     line-height: 1.05;
     margin: 0 0 28px;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
 `
 
 const HeroSub = styled.p`
@@ -872,7 +872,7 @@ const FeaturedSectionHeader = styled.div`
 `
 
 const FeaturedTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(1.2rem, 2vw, 1.6rem);
     font-weight: 500;
     font-style: normal;
@@ -1024,7 +1024,7 @@ const ArtistsShowcaseEyebrow = styled.p`
 `
 
 const ArtistsShowcaseTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(1.8rem, 4vw, 3.4rem);
     font-weight: 500;
     font-style: normal;
@@ -1355,12 +1355,12 @@ const CarouselText = styled.div`
     z-index: 2;
 `
 const CarouselTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(2.6rem, 6.5vw, 6rem);
-    font-weight: 500;
+    font-weight: 600;
     font-style: normal;
     color: #fff;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
     line-height: 1.05;
     margin: 0 0 1rem;
 `
@@ -1523,7 +1523,7 @@ const EditorialLabel = styled.p`
 `
 
 const EditorialQuote = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(2rem, 4.5vw, 4.2rem);
     font-weight: 500;
     font-style: normal;
@@ -1616,7 +1616,7 @@ const ShopEyebrow = styled.p`
 `
 
 const ShopTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(2.5rem, 5.5vw, 5rem);
     font-weight: 500;
     font-style: normal;
@@ -1663,7 +1663,7 @@ const ArtistCarouselHeader = styled.div`
 `
 
 const ArtistCarouselName = styled.h3`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(1.4rem, 3vw, 2.2rem);
     font-weight: 500;
     font-style: normal;
@@ -1812,7 +1812,7 @@ const JoinEyebrow = styled.p`
     margin: 0 0 1.4rem;
 `
 const JoinTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(2rem, 4vw, 3.4rem);
     font-weight: 500;
     font-style: normal;

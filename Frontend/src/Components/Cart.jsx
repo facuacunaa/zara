@@ -105,7 +105,7 @@ const Header = styled.div`
 `
 
 const Title = styled.h1`
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 500;
   font-style: normal;

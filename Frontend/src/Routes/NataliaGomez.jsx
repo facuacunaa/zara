@@ -291,7 +291,7 @@ const HeroEyebrow = styled.p`
   margin: 0 0 20px;
 `
 const HeroTitle = styled.h1`
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: clamp(3rem, 9vw, 8rem);
   font-weight: 500; font-style: normal;
   color: #fff; line-height: 1.0;
@@ -320,7 +320,7 @@ const Eyebrow = styled.p`
   margin: 0 0 16px;
 `
 const SectionTitle = styled.h2`
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
   font-weight: 500; font-style: normal;
   color: #1a1a1a; margin: 0 0 12px;
@@ -534,7 +534,7 @@ const EditTextBlock = styled.div`
   gap: 24px;
 `
 const EditBlockTitle = styled.h2`
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
   font-weight: 500; font-style: normal;
   color: #fff; margin: 0; line-height: 1.15;
@@ -574,7 +574,7 @@ const FooterEyebrow = styled.p`
   margin: 0 0 20px;
 `
 const FooterTitle = styled.h2`
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: clamp(2.5rem, 7vw, 6rem);
   font-weight: 500; font-style: normal;
   color: #fff; margin: 0 0 48px;

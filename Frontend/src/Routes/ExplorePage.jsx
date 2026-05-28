@@ -429,7 +429,7 @@ const HeroIssue = styled.p`
     margin: 0 0 2rem;
 `
 const HeroTitle = styled.h1`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(4rem, 12vw, 10rem);
     font-weight: 500;
     color: #fff;
@@ -786,7 +786,7 @@ const ArtistEyebrow = styled.p`
     margin: 0 0 1.2rem;
 `
 const ArtistName = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(2.2rem, 5vw, 4.5rem);
     font-weight: 500;
     font-style: normal;
@@ -858,7 +858,7 @@ const WorksHeader = styled.div`
     @media (max-width: 640px) { padding: 0 20px 20px; }
 `
 const WorksLabel = styled.h3`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(1.1rem, 2.5vw, 1.7rem);
     font-weight: 500;
     font-style: normal;
@@ -1010,7 +1010,7 @@ const CtaEyebrow = styled.p`
     margin: 0 0 1.5rem;
 `
 const CtaTitle = styled.h2`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 500;
     font-style: normal;

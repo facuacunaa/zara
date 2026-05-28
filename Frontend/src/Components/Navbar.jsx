@@ -643,7 +643,7 @@ const SellEyebrow = styled.p`
 `
 
 const SellTitle = styled.h3`
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
     font-size: 1.35rem;
     font-weight: 500;
     font-style: normal;
