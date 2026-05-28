@@ -1,4 +1,4 @@
-﻿import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 const LogIn = () => {
@@ -8,30 +8,30 @@ const LogIn = () => {
     <PageWrap>
       <Card>
         <Logo src="/logo-footer.png" alt="La Casita del Hornero" />
-        <Title>Iniciar sesiÃ³n</Title>
-        <Subtitle>SeleccionÃ¡ cÃ³mo querÃ©s ingresar</Subtitle>
+        <Title>Iniciar sesión</Title>
+        <Subtitle>Seleccioná cómo querés ingresar</Subtitle>
 
         <OptionsGrid>
           <OptionBtn onClick={() => navigate('/artist-portal')}>
-            <OptionIcon>ðŸŽ¨</OptionIcon>
+            <OptionIcon>🎨</OptionIcon>
             <OptionLabel>Loguearte como artista</OptionLabel>
-            <OptionSub>GestionÃ¡ tu pÃ¡gina y productos</OptionSub>
+            <OptionSub>Gestioná tu página y productos</OptionSub>
           </OptionBtn>
 
           <OptionBtn onClick={() => navigate('/admin')}>
-            <OptionIcon>âš™ï¸</OptionIcon>
+            <OptionIcon>⚙️</OptionIcon>
             <OptionLabel>Loguearte como administrador</OptionLabel>
             <OptionSub>Panel de control de la tienda</OptionSub>
           </OptionBtn>
         </OptionsGrid>
 
-        <BackLink onClick={() => navigate(-1)}>â† Volver</BackLink>
+        <BackLink onClick={() => navigate(-1)}>← Volver</BackLink>
       </Card>
     </PageWrap>
   )
 }
 
-/* â”€â”€ Estilos â”€â”€ */
+/* ── Estilos ── */
 const PageWrap = styled.div`
   min-height: 100vh;
   background: #f5ede2;
@@ -70,7 +70,6 @@ const Title = styled.h1`
   font-family: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
   font-size: 1.8rem;
   font-weight: 500;
-  font-style: normal;
   color: #1a1a1a;
   margin: 0;
   text-align: center;
@@ -122,7 +121,6 @@ const OptionLabel = styled.p`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.05rem;
   font-weight: 500;
-  font-style: normal;
   color: #1a1a1a;
   margin: 0;
 `
