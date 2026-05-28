@@ -149,11 +149,26 @@ export default function ArtistPortal() {
     setLoading(false)
   }
 
-  const logout = () => {
+  const logout = (expired = false) => {
     localStorage.removeItem('artistToken')
     localStorage.removeItem('artistData')
     setToken(''); setArtist(null)
+    if (expired) flash('⚠️ Tu sesión expiró. Iniciá sesión de nuevo.')
   }
+
+  /* Detectar 401 en cualquier request y cerrar sesión automáticamente */
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      r => r,
+      err => {
+        if (err.response?.status === 401 && token) {
+          logout(true)
+        }
+        return Promise.reject(err)
+      }
+    )
+    return () => axios.interceptors.response.eject(interceptor)
+  }, [token]) // eslint-disable-line
 
   /* ── Refresh artista ─────────────────────────────────────────────────── */
   /* Actualiza el estado del artista desde un objeto ya recibido */

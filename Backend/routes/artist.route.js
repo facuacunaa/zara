@@ -25,8 +25,12 @@ const artistAuth = (req, res, next) => {
         req.artistSlug = decoded.artistSlug
         req.artistId   = decoded.artistId
         next()
-    } catch {
-        res.status(401).json({ msg: "Token inválido" })
+    } catch (err) {
+        const expired = err.name === 'TokenExpiredError'
+        res.status(401).json({
+            msg: expired ? "Sesión expirada" : "Token inválido",
+            expired,
+        })
     }
 }
 
@@ -56,7 +60,7 @@ artistRouter.post("/login", async (req, res) => {
         const token  = jwt.sign(
             { artistId: artist._id, artistSlug: artist.slug },
             process.env.JWT_SECRET,
-            { expiresIn: "7d" }
+            { expiresIn: "30d" }
         )
         res.json({ msg: "Login exitoso", token, artist: { ...artist.toObject(), password: undefined } })
     } catch (err) {
