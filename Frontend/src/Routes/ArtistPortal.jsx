@@ -221,22 +221,40 @@ export default function ArtistPortal() {
     setLoading(false); setVideoProgress(0)
   }
 
+  /* ── Helper: obtener firma + subir directo a Cloudinary ────────────── */
+  const uploadImageDirect = async (file, onProgress) => {
+    // 1. Pedir firma al backend
+    const sigRes = await axios.get(`${API}/artist/image-signature`, { headers })
+    const sig = sigRes.data
+
+    // 2. Subir directo a Cloudinary (sin pasar por Vercel)
+    const form = new FormData()
+    form.append('file',      file)
+    form.append('api_key',   sig.api_key)
+    form.append('timestamp', String(sig.timestamp))
+    form.append('signature', sig.signature)
+    form.append('folder',    sig.folder)
+
+    const cdnRes = await axios.post(
+      `https://api.cloudinary.com/v1_1/${sig.cloud_name}/image/upload`,
+      form,
+      { onUploadProgress: e => onProgress(Math.round((e.loaded * 100) / e.total)) }
+    )
+    return cdnRes.data.secure_url
+  }
+
   /* ── Subir foto de perfil ───────────────────────────────────────────── */
   const uploadProfileImage = async (file) => {
     if (!file) return
     if (file.size > 10 * 1024 * 1024) return flash('❌ La imagen supera 10MB')
     setProfileProgress(0)
-    const form = new FormData()
-    form.append('image', file)
     try {
-      const res = await axios.post(`${API}/artist/profile-image`, form, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: e => setProfileProgress(Math.round((e.loaded * 100) / e.total))
-      })
+      const url = await uploadImageDirect(file, setProfileProgress)
+      const res = await axios.post(`${API}/artist/profile-image/save-url`, { url }, { headers })
       if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Foto de perfil actualizada')
-    } catch {
-      flash('❌ Error al subir la foto')
+    } catch (e) {
+      flash(`❌ Error al subir la foto: ${e.response?.data?.msg || e.message}`)
     }
     setProfileProgress(0)
   }
@@ -246,17 +264,13 @@ export default function ArtistPortal() {
     if (!file) return
     if (file.size > 10 * 1024 * 1024) return flash('❌ La imagen supera 10MB')
     setSlotProgress(p => ({ ...p, [slot]: 0 }))
-    const form = new FormData()
-    form.append('image', file)
     try {
-      const res = await axios.post(`${API}/artist/images/slot/${slot}`, form, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: e => setSlotProgress(p => ({ ...p, [slot]: Math.round((e.loaded * 100) / e.total) }))
-      })
+      const url = await uploadImageDirect(file, pct => setSlotProgress(p => ({ ...p, [slot]: pct })))
+      const res = await axios.post(`${API}/artist/images/slot/${slot}/save-url`, { url }, { headers })
       if (res.data?.artist) applyArtist(res.data.artist)
       flash(`✅ Imagen ${slot + 1} actualizada`)
-    } catch {
-      flash('❌ Error al subir imagen')
+    } catch (e) {
+      flash(`❌ Error al subir imagen: ${e.response?.data?.msg || e.message}`)
     }
     setSlotProgress(p => { const n = {...p}; delete n[slot]; return n })
   }
@@ -281,17 +295,13 @@ export default function ArtistPortal() {
     if (!file) return
     if (file.size > 10 * 1024 * 1024) return flash('❌ La imagen supera 10MB')
     setShopProgress(0)
-    const form = new FormData()
-    form.append('image', file)
     try {
-      const res = await axios.post(`${API}/artist/images/shop`, form, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: e => setShopProgress(Math.round((e.loaded * 100) / e.total))
-      })
+      const url = await uploadImageDirect(file, setShopProgress)
+      const res = await axios.post(`${API}/artist/images/shop/save-url`, { url }, { headers })
       if (res.data?.artist) applyArtist(res.data.artist)
       flash('✅ Imagen Shop the Look actualizada')
-    } catch {
-      flash('❌ Error al subir imagen')
+    } catch (e) {
+      flash(`❌ Error al subir imagen: ${e.response?.data?.msg || e.message}`)
     }
     setShopProgress(0)
   }

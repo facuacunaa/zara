@@ -120,6 +120,80 @@ artistRouter.get("/video-signature", artistAuth, (req, res) => {
     }
 })
 
+// ── FIRMA PARA UPLOAD DIRECTO DE IMÁGENES ─────────────────────────────────
+artistRouter.get("/image-signature", artistAuth, (req, res) => {
+    try {
+        const timestamp    = Math.round(Date.now() / 1000)
+        const folder       = "zara-artists/images"
+        const paramsToSign = { folder, timestamp }
+        const signature    = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET)
+        res.json({
+            signature,
+            timestamp,
+            folder,
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key:    process.env.CLOUDINARY_API_KEY,
+        })
+    } catch (err) {
+        res.status(500).json({ msg: "Error generando firma", error: err.message })
+    }
+})
+
+// ── GUARDAR URL FOTO DE PERFIL (upload directo a Cloudinary) ──────────────
+artistRouter.post("/profile-image/save-url", artistAuth, async (req, res) => {
+    try {
+        const { url } = req.body
+        if (!url) return res.status(400).json({ msg: "URL requerida" })
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { profileImage: url },
+            { new: true }
+        ).select("-password")
+        if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
+        res.json({ msg: "Foto de perfil actualizada", url, artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error guardando URL", error: err.message })
+    }
+})
+
+// ── GUARDAR URL IMAGEN SLOT (upload directo a Cloudinary) ─────────────────
+artistRouter.post("/images/slot/:slot/save-url", artistAuth, async (req, res) => {
+    try {
+        const { url } = req.body
+        if (!url) return res.status(400).json({ msg: "URL requerida" })
+        const slot = parseInt(req.params.slot)
+        if (isNaN(slot) || slot < 0 || slot > 5)
+            return res.status(400).json({ msg: "Slot inválido (0-5)" })
+        const artist = await ArtistModel.findById(req.artistId)
+        if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
+        while (artist.images.length <= slot) artist.images.push("")
+        artist.images[slot] = url
+        artist.markModified("images")
+        await artist.save()
+        const updated = await ArtistModel.findById(req.artistId).select("-password")
+        res.json({ msg: "Imagen actualizada", url, artist: updated })
+    } catch (err) {
+        res.status(500).json({ msg: "Error guardando URL", error: err.message })
+    }
+})
+
+// ── GUARDAR URL IMAGEN SHOP (upload directo a Cloudinary) ─────────────────
+artistRouter.post("/images/shop/save-url", artistAuth, async (req, res) => {
+    try {
+        const { url } = req.body
+        if (!url) return res.status(400).json({ msg: "URL requerida" })
+        const artist = await ArtistModel.findByIdAndUpdate(
+            req.artistId,
+            { shopImage: url },
+            { new: true }
+        ).select("-password")
+        if (!artist) return res.status(404).json({ msg: "Artista no encontrado" })
+        res.json({ msg: "Imagen shop actualizada", url, artist })
+    } catch (err) {
+        res.status(500).json({ msg: "Error guardando URL", error: err.message })
+    }
+})
+
 artistRouter.get("/:slug", async (req, res) => {
     try {
         const artist = await ArtistModel.findOne({ slug: req.params.slug }).select("-password").lean()
